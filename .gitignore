@@ -1,3 +1,6 @@
+backend/.idea/
 backend/api/__pycache__/
+backend/authentication/__pycache__/
+backend/authentication/migrations/__pycache__/
 backend/db.sqlite3
 backend/Pipfile.lock
