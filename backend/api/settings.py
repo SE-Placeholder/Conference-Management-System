@@ -25,7 +25,9 @@ SECRET_KEY = 'vu)ov9#mkon#qtm+2xx*w(b=137r@1p#g@a#5we8jd3m16cg61'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost'
+]
 
 
 # Application definition
@@ -37,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
     'authentication'
-
 ]
 
 REST_FRAMEWORK = {
@@ -50,6 +52,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
+    # TODO: reduce access token lifetime
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=6),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
@@ -57,10 +60,17 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': False
 }
 
+# TODO: restrict allowed origins
+# CORS_ALLOWED_ORIGINS = [
+#     ''
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

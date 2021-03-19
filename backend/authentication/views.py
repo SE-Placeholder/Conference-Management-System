@@ -7,11 +7,18 @@ from rest_framework_simplejwt.views import TokenViewBase
 from .serializers import UserSerializer, TokenDisableSerializer
 
 
-class TestView(GenericAPIView):
-    permission_classes = (IsAuthenticated,)
+class PingView(GenericAPIView):
+    permission_classes = ()
 
     def get(self, request):
-        return Response('boi', status=status.HTTP_200_OK)
+        return Response('pong', status=status.HTTP_200_OK)
+
+
+class RestrictedPingView(GenericAPIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request):
+        return Response('pong', status=status.HTTP_200_OK)
 
 
 class RegisterView(GenericAPIView):

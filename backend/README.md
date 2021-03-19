@@ -6,7 +6,7 @@ the current version of the API is live and (should be) accessible at the followi
 
 - `kind-wind-83282.pktriot.net`
 
-![](https://img.shields.io/uptimerobot/status/m787564946-8907589c6961bfbd32123964?color=%23E30B5D&label=server%20status&logo=raspberry-pi&logoColor=%23E30B5D&style=for-the-badge)
+![](https://img.shields.io/uptimerobot/status/m787566269-a2f2cdfea89e35226bfc73df?color=%23E30B5D&label=server%20status&logo=raspberry-pi&logoColor=%23E30B5D&style=for-the-badge)
 
 if it's down blame my ISP
 
