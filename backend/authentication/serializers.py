@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
 from django.contrib.auth.models import User
+from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserSerializer(ModelSerializer):
@@ -21,3 +22,19 @@ class UserSerializer(ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+
+class TokenDisableSerializer(Serializer):
+    refresh = serializers.CharField()
+
+    def validate(self, attrs):
+        print(attrs)
+        refresh = RefreshToken(attrs['refresh'])
+        try:
+            refresh.blacklist()
+        except AttributeError:
+            pass
+
+        data = {'status': 'Token disabled'}
+
+        return data
