@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 django = "*"
 djangorestframework = "*"
-djangorestframework-simplejwt = "*"
+django-rest-auth = {extras = ["with_social"], version = "*"}
 django-cors-headers = "*"
 
 [dev-packages]
