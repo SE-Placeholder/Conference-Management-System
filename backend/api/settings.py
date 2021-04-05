@@ -32,9 +32,6 @@ ALLOWED_HOSTS = [
     'kind-wind-83282.pktriot.net'
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -71,6 +68,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'api.urls'
 
