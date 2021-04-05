@@ -10,7 +10,11 @@ the current version of the API is live and (should be) accessible at the followi
 
 if it's down blame my ISP
 
-NOTE: CORS headers haven't been set up yet
+### request with httpie
+http GET localhost:8000/conference/ping/ Authorization:"Token <auth token>"
+
+### request with curl
+curl -X GET localhost:8000/conference/ping/ -H "Authorization: Token <auth token>"
 
 ## Development
 
