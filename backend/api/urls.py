@@ -19,7 +19,7 @@ urlpatterns = [
     # TODO: auth/token/verify/ TokenVerifyView.as_view() [name='token_verify']
     # TODO: auth/token/refresh/ get_refresh_view().as_view() [name='token_refresh']
 
-    # path('', include('dummy.urls')),
+    path('dummy/', include('dummy.urls')),
     path('user/', include('role.urls')),
     path('conference/', include('conference.urls')),
     path('paper/', include('paper.urls'))
