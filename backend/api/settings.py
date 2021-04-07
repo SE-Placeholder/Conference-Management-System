@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'dummy',
 
     'role',
-    'conference'
+    'conference',
+    'paper'
 ]
 
 MIDDLEWARE = [

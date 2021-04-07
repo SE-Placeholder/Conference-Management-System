@@ -20,6 +20,7 @@ urlpatterns = [
     # TODO: auth/token/refresh/ get_refresh_view().as_view() [name='token_refresh']
 
     # path('', include('dummy.urls')),
-    # path('', include('roles.urls')),
-    path('conference/', include('conference.urls'))
+    path('user/', include('role.urls')),
+    path('conference/', include('conference.urls')),
+    path('paper/', include('paper.urls'))
 ]
