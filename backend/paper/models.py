@@ -5,3 +5,6 @@ from django.db import models
 class Paper(models.Model):
     title = models.CharField(max_length=64)
     author = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f'{self.title} (by: {self.author})'

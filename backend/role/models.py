@@ -14,3 +14,6 @@ class Role(models.Model):
     paper = models.ForeignKey(Paper, default=None, related_name='paper', on_delete=models.CASCADE, blank=True, null=True)
 
     user = models.ForeignKey(User, related_name='roles', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.role} role for user "{self.user}"'

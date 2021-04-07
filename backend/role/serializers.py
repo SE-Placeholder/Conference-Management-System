@@ -21,7 +21,7 @@ class RoleSerializer(ModelSerializer):
         data = super().to_representation(instance)
         items = []
         for key, value in data.items():
-            print(key, value)
+            # print(key, value)
             if value is None:
                 items.append(key)
         for item in items:
