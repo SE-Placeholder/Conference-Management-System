@@ -11,10 +11,10 @@ the current version of the API is live and (should be) accessible at the followi
 if it's down blame my ISP
 
 ### request with httpie
-http GET localhost:8000/conference/ping/ Authorization:"Token <auth token>"
+http GET localhost:8000/conference/ping/ Authorization:"Bearer `<access token>`"
 
 ### request with curl
-curl -X GET localhost:8000/conference/ping/ -H "Authorization: Token <auth token>"
+curl -X GET localhost:8000/conference/ping/ -H "Authorization: Bearer `<access token>`"
 
 ## Development
 

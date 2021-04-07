@@ -13,16 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+# from allauth.account.views import ConfirmEmailView
+from dj_rest_auth.registration.views import RegisterView, VerifyEmailView
+from dj_rest_auth.serializers import PasswordResetSerializer
+from dj_rest_auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetConfirmView
 from django.contrib import admin
 from django.urls import path, include
 
 # from dj_rest_auth import urls
-# urls.LogoutView
-# urls.LoginView
 # urls.PasswordChangeView
 # urls.PasswordResetConfirmView
-# urls.PasswordResetView
+# urls.
 # urls.TokenVerifyView
 # urls.UserDetailsView
 
@@ -31,9 +32,18 @@ from django.urls import path, include
 # urls.VerifyEmailView
 # urls.TemplateView
 
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('auth/', include('dj_rest_auth.urls')),
-    path('auth/register/', include('dj_rest_auth.registration.urls')),
-    path('', include('dummy.urls'))
+    path('admin/', admin.site.urls, name='admin'),
+    path('auth/login/', LoginView.as_view(), name='login'),
+    path('auth/logout/', LogoutView.as_view(), name='logout'),
+    path('auth/register/', RegisterView.as_view(), name='register'),
+
+    path('auth/password/reset/', PasswordResetView.as_view(), name='password_reset'),
+    path('auth/password/reset/confirm/<slug:uidb64>/<slug:token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
+    # path('auth/', include('dj_rest_auth.urls')),
+    # path('auth/register/', include('dj_rest_auth.registration.urls')),
+    path('', include('dummy.urls')),
+    path('', include('roles.urls'))
 ]
