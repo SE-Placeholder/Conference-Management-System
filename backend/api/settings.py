@@ -56,7 +56,9 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'dummy',
-    'roles'
+
+    'role',
+    'conference'
 ]
 
 MIDDLEWARE = [
