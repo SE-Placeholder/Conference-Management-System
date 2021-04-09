@@ -1,11 +1,9 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, HyperlinkedModelSerializer
 
 from conference.models import Conference
 
 
-# TODO: change to hyperlinked model serializer
-class ConferenceSerializer(ModelSerializer):
-    # url = HyperlinkedIdentityField(view_name='conference-detail', lookup_field='pk')
+class ConferenceSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Conference
         fields = ['id', 'title', 'description', 'deadline']

@@ -1,9 +1,8 @@
 from django.urls import path
 
-from role.views import ListUsersView, GetUserView
+from role.views import UserViewSet
 
-# TODO: name tags
 urlpatterns = [
-    path('list/', ListUsersView.as_view()),
-    path('get/<str:username>/', GetUserView.as_view())
+    path('', UserViewSet.as_view({'get': 'list'}), name='user-list'),
+    path('/<str:username>', UserViewSet.as_view({'get': 'retrieve'}), name='user-detail')
 ]

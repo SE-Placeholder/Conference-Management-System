@@ -1,15 +1,10 @@
 from django.contrib.auth.models import User
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.viewsets import ModelViewSet
 
 from role.serializers import UserSerializer
 
 
-class ListUsersView(ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class GetUserView(RetrieveAPIView):
+class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'username'

@@ -26,6 +26,7 @@ SECRET_KEY = '!zt)bjdkce8n+6pf81$^y%gjcidl5yhtygo8kyu#fh=v1km7v@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+SILENCED_SYSTEM_CHECKS = ["urls.W002"]
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
 
     'dummy',
 
+    'authentication',
     'role',
     'conference',
     'paper'

@@ -1,10 +1,9 @@
 from django.urls import path
 
-from conference.views import ListConferencesView, GetConferenceView, AddConferenceView
+from conference.views import ConferenceViewSet
 
-# TODO: add name tags
 urlpatterns = [
-    path('list/', ListConferencesView.as_view()),
-    path('get/<int:id>/', GetConferenceView.as_view()),
-    path('add/', AddConferenceView.as_view())
+    path('', ConferenceViewSet.as_view({'get': 'list', 'post': 'create'}), name='conference-list'),
+    # TODO: update and delete
+    path('/<int:id>', ConferenceViewSet.as_view({'get': 'retrieve'}), name='conference-detail'),
 ]
