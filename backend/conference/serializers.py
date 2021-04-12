@@ -2,7 +2,7 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from conference.models import Conference
-from role.models import Role
+from role.models import Role, RoleTypes
 
 
 class ConferenceSerializer(ModelSerializer):
@@ -15,10 +15,10 @@ class ConferenceSerializer(ModelSerializer):
     def create(self, validated_data):
         print(self.context['request'].user)
         conference = super().create(validated_data)
-        role = Role(role='steering committee', conference=conference, user=self.context['request'].user)
+        role = Role(role=RoleTypes.STEERING_COMMITTEE, conference=conference, user=self.context['request'].user)
         role.save()
         return conference
 
     def get_steering_committee(self, conference):
         return map(lambda role: role.user.username,
-                   Role.objects.filter(role='steering committee', conference=conference))
+                   Role.objects.filter(role=RoleTypes.STEERING_COMMITTEE, conference=conference))

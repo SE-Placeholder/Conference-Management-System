@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import ModelViewSet
 
 from paper.models import Paper
