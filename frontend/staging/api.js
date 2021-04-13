@@ -14,7 +14,9 @@ const endpoints = {
     conferenceDetails: 'conferences/<id>',
 
     users: 'users',
-    userDetails: 'users/<username>'
+    userDetails: 'users/<username>',
+
+    papers: 'papers'
 }
 
 const pathEncode = (endpoint, ...arguments) =>
@@ -50,6 +52,12 @@ const api = {
             client.get(endpoints.users),
         retrieve: username =>
             client.get(pathEncode(endpoints.userDetails, username))
+    },
+    papers: {
+        list: () =>
+            client.get(endpoints.papers),
+        create: (title, authors, abstract, proposal) =>
+            client.post(endpoints.papers, {title, other_authors: authors, abstract, proposal})
     }
 }
 

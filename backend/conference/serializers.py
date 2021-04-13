@@ -15,8 +15,10 @@ class ConferenceSerializer(ModelSerializer):
     def create(self, validated_data):
         print(self.context['request'].user)
         conference = super().create(validated_data)
-        role = Role(role=RoleTypes.STEERING_COMMITTEE, conference=conference, user=self.context['request'].user)
-        role.save()
+        Role.objects.create(
+            role=RoleTypes.STEERING_COMMITTEE,
+            conference=conference,
+            user=self.context['request'].user)
         return conference
 
     def get_steering_committee(self, conference):

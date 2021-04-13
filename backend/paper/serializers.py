@@ -1,9 +1,10 @@
+from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import ListField, SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from paper.models import Paper
-from role.models import Role
+from role.models import Role, RoleTypes
 
 
 class PaperSerializer(ModelSerializer):
@@ -20,13 +21,20 @@ class PaperSerializer(ModelSerializer):
             abstract=validated_data.get('abstract', None),
             proposal=validated_data.get('proposal', None),
         )
-        paper.save()
-        for author in validated_data.get('other_authors', []):
-            print(author)
-            # if author != '':
-            #     raise ValidationError({"authors": "user not found"})
+        for author in validated_data.get('other_authors', []) + [self.context['request'].user.username]:
+            try:
+                user = User.objects.get(username=author)
+                Role.objects.create(
+                    role=RoleTypes.AUTHOR,
+                    paper=paper,
+                    user=user)
+            except User.DoesNotExist:
+                print('user does not exist ' + author)
+                # TODO: return error with list of users that don't exist
+                # raise ValidationError({"authors": "user not found"})
+
         return paper
 
     def get_authors(self, paper):
         return map(lambda role: role.user.username,
-                   Role.objects.filter(role='author', paper=paper))
+                   Role.objects.filter(role=RoleTypes.AUTHOR, paper=paper))
