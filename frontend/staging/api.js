@@ -56,8 +56,14 @@ const api = {
     papers: {
         list: () =>
             client.get(endpoints.papers),
-        create: (title, authors, abstract, proposal) =>
-            client.post(endpoints.papers, {title, other_authors: authors, abstract, proposal})
+        create: (title, authors, abstract, paper) => {
+            data = new FormData()
+            data.append('title', title)
+            data.append('author', authors)
+            data.append('abstract', abstract)
+            data.append('paper', paper)
+            return client.post(endpoints.papers, data)
+        }
     }
 }
 
