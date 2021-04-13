@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" type="text/css" href="cms-style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="api.js"></script>
     <title>Conference Management System</title>
 </head>
 <body>
@@ -13,9 +16,10 @@
     <!-- Navigation Menu -->
     <div id="menu" class="w3-bar w3-large">
         <a href="#" class="w3-bar-item w3-button w3-ripple">HOME</a>
-        <a href="#" class="w3-bar-item w3-button w3-ripple">About</a>
-        <a href="#" class="w3-bar-item w3-button w3-ripple">Add Conference</a>
-        <a href="#" class="w3-bar-item w3-button w3-ripple w3-right" onclick="document.getElementById('loginModal').style.display='block'">Sign In</a>
+        <a href="#" v-if="authenticated" class="w3-bar-item w3-button w3-ripple">Profile</a>
+        <a href="#" v-if="authenticated" class="w3-bar-item w3-button w3-ripple" onclick="document.getElementById('addConferenceModal').style.display='block'">Add Conference</a>
+        <a href="#" v-if="authenticated" id="signOutButton" class="w3-bar-item w3-button w3-ripple w3-right" @click.prevent="logout()">Sign Out</a>
+        <a href="#" v-else id="signInButton" class="w3-bar-item w3-button w3-ripple w3-right" onclick="document.getElementById('loginModal').style.display='block'">Sign In</a>
     </div>
 
     <!-- Presentation Card/Title -->
@@ -30,33 +34,26 @@
         <h1 class="heading w3-panel w3-border w3-bottombar w3-round-xxlarge w3-center w3-wide">Upcoming Conferences</h1>
     </div>
 
-    <!-- Conference Details Card -->
-    <div class="w3-panel">
-        <div class="w3-card w3-round-large w3-leftbar">
-            <h3 class="conference-name w3-padding w3-wide">Generic Conference Name</h3>
-            <div class="w3-container w3-cell-row">
-                <article class="conference-details-primary w3-large w3-padding">Description about the conference</article>
-                <section class="conference-details-secondary w3-padding">Location: City/Country, Address:street</section>
-                <section class="conference-details-secondary w3-padding">Date: <span>DD/MM/YYYY</span></section>
-                <section class="conference-details-secondary w3-padding">Fee: <span>$20</span></section>
-                <button class="conference-details-button w3-button w3-margin w3-round-large w3-large w3-container">Get a ticket</button>
-                <section class="conference-details-secondary w3-padding">Want to propose a paper? <a href="#"> Click here!</a></section>
-            </div>
+    <!-- Conferences Section -->
+    <div id="conferencesSection" class="w3-container">
+        <div v-for="conference in conferences">
 
-        </div>
-    </div>
+            <!-- Conference Details Card -->
+            <div class="w3-panel">
+                <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
+                    <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
+                    <div class="w3-bar">
+                        <div class="w3-bar-item">
+                            <article class="conference-details-primary w3-large">{{conference.description}}</article>
+                            <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
+                            <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section>
+                            <section class="conference-details-secondary w3-small">Fee: <span>${{conference.fee}}</span></section>
+                            <section class="conference-details-secondary w3-small w3-display-bottomleft w3-margin">Want to propose a paper? <a href="#" v-on:click="showSubmissionModal(conference.id)"> Click here!</a></section>
+                        </div>
+                        <button class="cms-button w3-button w3-round-large w3-large w3-container w3-bar-item w3-right w3-padding-64">Get a ticket <p class="conference-details-secondary w3-tiny w3-margin-0 w3-center">Deadline: {{new Date(conference.deadline).toDateString()}}</p></button>
+                    </div>
 
-    <!-- Conference Details Card -->
-    <div class="w3-panel">
-        <div class="w3-card w3-round-large w3-leftbar">
-            <h3 class="conference-name w3-padding w3-wide">Generic Conference Name</h3>
-            <div class="w3-container w3-cell-row">
-                <article class="conference-details-primary w3-large w3-padding">Description about the conference</article>
-                <section class="conference-details-secondary w3-padding">Location: City/Country, Address:street</section>
-                <section class="conference-details-secondary w3-padding">Date: <span>DD/MM/YYYY</span></section>
-                <section class="conference-details-secondary w3-padding">Fee: <span>$20</span></section>
-                <button class="conference-details-button w3-button w3-margin w3-round-large w3-large w3-container">Get a ticket</button>
-                <section class="conference-details-secondary w3-padding">Want to propose a paper? <a href="#"> Click here!</a></section>
+                </div>
             </div>
 
         </div>
@@ -66,22 +63,22 @@
     <div id="loginModal" class="w3-modal">
         <div class="w3-modal-content w3-animate-top w3-card-4">
             <header class="w3-container presentation">
-                <span onclick="document.getElementById('loginModal').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+                <span onclick="document.getElementById('loginModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
                 <h1>Sign In</h1>
             </header>
 
-            <form class="w3-container w3-margin-top">
+            <form class="w3-container w3-margin-top" @submit.prevent="login">
                 <label>
                     <span>Username</span>
-                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username" required>
+                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username" v-model="username" required>
                 </label>
 
                 <label>
                     <span>Password</span>
-                    <input type="password" class="w3-input w3-margin-bottom" placeholder="Enter Password" required>
+                    <input type="password" class="w3-input w3-margin-bottom" placeholder="Enter Password" v-model="password" required>
                 </label>
 
-                <button type="submit" class="w3-button w3-margin-bottom w3-bar w3-section">Sign In</button>
+                <button type="submit" class="w3-button w3-margin-bottom w3-bar w3-section w3-round-large">Sign In</button>
             </form>
 
             <footer class="w3-container">
@@ -94,11 +91,11 @@
     <div id="signUpModal" class="w3-modal">
         <div class="w3-modal-content w3-animate-top w3-card-4">
             <header class="w3-container presentation">
-                <span onclick="document.getElementById('signUpModal').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+                <span onclick="document.getElementById('signUpModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
                 <h1>New Account</h1>
             </header>
 
-            <form class="w3-container w3-margin-top">
+            <form class="w3-container w3-margin-top" @submit.prevent="register">
                 <label class="w3-padding-top">
                     <span>First Name</span>
                     <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter First Name" required>
@@ -111,29 +108,249 @@
 
                 <label>
                     <span>Username</span>
-                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username" required>
+                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username" v-model="username" required>
                 </label>
 
                 <label>
                     <span>Email Address</span>
-                    <input type="email" class="w3-input w3-margin-bottom" placeholder="Enter Email" required>
+                    <input type="email" class="w3-input w3-margin-bottom" placeholder="Enter Email" v-model="email" required>
                 </label>
 
                 <label>
                     <span>Password</span>
-                    <input type="password" class="w3-input w3-margin-bottom" placeholder="Enter Password" required>
+                    <input type="password" class="w3-input w3-margin-bottom" placeholder="Enter Password" v-model="password1" required>
                 </label>
 
                 <label>
                     <span>Confirm Password</span>
-                    <input type="password" class="w3-input w3-margin-bottom" placeholder="Confirm Password" required>
+                    <input type="password" class="w3-input w3-margin-bottom" placeholder="Confirm Password" v-model="password2" required>
                 </label>
 
-                <button type="submit" class="w3-button w3-margin-bottom w3-bar w3-section">Sign In</button>
+                <button type="submit" class="w3-button w3-margin-bottom w3-bar w3-section w3-round-large">Register</button>
             </form>
         </div>
     </div>
 
+    <!-- Add Conference Modal -->
+    <div id="addConferenceModal" class="w3-modal">
+        <div class="w3-modal-content w3-animate-top w3-card-4">
+            <header class="w3-container presentation">
+                <span onclick="document.getElementById('addConferenceModal').style.display='none'" class="cms-button w3-button w3-display-topright">&times;</span>
+                <h1>Create New Conference</h1>
+            </header>
+
+            <form class="w3-container w3-margin-top">
+                <label class="w3-padding-top">
+                    <span>Conference Title</span>
+                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Conference Title" v-model="title" required>
+                </label>
+
+                <label class="w3-padding-top">
+                    <span>Conference Description</span>
+                    <textarea class="w3-input w3-margin-bottom" placeholder="Enter Conference Description" v-model="description" required></textarea>
+                </label>
+
+                <label class="w3-padding-top">
+                    <span>Registration Deadline</span>
+                    <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="deadline" required>
+                </label>
+
+                <footer class="w3-container w3-footer w3-row">
+                    <button type="button" class="w3-button w3-half" onclick="document.getElementById('addConferenceModal').style.display='none'">Cancel</button>
+                    <button type="button" class="w3-button w3-half" v-on:click="createConference">Create</button>
+                </footer>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Submit Proposal Modal -->
+    <div id="submitProposalModal" class="w3-modal">
+        <div class="w3-modal-content w3-animate-top w3-card-4">
+            <header class="w3-container presentation">
+                <span onclick="document.getElementById('submitProposalModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
+                <h1>Submit Proposal</h1>
+            </header>
+
+            <form class="w3-container w3-margin-top">
+                <label>
+                    <span>Title</span>
+                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Proposal Title" v-model="title" required>
+                </label>
+
+<!--                <label>-->
+<!--                    <span>Author</span>-->
+<!--                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Proposal Author" v-model="author" required>-->
+<!--                </label>-->
+
+                <label>
+                    <span>Abstract</span>
+                    <input type="file" class="w3-input w3-margin-bottom" id="upload-abstract" v-on:change="abstractUpload()" required>
+                </label>
+
+                <label>
+                    <span>Paper (PDF)</span>
+                    <input type="file" class="w3-input w3-margin-bottom" id="upload-paper" v-on:change="paperUpload()" required>
+                </label>
+            </form>
+
+            <footer class="w3-container w3-footer w3-row">
+                <button type="button" class="w3-button w3-bar w3-half" onclick="document.getElementById('submitProposalModal').style.display='none'">Cancel</button>
+                <button type="button" class="w3-button w3-bar w3-half" v-on:click="submitProposal()">Submit</button>
+            </footer>
+        </div>
+    </div>
+
+
+    <script>
+
+        /* Login */
+        Vue.createApp({
+            data() {
+                return {
+                    username: '',
+                    password: ''
+                }
+            },
+            methods: {
+                login() {
+                    api.auth.login(this.username, this.password)
+                        .then(response => {
+                            window.location.reload();
+                            //window.history.back()
+                        })
+                        .catch(error => {
+                            alert(JSON.stringify(error.response.data))
+                        })
+                }
+            }
+        })
+            .mount('#loginModal')
+
+        /* Sign up */
+        Vue.createApp({
+            data() {
+                return {
+                    username: '',
+                    email: '',
+                    password1: '',
+                    password2: ''
+                }
+            },
+            methods: {
+                register() {
+                    api.auth.register(this.username, this.email, this.password1, this.password2)
+                        .then(response => {
+                            var element = document.querySelector("#signUpModal");
+                            element.style.display='none';
+                        })
+                        .catch(error => {
+                            alert(JSON.stringify(error.response.data))
+                        })
+                }
+            }
+        })
+            .mount('#signUpModal')
+
+        /* Get conferences */
+        Vue.createApp({
+            data() {
+                return {
+                    conferences: []
+                }
+            },
+            mounted() {
+                api.conferences.list()
+                    .then(response => this.conferences = response.data)
+                    .catch(error => console.log(error))
+            },
+            methods: {
+                showSubmissionModal(id) {
+                    window.selectedConference = id;
+                    document.getElementById('submitProposalModal').style.display='block'
+                }
+            }
+        })
+            .mount('#conferencesSection')
+
+        /* Create Conference */
+        Vue.createApp({
+            data() {
+                return {
+                    title: '',
+                    description: '',
+                    deadline: new Date().toISOString().replace(/\..*$/, '')
+                }
+            },
+            methods: {
+                createConference() {
+                    api.conferences.create(this.title, this.description, this.deadline)
+                        .then(response => {
+                            // TODO: actualize list without reloading
+                            // $('#create-conference-modal').modal('hide')
+                            window.location.reload()
+                        })
+                        .catch(error => console.log(error))
+                }
+            }
+        })
+            .mount('#addConferenceModal')
+
+        /* Submit Proposal */
+        Vue.createApp({
+            data() {
+                return {
+                    title: '',
+                    // author: '',
+                    abstract: '',
+                    paper: '',
+                }
+            },
+            methods: {
+                submitProposal() {
+                    api.papers.create(this.title, [], this.abstract, this.paper)
+                    .then(response => {
+                        document.getElementById('submitProposalModal').style.display='none'
+                        alert('Submission successful ' + JSON.stringify(response.data))
+                    })
+                    .catch(response => console.log(response.response))
+                },
+                abstractUpload() {
+                    this.abstract = document.querySelector('#upload-abstract').files[0]
+                },
+                paperUpload() {
+                    this.paper = document.querySelector('#upload-paper').files[0]
+                }
+            }
+        })
+            .mount('#submitProposalModal')
+
+        /* Menu */
+        Vue.createApp({
+            data() {
+                return {
+                    authenticated: false
+                }
+            },
+            mounted() {
+                api.auth.isAuthenticated()
+                    .then(response => this.authenticated = response.data.authenticated)
+                    .catch(error => console.log(error))
+            },
+            methods: {
+                logout() {
+                    api.auth.logout()
+                        .then(response => {
+                            this.authenticated = false;
+                            //window.location.href = 'index.html'
+                        })
+                        .catch(error => console.log(error))
+                }
+            }
+        })
+            .mount('#menu')
+
+    </script>
 
 </body>
 </html>

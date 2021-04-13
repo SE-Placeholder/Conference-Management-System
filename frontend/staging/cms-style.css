@@ -63,7 +63,16 @@ body, html {
     font-weight: lighter;
 }
 
-.conference-details-button {
-    background-color: var(--bg-color-darker);
+button .conference-details-secondary {
+    color: var(--text-color);
+}
+
+.cms-button {
+    background-color: var(--bg-color);
     color: var(--contrast-color);
+    font-weight: bold;
+}
+
+form textarea {
+    min-height: 100px;
 }

@@ -62,6 +62,7 @@ const api = {
             data.append('author', authors)
             data.append('abstract', abstract)
             data.append('paper', paper)
+            data.append('conference', window.selectedConference)
             return client.post(endpoints.papers, data)
         }
     }
