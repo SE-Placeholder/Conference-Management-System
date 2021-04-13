@@ -1,0 +1,69 @@
+:root {
+    --bg-color-darker: #141414;
+    --bg-color: #191919;
+    --bg-color-lighter: #292929;
+    --text-color: #E6E8E6;
+    --contrast-color: #F18F01;
+}
+
+body, html {
+    height: 100%;
+    font-family: "Inconsolata", sans-serif;
+    margin: 0;
+    background-color: var(--text-color);
+}
+
+.presentation {
+    min-height: 75%;
+    background-color: var(--bg-color);
+
+    /*background-image: url("resources/cms-bg.jpg");*/
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border-bottom-left-radius: 8%;
+    border-bottom-right-radius: 8%;
+}
+
+.presentation h1 {
+    color: var(--text-color);
+    /*background: linear-gradient(var(--text-color), #FF2E00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;*/
+}
+
+#menu {
+    background-image: linear-gradient(var(--bg-color-darker), var(--bg-color));
+    color: var(--text-color);
+    text-decoration: none;
+
+}
+#menu > a:hover {
+    background-color: var(--contrast-color);
+}
+
+#loginModal {
+    min-height: 50%;
+}
+
+.heading {
+    color: var(--bg-color-lighter);
+}
+
+.conference-name {
+    color: var(--text-color);
+    background-color: var(--bg-color-lighter);
+}
+
+.conference-details-primary {
+
+}
+
+.conference-details-secondary {
+    font-size: 14px;
+    font-weight: lighter;
+}
+
+.conference-details-button {
+    background-color: var(--bg-color-darker);
+    color: var(--contrast-color);
+}
