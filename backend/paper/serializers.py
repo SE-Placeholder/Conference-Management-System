@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import ListField, SerializerMethodField
+from rest_framework.fields import ListField, SerializerMethodField, IntegerField
 from rest_framework.serializers import ModelSerializer
 
 from paper.models import Paper
@@ -13,25 +13,35 @@ class PaperSerializer(ModelSerializer):
 
     class Meta:
         model = Paper
-        fields = ['id', 'title', 'abstract', 'proposal', 'other_authors', 'authors']
+        fields = ['id', 'title', 'abstract', 'proposal', 'conference', 'other_authors', 'authors']
 
     def create(self, validated_data):
-        paper = Paper.objects.create(
+        paper = Paper(
             title=validated_data['title'],
             abstract=validated_data.get('abstract', None),
             proposal=validated_data.get('proposal', None),
+            conference=validated_data['conference']
         )
-        for author in validated_data.get('other_authors', []) + [self.context['request'].user.username]:
+        authors = [self.context['request'].user.username] + validated_data.get('other_authors', [])
+        roles = []
+        errors = []
+        for author in authors:
             try:
-                user = User.objects.get(username=author)
-                Role.objects.create(
+                role = Role(
                     role=RoleTypes.AUTHOR,
                     paper=paper,
-                    user=user)
+                    user=User.objects.get(username=author)
+                )
+                roles.append(role)
             except User.DoesNotExist:
-                print('user does not exist ' + author)
-                # TODO: return error with list of users that don't exist
-                # raise ValidationError({"authors": "user not found"})
+                errors.append({"authors": f"user '{author}' not found"})
+
+        if len(errors) == 0:
+            paper.save()
+            for role in roles:
+                role.save()
+        else:
+            raise ValidationError({'authors': errors})
 
         return paper
 

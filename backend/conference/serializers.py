@@ -1,16 +1,20 @@
 from rest_framework.fields import SerializerMethodField
+from rest_framework.relations import StringRelatedField
 from rest_framework.serializers import ModelSerializer
 
 from conference.models import Conference
+from paper.serializers import PaperSerializer
 from role.models import Role, RoleTypes
 
 
 class ConferenceSerializer(ModelSerializer):
     steering_committee = SerializerMethodField()
+    # papers = PaperSerializer(many=True)
+    papers = StringRelatedField(many=True)
 
     class Meta:
         model = Conference
-        fields = ['id', 'title', 'description', 'deadline', 'steering_committee']
+        fields = ['id', 'title', 'description', 'deadline', 'steering_committee', 'papers']
 
     def create(self, validated_data):
         print(self.context['request'].user)
