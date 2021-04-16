@@ -50,7 +50,7 @@
                             <section class="conference-details-secondary w3-small">Fee: <span>${{conference.fee}}</span></section>
                             <section class="conference-details-secondary w3-small w3-display-bottomleft w3-margin">Want to propose a paper? <a href="#" v-on:click="showSubmissionModal(conference.id)"> Click here!</a></section>
                         </div>
-                        <button class="cms-button w3-button w3-round-large w3-large w3-container w3-bar-item w3-right w3-padding-64">Get a ticket <p class="conference-details-secondary w3-tiny w3-margin-0 w3-center">Deadline: {{new Date(conference.deadline).toDateString()}}</p></button>
+                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding-64 w3-margin">Get a ticket <p class="conference-details-secondary w3-tiny w3-margin-0 w3-center">Deadline: {{new Date(conference.deadline).toDateString()}}</p></button>
                     </div>
 
                 </div>
@@ -148,6 +148,21 @@
                 <label class="w3-padding-top">
                     <span>Conference Description</span>
                     <textarea class="w3-input w3-margin-bottom" placeholder="Enter Conference Description" v-model="description" required></textarea>
+                </label>
+
+                <label class="w3-padding-top">
+                    <span>Date</span>
+                    <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="date" required>
+                </label>
+
+                <label class="w3-padding-top">
+                    <span>Location</span>
+                    <input type="text" class="w3-input w3-margin-bottom" v-model="location" required>
+                </label>
+
+                <label class="w3-padding-top">
+                    <span>Fee</span>
+                    <input type="number" class="w3-input w3-margin-bottom" v-model="fee" required>
                 </label>
 
                 <label class="w3-padding-top">
@@ -279,12 +294,15 @@
                 return {
                     title: '',
                     description: '',
-                    deadline: new Date().toISOString().replace(/\..*$/, '')
+                    date: new Date().toISOString().replace(/\..*$/, ''),
+                    location: '',
+                    deadline: new Date().toISOString().replace(/\..*$/, ''),
+                    fee: Number
                 }
             },
             methods: {
                 createConference() {
-                    api.conferences.create(this.title, this.description, this.deadline)
+                    api.conferences.create(this.title, this.description, this.date, this.location, this.deadline, this.fee)
                         .then(response => {
                             // TODO: actualize list without reloading
                             // $('#create-conference-modal').modal('hide')

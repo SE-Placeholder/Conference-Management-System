@@ -44,14 +44,15 @@ const api = {
             client.get(endpoints.conferences),
         retrieve: id =>
             client.get(pathEncode(endpoints.conferenceDetails, id)),
-        create: (title, description, deadline) =>
-            client.post(endpoints.conferences, {title, description, deadline}),
+        create: (title, description, date, location, deadline, fee) =>
+            client.post(endpoints.conferences, {title, description, date, location, deadline, fee}),
     },
     users: {
         list: () =>
             client.get(endpoints.users),
         retrieve: username =>
-            client.get(pathEncode(endpoints.userDetails, username))
+            client.get(pathEncode(endpoints.userDetails, username)),
+
     },
     papers: {
         list: () =>
@@ -65,7 +66,8 @@ const api = {
             data.append('conference', window.selectedConference)
             return client.post(endpoints.papers, data)
         }
-    }
+    },
+
 }
 
 client.interceptors.request.use(
@@ -103,9 +105,10 @@ client.interceptors.response.use(
         console.log(error.request)
         console.log(error.config)
 
-        if (error.response.status == 401)
-            window.location.href = 'login.html'
+        // if (error.response.status == 401)
+        //     window.location.href = 'login.html'
 
         return Promise.reject(error)
     }
 )
+

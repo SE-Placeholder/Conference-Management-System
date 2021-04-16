@@ -52,6 +52,7 @@ body, html {
 .conference-name {
     color: var(--text-color);
     background-color: var(--bg-color-lighter);
+    margin: 14px;
 }
 
 .conference-details-primary {
