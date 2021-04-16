@@ -23,12 +23,12 @@ body, html {
     display: none;
 }
 
-#myConferences-tab {
+#dashboard-tab {
     height: 100%;
     display: none;
 }
 
-#profile-tab > .presentation, #myConferences-tab > .presentation {
+#profile-tab > .presentation, #dashboard-tab > .presentation {
     min-height: 0%;
     background-color: var(--bg-color);
 
