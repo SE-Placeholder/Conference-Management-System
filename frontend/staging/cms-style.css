@@ -55,6 +55,10 @@ body, html {
     margin: 14px;
 }
 
+#addConferenceButton {
+    border: 1px solid var(--text-color);
+}
+
 .conference-details-primary {
 
 }
