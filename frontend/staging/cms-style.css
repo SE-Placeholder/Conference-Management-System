@@ -13,6 +13,31 @@ body, html {
     background-color: var(--text-color);
 }
 
+#home-tab {
+    height: 100%;
+    display: block;
+}
+
+#profile-tab {
+    height: 100%;
+    display: none;
+}
+
+#myConferences-tab {
+    height: 100%;
+    display: none;
+}
+
+#profile-tab > .presentation, #myConferences-tab > .presentation {
+    min-height: 0%;
+    background-color: var(--bg-color);
+
+    /*background-image: url("resources/cms-bg.jpg");*/
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border-bottom-left-radius: 8%;
+    border-bottom-right-radius: 24%;
+}
 .presentation {
     min-height: 75%;
     background-color: var(--bg-color);
@@ -36,9 +61,6 @@ body, html {
     color: var(--text-color);
     text-decoration: none;
 
-}
-#menu > a:hover {
-    background-color: var(--contrast-color);
 }
 
 #loginModal {

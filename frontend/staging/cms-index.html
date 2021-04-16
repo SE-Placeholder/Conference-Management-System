@@ -15,209 +15,227 @@
 
     <!-- Navigation Menu -->
     <div id="menu" class="w3-bar w3-large">
-        <a href="#" class="w3-bar-item w3-button w3-ripple">HOME</a>
-        <a href="#" v-if="authenticated" class="w3-bar-item w3-button w3-ripple">Profile</a>
-        <a href="#" v-if="authenticated" class="w3-bar-item w3-button w3-ripple">My Conferences</a>
+        <a href="#"  class="w3-bar-item w3-button w3-ripple" onclick="openTab('home-tab')">HOME</a>
+        <a href="#"  v-if="authenticated" class="w3-bar-item w3-button w3-ripple" onclick="openTab('profile-tab')">Profile</a>
+        <a href="#"  v-if="authenticated" class="w3-bar-item w3-button w3-ripple" onclick="openTab('myConferences-tab')">My Conferences</a>
         <a href="#" v-if="authenticated" id="addConferenceButton" class="w3-bar-item w3-button w3-ripple" onclick="document.getElementById('addConferenceModal').style.display='block'">Add Conference +</a>
         <a href="#" v-if="authenticated" id="signOutButton" class="w3-bar-item w3-button w3-ripple w3-right" @click.prevent="logout()">Sign Out</a>
         <a href="#" v-else id="signInButton" class="w3-bar-item w3-button w3-ripple w3-right" onclick="document.getElementById('loginModal').style.display='block'">Sign In</a>
     </div>
 
-    <!-- Presentation Card/Title -->
-    <div id="" class="presentation w3-container w3-display-container">
-        <div class="w3-auto">
-            <h1 class="w3-jumbo w3-display-middle w3-center w3-wide"> CONFERENCE MANAGEMENT SYSTEM</h1>
-        </div>
-    </div>
-
-    <!-- Upcoming Conferences Heading -->
-    <div class="w3-container">
-        <h1 class="heading w3-panel w3-border w3-bottombar w3-round-xxlarge w3-center w3-wide">Upcoming Conferences</h1>
-    </div>
-
-    <!-- Conferences Section -->
-    <div id="conferencesSection" class="w3-container">
-        <div v-for="conference in conferences">
-
-            <!-- Conference Details Card -->
-            <div class="w3-panel">
-                <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
-                    <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
-                    <div class="w3-bar">
-                        <div class="w3-bar-item">
-                            <article class="conference-details-primary w3-large">{{conference.description}}</article>
-                            <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
-                            <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section>
-                            <section class="conference-details-secondary w3-small">Fee: <span>${{conference.fee}}</span></section>
-                            <section class="conference-details-secondary w3-small w3-display-bottomleft w3-margin">Want to propose a paper? <a href="#" v-on:click="showSubmissionModal(conference.id)"> Click here!</a></section>
-                        </div>
-                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding-64 w3-margin">Get a ticket <p class="conference-details-secondary w3-tiny w3-margin-0 w3-center">Deadline: {{new Date(conference.deadline).toDateString()}}</p></button>
-                    </div>
-
-                </div>
+    <!-- Home Page Tab -->
+    <div id="home-tab" class="menu-tab">
+        <!-- Presentation Card/Title -->
+        <div id="" class="presentation w3-container w3-display-container">
+            <div class="w3-auto">
+                <h1 class="w3-jumbo w3-display-middle w3-center w3-wide">CONFERENCE MANAGEMENT SYSTEM</h1>
             </div>
-
         </div>
-    </div>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="w3-modal">
-        <div class="w3-modal-content w3-animate-top w3-card-4">
-            <header class="w3-container presentation">
-                <span onclick="document.getElementById('loginModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
-                <h1>Sign In</h1>
-            </header>
-
-            <form class="w3-container w3-margin-top" @submit.prevent="login">
-                <label>
-                    <span>Username</span>
-                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username" v-model="username" required>
-                </label>
-
-                <label>
-                    <span>Password</span>
-                    <input type="password" class="w3-input w3-margin-bottom" placeholder="Enter Password" v-model="password" required>
-                </label>
-
-                <button type="submit" class="w3-button w3-margin-bottom w3-bar w3-section w3-round-large">Sign In</button>
-            </form>
-
-            <footer class="w3-container">
-                <p class="w3-tiny"> Don't have account? <a href="#" onclick="document.getElementById('loginModal').style.display='none'; document.getElementById('signUpModal').style.display='block'">Create a new one!</a></p>
-            </footer>
+        <!-- Upcoming Conferences Heading -->
+        <div class="w3-container">
+            <h1 class="heading w3-panel w3-border w3-bottombar w3-round-xxlarge w3-center w3-wide">Upcoming Conferences</h1>
         </div>
-    </div>
 
-    <!-- New Account Modal -->
-    <div id="signUpModal" class="w3-modal">
-        <div class="w3-modal-content w3-animate-top w3-card-4">
-            <header class="w3-container presentation">
-                <span onclick="document.getElementById('signUpModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
-                <h1>New Account</h1>
-            </header>
+        <!-- Conferences Section -->
+        <div id="conferencesSection" class="w3-container">
+            <div v-for="conference in conferences">
 
-            <form class="w3-container w3-margin-top" @submit.prevent="register">
-                <label class="w3-padding-top">
-                    <span>First Name</span>
-                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter First Name" required>
-                </label>
+                <!-- Conference Details Card -->
+                <div class="w3-panel">
+                    <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
+                        <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
+                        <div class="w3-bar">
+                            <div class="w3-bar-item">
+                                <article class="conference-details-primary w3-large">{{conference.description}}</article>
+                                <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
+                                <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section>
+                                <section class="conference-details-secondary w3-small">Fee: <span>${{conference.fee}}</span></section>
+                                <section class="conference-details-secondary w3-small w3-display-bottomleft w3-margin">Want to propose a paper? <a href="#" v-on:click="showSubmissionModal(conference.id)"> Click here!</a></section>
+                            </div>
+                            <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding-64 w3-margin">Get a ticket <p class="conference-details-secondary w3-tiny w3-margin-0 w3-center">Deadline: {{new Date(conference.deadline).toDateString()}}</p></button>
+                        </div>
 
-                <label>
-                    <span>Last Name</span>
-                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Last Name" required>
-                </label>
+                    </div>
+                </div>
 
-                <label>
-                    <span>Username</span>
-                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username" v-model="username" required>
-                </label>
-
-                <label>
-                    <span>Email Address</span>
-                    <input type="email" class="w3-input w3-margin-bottom" placeholder="Enter Email" v-model="email" required>
-                </label>
-
-                <label>
-                    <span>Password</span>
-                    <input type="password" class="w3-input w3-margin-bottom" placeholder="Enter Password" v-model="password1" required>
-                </label>
-
-                <label>
-                    <span>Confirm Password</span>
-                    <input type="password" class="w3-input w3-margin-bottom" placeholder="Confirm Password" v-model="password2" required>
-                </label>
-
-                <button type="submit" class="w3-button w3-margin-bottom w3-bar w3-section w3-round-large">Register</button>
-            </form>
+            </div>
         </div>
-    </div>
 
-    <!-- Add Conference Modal -->
-    <div id="addConferenceModal" class="w3-modal">
-        <div class="w3-modal-content w3-animate-top w3-card-4">
-            <header class="w3-container presentation">
-                <span onclick="document.getElementById('addConferenceModal').style.display='none'" class="cms-button w3-button w3-display-topright">&times;</span>
-                <h1>Create New Conference</h1>
-            </header>
+        <!-- Login Modal -->
+        <div id="loginModal" class="w3-modal">
+            <div class="w3-modal-content w3-animate-top w3-card-4">
+                <header class="w3-container presentation">
+                    <span onclick="document.getElementById('loginModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
+                    <h1>Sign In</h1>
+                </header>
 
-            <form class="w3-container w3-margin-top">
-                <label class="w3-padding-top">
-                    <span>Conference Title</span>
-                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Conference Title" v-model="title" required>
-                </label>
+                <form class="w3-container w3-margin-top" @submit.prevent="login">
+                    <label>
+                        <span>Username</span>
+                        <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username" v-model="username" required>
+                    </label>
 
-                <label class="w3-padding-top">
-                    <span>Conference Description</span>
-                    <textarea class="w3-input w3-margin-bottom" placeholder="Enter Conference Description" v-model="description" required></textarea>
-                </label>
+                    <label>
+                        <span>Password</span>
+                        <input type="password" class="w3-input w3-margin-bottom" placeholder="Enter Password" v-model="password" required>
+                    </label>
 
-                <label class="w3-padding-top">
-                    <span>Date</span>
-                    <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="date" required>
-                </label>
+                    <button type="submit" class="w3-button w3-margin-bottom w3-bar w3-section w3-round-large">Sign In</button>
+                </form>
 
-                <label class="w3-padding-top">
-                    <span>Location</span>
-                    <input type="text" class="w3-input w3-margin-bottom" v-model="location" required>
-                </label>
+                <footer class="w3-container">
+                    <p class="w3-tiny"> Don't have account? <a href="#" onclick="document.getElementById('loginModal').style.display='none'; document.getElementById('signUpModal').style.display='block'">Create a new one!</a></p>
+                </footer>
+            </div>
+        </div>
 
-                <label class="w3-padding-top">
-                    <span>Fee</span>
-                    <input type="number" class="w3-input w3-margin-bottom" v-model="fee" required>
-                </label>
+        <!-- New Account Modal -->
+        <div id="signUpModal" class="w3-modal">
+            <div class="w3-modal-content w3-animate-top w3-card-4">
+                <header class="w3-container presentation">
+                    <span onclick="document.getElementById('signUpModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
+                    <h1>New Account</h1>
+                </header>
 
-                <label class="w3-padding-top">
-                    <span>Registration Deadline</span>
-                    <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="deadline" required>
-                </label>
+                <form class="w3-container w3-margin-top" @submit.prevent="register">
+                    <label class="w3-padding-top">
+                        <span>First Name</span>
+                        <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter First Name" required>
+                    </label>
+
+                    <label>
+                        <span>Last Name</span>
+                        <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Last Name" required>
+                    </label>
+
+                    <label>
+                        <span>Username</span>
+                        <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username" v-model="username" required>
+                    </label>
+
+                    <label>
+                        <span>Email Address</span>
+                        <input type="email" class="w3-input w3-margin-bottom" placeholder="Enter Email" v-model="email" required>
+                    </label>
+
+                    <label>
+                        <span>Password</span>
+                        <input type="password" class="w3-input w3-margin-bottom" placeholder="Enter Password" v-model="password1" required>
+                    </label>
+
+                    <label>
+                        <span>Confirm Password</span>
+                        <input type="password" class="w3-input w3-margin-bottom" placeholder="Confirm Password" v-model="password2" required>
+                    </label>
+
+                    <button type="submit" class="w3-button w3-margin-bottom w3-bar w3-section w3-round-large">Register</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Conference Modal -->
+        <div id="addConferenceModal" class="w3-modal">
+            <div class="w3-modal-content w3-animate-top w3-card-4">
+                <header class="w3-container presentation">
+                    <span onclick="document.getElementById('addConferenceModal').style.display='none'" class="cms-button w3-button w3-display-topright">&times;</span>
+                    <h1>Create New Conference</h1>
+                </header>
+
+                <form class="w3-container w3-margin-top">
+                    <label class="w3-padding-top">
+                        <span>Conference Title</span>
+                        <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Conference Title" v-model="title" required>
+                    </label>
+
+                    <label class="w3-padding-top">
+                        <span>Conference Description</span>
+                        <textarea class="w3-input w3-margin-bottom" placeholder="Enter Conference Description" v-model="description" required></textarea>
+                    </label>
+
+                    <label class="w3-padding-top">
+                        <span>Date</span>
+                        <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="date" required>
+                    </label>
+
+                    <label class="w3-padding-top">
+                        <span>Location</span>
+                        <input type="text" class="w3-input w3-margin-bottom" v-model="location" required>
+                    </label>
+
+                    <label class="w3-padding-top">
+                        <span>Fee</span>
+                        <input type="number" class="w3-input w3-margin-bottom" v-model="fee" required>
+                    </label>
+
+                    <label class="w3-padding-top">
+                        <span>Registration Deadline</span>
+                        <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="deadline" required>
+                    </label>
+
+                    <footer class="w3-container w3-footer w3-row">
+                        <button type="button" class="w3-button w3-half" onclick="document.getElementById('addConferenceModal').style.display='none'">Cancel</button>
+                        <button type="button" class="w3-button w3-half" v-on:click="createConference">Create</button>
+                    </footer>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Submit Proposal Modal -->
+        <div id="submitProposalModal" class="w3-modal">
+            <div class="w3-modal-content w3-animate-top w3-card-4">
+                <header class="w3-container presentation">
+                    <span onclick="document.getElementById('submitProposalModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
+                    <h1>Submit Proposal</h1>
+                </header>
+
+                <form class="w3-container w3-margin-top">
+                    <label>
+                        <span>Title</span>
+                        <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Proposal Title" v-model="title" required>
+                    </label>
+
+                    <!--                <label>-->
+                    <!--                    <span>Author</span>-->
+                    <!--                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Proposal Author" v-model="author" required>-->
+                    <!--                </label>-->
+
+                    <label>
+                        <span>Abstract</span>
+                        <input type="file" class="w3-input w3-margin-bottom" id="upload-abstract" v-on:change="abstractUpload()" required>
+                    </label>
+
+                    <label>
+                        <span>Paper (PDF)</span>
+                        <input type="file" class="w3-input w3-margin-bottom" id="upload-paper" v-on:change="paperUpload()" required>
+                    </label>
+                </form>
 
                 <footer class="w3-container w3-footer w3-row">
-                    <button type="button" class="w3-button w3-half" onclick="document.getElementById('addConferenceModal').style.display='none'">Cancel</button>
-                    <button type="button" class="w3-button w3-half" v-on:click="createConference">Create</button>
+                    <button type="button" class="w3-button w3-bar w3-half" onclick="document.getElementById('submitProposalModal').style.display='none'">Cancel</button>
+                    <button type="button" class="w3-button w3-bar w3-half" v-on:click="submitProposal()">Submit</button>
                 </footer>
-            </form>
-
+            </div>
         </div>
     </div>
 
-    <!-- Submit Proposal Modal -->
-    <div id="submitProposalModal" class="w3-modal">
-        <div class="w3-modal-content w3-animate-top w3-card-4">
-            <header class="w3-container presentation">
-                <span onclick="document.getElementById('submitProposalModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
-                <h1>Submit Proposal</h1>
-            </header>
+    <!-- Profile Page Tab -->
+    <div id="profile-tab" class="menu-tab">
+        <header class="presentation w3-container">
+            <h1 class="w3-jumbo">My Profile</h1>
+        </header>
+    </div>
 
-            <form class="w3-container w3-margin-top">
-                <label>
-                    <span>Title</span>
-                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Proposal Title" v-model="title" required>
-                </label>
-
-<!--                <label>-->
-<!--                    <span>Author</span>-->
-<!--                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Proposal Author" v-model="author" required>-->
-<!--                </label>-->
-
-                <label>
-                    <span>Abstract</span>
-                    <input type="file" class="w3-input w3-margin-bottom" id="upload-abstract" v-on:change="abstractUpload()" required>
-                </label>
-
-                <label>
-                    <span>Paper (PDF)</span>
-                    <input type="file" class="w3-input w3-margin-bottom" id="upload-paper" v-on:change="paperUpload()" required>
-                </label>
-            </form>
-
-            <footer class="w3-container w3-footer w3-row">
-                <button type="button" class="w3-button w3-bar w3-half" onclick="document.getElementById('submitProposalModal').style.display='none'">Cancel</button>
-                <button type="button" class="w3-button w3-bar w3-half" v-on:click="submitProposal()">Submit</button>
-            </footer>
-        </div>
+    <!-- Conferences Page Tab -->
+    <div id="myConferences-tab" class="menu-tab">
+        <header class="presentation w3-container">
+            <h1 class="w3-jumbo">My Conferences</h1>
+        </header>
     </div>
 
 
+    <!-- Script Section -->
     <script>
 
         /* Login */
@@ -368,6 +386,17 @@
             }
         })
             .mount('#menu')
+
+
+        /* Tabified Navigation Menu Switch*/
+        function openTab(tabName) {
+            var i;
+            var x = document.getElementsByClassName("menu-tab");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            document.getElementById(tabName).style.display = "block";
+        }
 
     </script>
 
