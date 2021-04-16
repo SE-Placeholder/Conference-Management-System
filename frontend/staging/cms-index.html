@@ -53,7 +53,7 @@
                             <section class="conference-details-secondary w3-small">Fee: <span>${{conference.fee}}</span></section>
                             <section class="conference-details-secondary w3-small w3-display-bottomleft w3-margin">Want to propose a paper? <a href="#" v-on:click="showSubmissionModal(conference.id)"> Click here!</a></section>
                         </div>
-                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding-64 w3-margin">Get a ticket <p class="conference-details-secondary w3-tiny w3-margin-0 w3-center">Deadline: {{new Date(conference.deadline).toDateString()}}</p></button>
+                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding-64 w3-margin" v-on:click="showConfirmJoinModal(conference.id, conference.title)">Get a ticket <p class="conference-details-secondary w3-tiny w3-margin-0 w3-center">Deadline: {{new Date(conference.deadline).toDateString()}}</p></button>
                     </div>
 
                 </div>
@@ -171,6 +171,82 @@
         </div>
     </div>
 
+    <!-- Confirm Conference Join Modal -->
+    <div id="joinConferenceModal" class="w3-modal">
+        <div class="w3-modal-content w3-animate-top w3-card-4">
+            <header class="w3-container presentation">
+                <span onclick="document.getElementById('joinConferenceModal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
+                <h1 id="joinConferenceModal-title"></h1>
+            </header>
+
+            <p class="w3-container w3-auto w3-large">Are you sure you want to register to this conference?</p>
+
+            <footer class="w3-container w3-footer w3-row">
+                <button type="button" class="w3-button w3-bar w3-half" onclick="document.getElementById('joinConferenceModal').style.display='none'">Cancel</button>
+                <button type="button" class="w3-button w3-bar w3-half" v-on:click="joinConference()">Get ticket!</button>
+            </footer>
+        </div>
+    </div>
+
+</div>
+
+<!-- Profile Page Tab -->
+<div id="profile-tab" class="menu-tab">
+    <header class="presentation w3-container">
+        <h1 class="w3-jumbo">Profile</h1>
+    </header>
+</div>
+
+<!-- Dashboard Page Tab -->
+<div id="dashboard-tab" class="menu-tab">
+    <header class="presentation w3-container">
+        <h1 class="w3-jumbo">Dashboard</h1>
+    </header>
+
+    <!-- My Conferences Section -->
+    <div id="myConferencesSection" class="w3-container">
+
+        <h2 class="w3-container w3-xxlarge">My Conferences</h2>
+
+
+        <h3 class="w3-container w3-xlarge">Listener</h3>
+
+        <div v-for="conference in conferences.listener">
+            <!-- My Conference Details Card -->
+            <div class="w3-panel">
+                <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
+                    <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
+                    <div class="w3-bar">
+                        <div class="w3-bar-item">
+                            <article class="conference-details-primary w3-large">{{conference.description}}</article>
+                            <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
+                            <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <h3 class="w3-container w3-xlarge">Steering</h3>
+
+        <div v-for="conference in conferences.steeringCommittee">
+            <!-- My Conference Details Card -->
+            <div class="w3-panel">
+                <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
+                    <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
+                    <div class="w3-bar">
+                        <div class="w3-bar-item">
+                            <article class="conference-details-primary w3-large">{{conference.description}}</article>
+                            <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
+                            <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- Add Conference Modal -->
@@ -220,22 +296,6 @@
 
     </div>
 </div>
-
-
-<!-- Profile Page Tab -->
-<div id="profile-tab" class="menu-tab">
-    <header class="presentation w3-container">
-        <h1 class="w3-jumbo">Profile</h1>
-    </header>
-</div>
-
-<!-- Dashboard Page Tab -->
-<div id="dashboard-tab" class="menu-tab">
-    <header class="presentation w3-container">
-        <h1 class="w3-jumbo">Dashboard</h1>
-    </header>
-</div>
-
 
 <!-- Script Section -->
 <script>
@@ -302,8 +362,14 @@
         },
         methods: {
             showSubmissionModal(id) {
-                window.selectedConference = id;
+                window.selectedConference = id
                 document.getElementById('submitProposalModal').style.display='block'
+            },
+
+            showConfirmJoinModal(id, name) {
+                window.selectedConference = id
+                document.getElementById('joinConferenceModal-title').innerText = name
+                document.getElementById('joinConferenceModal').style.display='block'
             }
         }
     })
@@ -381,13 +447,73 @@
                 api.auth.logout()
                     .then(response => {
                         this.authenticated = false;
-                        //window.location.href = 'index.html'
+                        var i;
+                        var x = document.getElementsByClassName("menu-tab");
+                        for (i = 0; i < x.length; i++) {
+                            x[i].style.display = "none";
+                        }
+                        document.getElementById("home-tab").style.display = "block";
                     })
                     .catch(error => console.log(error))
             }
         }
     })
         .mount('#menu')
+
+    /* Join Conference */
+    Vue.createApp({
+        data() {
+            return {
+                title: '',
+                description: '',
+                date: new Date().toISOString().replace(/\..*$/, ''),
+                location: '',
+                deadline: new Date().toISOString().replace(/\..*$/, ''),
+                fee: Number
+            }
+        },
+        methods: {
+            joinConference() {
+                api.conferences.join(window.selectedConference)
+                    .then(response => {
+                        console.log(response)
+                        var element = document.querySelector("#joinConferenceModal");
+                        element.style.display='none';
+                        alert("Conerence joined succesfully")
+                        // window.location.reload()
+                    })
+                    .catch(error => console.log(error))
+            }
+        }
+    })
+        .mount('#joinConferenceModal')
+
+    /* Get my conferences */
+    Vue.createApp({
+        data() {
+            return {
+                conferences: []
+            }
+        },
+        mounted() {
+            api.users.conferences()
+                .then(response => this.conferences = response.data)
+                .catch(error => console.log(error))
+        }
+        // methods: {
+        //     showSubmissionModal(id) {
+        //         window.selectedConference = id
+        //         document.getElementById('submitProposalModal').style.display='block'
+        //     },
+        //
+        //     showConfirmJoinModal(id, name) {
+        //         window.selectedConference = id
+        //         document.getElementById('joinConferenceModal-title').innerText = name
+        //         document.getElementById('joinConferenceModal').style.display='block'
+        //     }
+        // }
+    })
+        .mount('#myConferencesSection')
 
 
     /* Tabified Navigation Menu Switch*/
@@ -399,8 +525,6 @@
         }
         document.getElementById(tabName).style.display = "block";
     }
-
-
 
 </script>
 
