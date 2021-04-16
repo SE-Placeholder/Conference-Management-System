@@ -17,7 +17,7 @@ class ConferenceSerializer(ModelSerializer):
         fields = ['id', 'title', 'description', 'deadline', 'steering_committee', 'papers']
 
     def create(self, validated_data):
-        print(self.context['request'].user)
+        # print(self.context['request'].user)
         conference = super().create(validated_data)
         Role.objects.create(
             role=RoleTypes.STEERING_COMMITTEE,

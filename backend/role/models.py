@@ -10,6 +10,9 @@ from paper.models import Paper
 class RoleTypes(IntEnum):
     STEERING_COMMITTEE = 1
     AUTHOR = 2
+    LISTENER = 3
+    SPEAKER = 4
+    SESSION_CHAIR = 5
 
     @classmethod
     def choices(cls):

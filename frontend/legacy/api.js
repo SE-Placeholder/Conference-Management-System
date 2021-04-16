@@ -12,6 +12,7 @@ const endpoints = {
 
     conferences: 'conferences',
     conferenceDetails: 'conferences/<id>',
+    joinConference: 'conferences/<id>/join',
 
     users: 'users',
     userDetails: 'users/<username>'
@@ -44,6 +45,8 @@ const api = {
             client.get(pathEncode(endpoints.conferenceDetails, id)),
         create: (title, description, deadline) =>
             client.post(endpoints.conferences, {title, description, deadline}),
+        join: id =>
+            client.post(pathEncode(endpoints.joinConference, id))
     },
     users: {
         list: () =>
