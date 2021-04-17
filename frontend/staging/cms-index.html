@@ -44,7 +44,7 @@
             <!-- Conference Details Card -->
             <div class="w3-panel">
                 <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
-                    <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
+                    <span class="conference-name w3-padding w3-wide w3-block w3-xlarge">{{conference.title}}</span>
                     <div class="w3-bar">
                         <div class="w3-bar-item">
                             <article class="conference-details-primary w3-large">{{conference.description}}</article>
@@ -148,10 +148,29 @@
                     <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Proposal Title" v-model="title" required>
                 </label>
 
-                <!--                <label>-->
-                <!--                    <span>Author</span>-->
-                <!--                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Proposal Author" v-model="author" required>-->
-                <!--                </label>-->
+                <label>
+                    <span>Keywords</span>
+                    <span class="w3-block">
+                        <div v-for='(tag, index) in keywords_list' :key='tag' class="tag w3-tag w3-round-xxlarge">
+                            <span @click='removeTag(index, keywords_list)'>x</span>
+                            {{ tag }}
+                        </div>
+                    </span>
+
+                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Keywords" @keydown.enter='addTag($event, keywords_list)' @keydown.delete='removeLastTag($event, keywords_list)'>
+                </label>
+
+                <label>
+                    <span>Topics</span>
+                    <span class="w3-block">
+                        <div v-for='(tag, index) in topics_list' :key='tag' class="tag w3-tag w3-round-xxlarge">
+                            <span @click='removeTag(index, topics_list)'>x</span>
+                            {{ tag }}
+                        </div>
+                    </span>
+
+                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Topics" @keydown.enter='addTag($event, topics_list)' @keydown.delete='removeLastTag($event, topics_list)'>
+                </label>
 
                 <label>
                     <span>Abstract</span>
@@ -384,7 +403,7 @@
                 date: new Date().toISOString().replace(/\..*$/, ''),
                 location: '',
                 deadline: new Date().toISOString().replace(/\..*$/, ''),
-                fee: Number
+                fee: 0
             }
         },
         methods: {
@@ -409,11 +428,13 @@
                 // author: '',
                 abstract: '',
                 paper: '',
+                keywords_list: [],
+                topics_list: []
             }
         },
         methods: {
             submitProposal() {
-                api.papers.create(this.title, [], this.abstract, this.paper)
+                api.papers.create(this.title, [], this.abstract, this.paper, this.keywords_list, this.topics_list)
                     .then(response => {
                         document.getElementById('submitProposalModal').style.display='none'
                         alert('Submission successful ' + JSON.stringify(response.data))
@@ -425,6 +446,22 @@
             },
             paperUpload() {
                 this.paper = document.querySelector('#upload-paper').files[0]
+            },
+            addTag(event, tag_list) {
+                event.preventDefault()
+                var val = event.target.value.trim()
+                if (val.length > 0) {
+                    tag_list.push(val)
+                    event.target.value = ''
+                }
+            },
+            removeTag(index, tag_list) {
+                tag_list.splice(index, 1)
+            },
+            removeLastTag(event, tag_list) {
+                if (event.target.value.length === 0) {
+                    this.removeTag(tag_list.length - 1, tag_list)
+                }
             }
         }
     })
@@ -464,12 +501,6 @@
     Vue.createApp({
         data() {
             return {
-                title: '',
-                description: '',
-                date: new Date().toISOString().replace(/\..*$/, ''),
-                location: '',
-                deadline: new Date().toISOString().replace(/\..*$/, ''),
-                fee: Number
             }
         },
         methods: {
@@ -514,7 +545,6 @@
         // }
     })
         .mount('#myConferencesSection')
-
 
     /* Tabified Navigation Menu Switch*/
     function openTab(tabName) {

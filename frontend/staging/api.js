@@ -63,13 +63,15 @@ const api = {
     papers: {
         list: () =>
             client.get(endpoints.papers),
-        create: (title, authors, abstract, paper) => {
+        create: (title, authors, abstract, paper, keywords, topics) => {
             data = new FormData()
             data.append('title', title)
             data.append('author', authors)
             data.append('abstract', abstract)
             data.append('paper', paper)
             data.append('conference', window.selectedConference)
+            data.append('keywords', JSON.stringify(keywords))
+            data.append('topics', JSON.stringify(topics))
             return client.post(endpoints.papers, data)
         }
     },

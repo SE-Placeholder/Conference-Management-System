@@ -74,7 +74,6 @@ body, html {
 .conference-name {
     color: var(--text-color);
     background-color: var(--bg-color-lighter);
-    margin: 14px;
 }
 
 #addConferenceButton {
@@ -102,4 +101,16 @@ button .conference-details-secondary {
 
 form textarea {
     min-height: 100px;
+}
+
+.tag {
+    /*color: var(--contrast-color);*/
+    margin-right: 2px;
+    margin-top: 2px;
+}
+
+.tag:hover {
+    background-color: var(--contrast-color);
+    color: var(--bg-color-darker);
+    font-weight: bold;
 }
