@@ -14,7 +14,7 @@ class ConferenceSerializer(ModelSerializer):
 
     class Meta:
         model = Conference
-        fields = ['id', 'title', 'description', 'deadline', 'steering_committee', 'papers']
+        fields = ['id', 'title', 'description', 'deadline', 'location', 'date', 'fee', 'steering_committee', 'papers']
 
     def create(self, validated_data):
         # print(self.context['request'].user)
