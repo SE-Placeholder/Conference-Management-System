@@ -8,11 +8,21 @@ from role.models import Role, RoleTypes
 
 class ConferenceSerializer(ModelSerializer):
     steering_committee = SerializerMethodField()
-    papers = StringRelatedField(many=True)
+    papers = StringRelatedField(read_only=True, many=True)
 
     class Meta:
         model = Conference
-        fields = ['id', 'title', 'description', 'deadline', 'location', 'date', 'fee', 'steering_committee', 'papers']
+        fields = [
+            'id',
+            'title',
+            'description',
+            'deadline',
+            'location',
+            'date',
+            'fee',
+            'steering_committee',
+            'papers'
+        ]
 
     def create(self, validated_data):
         # print(self.context['request'].user)

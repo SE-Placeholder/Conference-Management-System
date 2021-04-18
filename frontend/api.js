@@ -9,15 +9,10 @@ const endpoints = {
     isAuthenticated: 'auth/is-authenticated',
     changePassword: 'auth/password/change',
     resetPassword: 'auth/password/reset',
-
     conferences: 'conferences',
     conferenceDetails: 'conferences/<id>',
     joinConference: 'conferences/<id>/join',
-
-    users: 'users',
-    userDetails: 'users/<username>',
-    userConferences: '/users/conferences',
-
+    userConferences: '/user/conferences',
     papers: 'papers'
 }
 
@@ -46,36 +41,33 @@ const api = {
             client.get(endpoints.conferences),
         retrieve: id =>
             client.get(pathEncode(endpoints.conferenceDetails, id)),
-        create: (title, description, date, location, deadline, fee) =>
+        create: ({title, description, date, location, deadline, fee}) =>
             client.post(endpoints.conferences, {title, description, date, location, deadline, fee}),
         join: id =>
             client.post(pathEncode(endpoints.joinConference, id))
     },
-    users: {
-        list: () =>
-            client.get(endpoints.users),
-        retrieve: username =>
-            client.get(pathEncode(endpoints.userDetails, username)),
+    user: {
         conferences: () =>
             client.get(endpoints.userConferences)
-
     },
     papers: {
         list: () =>
             client.get(endpoints.papers),
-        create: (title, authors, abstract, paper, keywords, topics) => {
+        create: ({title, conference, topics, keywords, abstract, paper, authors}) => {
             data = new FormData()
             data.append('title', title)
+            data.append('conference', conference)
             data.append('author', authors)
             data.append('abstract', abstract)
-            data.append('paper', paper)
-            data.append('conference', window.selectedConference)
+            // TODO: rename
+            data.append('proposal', paper)
             data.append('keywords', JSON.stringify(keywords))
             data.append('topics', JSON.stringify(topics))
             return client.post(endpoints.papers, data)
         }
     },
-
+    setUnauthorizedCallback: callback =>
+        api.unauthorizedCallback = callback
 }
 
 client.interceptors.request.use(
@@ -113,10 +105,9 @@ client.interceptors.response.use(
         console.log(error.request)
         console.log(error.config)
 
-        // if (error.response.status == 401)
-        //     window.location.href = 'login.html'
+        if (error.response.status == 401)
+            api.unauthorizedCallback()
 
         return Promise.reject(error)
     }
 )
-
