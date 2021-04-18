@@ -35,7 +35,7 @@ body, html {
     /*background-image: url("resources/cms-bg.jpg");*/
     background-size: 100% 100%;
     background-repeat: no-repeat;
-    border-bottom-left-radius: 8%;
+    border-bottom-left-radius: 0;
     border-bottom-right-radius: 24%;
 }
 .presentation {
@@ -56,11 +56,29 @@ body, html {
     -webkit-text-fill-color: transparent;*/
 }
 
-#menu {
+#menu{
     background-image: linear-gradient(var(--bg-color-darker), var(--bg-color));
     color: var(--text-color);
     text-decoration: none;
+}
 
+#dashboard-menu {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    text-decoration: none;
+    width: 10%;
+}
+
+.dashboard-content-tab {
+    margin-left: 10%;
+}
+
+#dashboard-conferences-tab {
+    display: block;
+}
+
+#dashboard-papers-tab {
+    display: none;
 }
 
 #loginModal {

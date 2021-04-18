@@ -273,7 +273,7 @@ Vue.createApp({
     .mount('#dashboard-tab')
 
 /* Tabified Navigation Menu Switch*/
-function openTab(tabName) {
-    document.querySelectorAll(".menu-tab").forEach(div => div.style.display = "none")
+function openTab(scopeClass, tabName) {
+    document.querySelectorAll(scopeClass).forEach(div => div.style.display = "none")
     document.getElementById(tabName).style.display = "block";
 }
