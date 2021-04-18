@@ -135,15 +135,23 @@
         <h2 class="w3-container w3-xxlarge">My Papers</h2>
 
         <div v-for="conference in conferences">
-            <!-- My Papers Details Card -->
+            <!-- My Papers On Conference Details Card -->
             <div class="w3-panel">
                 <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
-                    <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
+                    <h3 class="conference-name w3-padding w3-wide">Conference name</h3>
+                    <!-- Papers List -->
                     <div class="w3-bar">
                         <div class="w3-bar-item">
-                            <article class="conference-details-primary w3-large">{{conference.description}}</article>
-                            <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
-                            <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section>
+                            <article class="conference-details-primary w3-large">Paper 1</article>
+                        </div>
+                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="">
+                            Edit
+                        </button>
+                    </div>
+                    <!-- Second paper - TODO: DELETE THIS -->
+                    <div class="w3-bar">
+                        <div class="w3-bar-item">
+                            <article class="conference-details-primary w3-large">Paper 1</article>
                         </div>
                         <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="">
                             Edit
