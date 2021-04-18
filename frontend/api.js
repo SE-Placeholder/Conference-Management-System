@@ -43,6 +43,8 @@ const api = {
             client.get(pathEncode(endpoints.conferenceDetails, id)),
         create: ({title, description, date, location, deadline, fee}) =>
             client.post(endpoints.conferences, {title, description, date, location, deadline, fee}),
+        update: ({id, title, description, date, location, deadline, fee}) =>
+            client.post(pathEncode(endpoints.conferenceDetails, id), {title, description, date, location, deadline, fee}),
         join: id =>
             client.post(pathEncode(endpoints.joinConference, id))
     },
@@ -57,7 +59,7 @@ const api = {
             data = new FormData()
             data.append('title', title)
             data.append('conference', conference)
-            data.append('author', authors)
+            data.append('contributors', authors)
             data.append('abstract', abstract)
             // TODO: rename
             data.append('proposal', paper)
