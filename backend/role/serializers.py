@@ -14,7 +14,7 @@ class RoleSerializer(ModelSerializer):
 
     class Meta:
         model = Role
-        fields = ['role', 'conference', 'paper']
+        fields = ['role', 'user', 'conference', 'paper']
 
     def get_role(self, instance):
         return instance.get_role_display()

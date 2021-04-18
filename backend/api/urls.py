@@ -7,7 +7,8 @@ urlpatterns = [
     path('auth', include('authentication.urls')),
     path('dummy', include('dummy.urls')),
 
-    path('users', include('role.urls')),
     path('conferences', include('conference.urls')),
-    path('papers', include('paper.urls'))
+    path('papers', include('paper.urls')),
+
+    path('user', include('role.urls'))
 ]

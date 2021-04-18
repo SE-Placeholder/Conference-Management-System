@@ -3,13 +3,11 @@ from rest_framework.relations import StringRelatedField
 from rest_framework.serializers import ModelSerializer
 
 from conference.models import Conference
-from paper.serializers import PaperSerializer
 from role.models import Role, RoleTypes
 
 
 class ConferenceSerializer(ModelSerializer):
     steering_committee = SerializerMethodField()
-    # papers = PaperSerializer(many=True)
     papers = StringRelatedField(many=True)
 
     class Meta:
