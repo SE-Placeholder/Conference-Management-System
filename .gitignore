@@ -1,7 +1,10 @@
+.idea/
 backend/.idea/
 backend/api/__pycache__/
-backend/authentication/__pycache__/
-backend/authentication/migrations/__pycache__/
+backend/authentication/migrations/
+backend/conference/migrations/
+backend/paper/migrations/
+backend/role/migrations/
+backend/uploads/
 backend/db.sqlite3
 backend/Pipfile.lock
-.idea/

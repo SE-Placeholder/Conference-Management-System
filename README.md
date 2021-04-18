@@ -1,9 +1,8 @@
 # Conference-Management-System
 
-
 Technologies:
-- back-end: python django
-- front-end: react or custom
+- back-end: django rest framework (python)
+- front-end: vuejs components, w3 css and custom js middleware
 
 # Phase 1
 
@@ -83,3 +82,5 @@ Technologies:
 - [pure javascript frontend for django api](https://www.youtube.com/watch?v=hISSGMafzvU)
 
 - [react frontend for django api](https://www.youtube.com/watch?v=W9BjUoot2Eo)
+
+- [notion notes](https://www.notion.so/Conference-Management-System-5444e431f8ca44c58507c6f6da4efb47)
