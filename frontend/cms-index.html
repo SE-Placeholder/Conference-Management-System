@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" type="text/css" href="cms-style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://unpkg.com/vue@next"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script src="api.js"></script>
@@ -15,11 +16,11 @@
 <body>
 
 <!-- Navigation Menu -->
-<div id="menu" class="w3-bar w3-large">
-    <a class="w3-bar-item w3-button w3-ripple" onclick="openTab('.menu-tab', 'home-tab')">HOME</a>
+<div id="menu" class="w3-bar w3-xlarge">
+    <a class="w3-bar-item w3-button w3-ripple w3-left" onclick="openTab('.menu-tab', 'home-tab')">HOME</a>
 <!--    <a v-if="authenticated" class="w3-bar-item w3-button w3-ripple" onclick="openTab('profile-tab')">Profile</a>-->
-    <a v-if="authenticated" class="w3-bar-item w3-button w3-ripple" onclick="openTab('.menu-tab', 'dashboard-tab')">Dashboard</a>
-    <a v-if="authenticated" class="w3-bar-item w3-button w3-ripple" @click.prevent="showAddConference">Add Conference +</a>
+    <a v-if="authenticated" class="w3-bar-item w3-button w3-ripple w3-left" onclick="openTab('.menu-tab', 'dashboard-tab')">Dashboard</a>
+    <a v-if="authenticated" class="w3-bar-item w3-button w3-ripple w3-round-large w3-left" @click.prevent="showAddConference" style="border: 1px solid var(--text-color)">Add Conference <span class="icon material-icons md-24">add_circle_outline</span></a>
     <a v-if="authenticated" class="w3-bar-item w3-button w3-ripple w3-right" @click.prevent="logout">Sign Out</a>
     <a v-if="authenticated" class="w3-bar-item w3-right w3-text-grey">&#8226;{{logged_user}}&#8226;</a>
     <a v-if="!authenticated" class="w3-bar-item w3-button w3-ripple w3-right" @click.prevent="showLogin">Sign In</a>
@@ -80,14 +81,15 @@
         <h1 class="w3-jumbo">Dashboard</h1>
     </header>
 
+
     <!-- Dashboard Menu -->
-    <div id="dashboard-menu" class="w3-sidebar w3-bar-block w3-large">
+    <div id="dashboard-menu" class="w3-sidebar w3-bar-block w3-large w3-cell">
         <button class="w3-bar-item w3-button w3-ripple w3-center w3-padding-32" onclick="openTab('.dashboard-content-tab', 'dashboard-conferences-tab')">My Conferences <span style="float: right">&#10095;</span></button>
         <button class="w3-bar-item w3-button w3-ripple w3-center w3-padding-32" onclick="openTab('.dashboard-content-tab', 'dashboard-papers-tab')">My Papers <span style="float: right">&#10095;</span> </button>
     </div>
 
     <!-- My Conferences Section -->
-    <div id="dashboard-conferences-tab" class="dashboard-content-tab w3-container w3-rest">
+    <div id="dashboard-conferences-tab" class="dashboard-content-tab w3-container w3-cell">
         <h2 class="w3-container w3-xxlarge">My Conferences</h2>
 
         <!-- Listener -->
@@ -126,6 +128,9 @@
                         <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditConferenceModal(conference)">
                             Edit
                         </button>
+                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showViewPapersModal(conference)">
+                            View Papers
+                        </button>
                     </div>
                 </div>
             </div>
@@ -133,7 +138,7 @@
     </div>
 
     <!-- My papers Section -->
-    <div id="dashboard-papers-tab" class="dashboard-content-tab w3-container w3-rest">
+    <div id="dashboard-papers-tab" class="dashboard-content-tab w3-container w3-cell">
         <h2 class="w3-container w3-xxlarge">My Papers</h2>
 
         <div v-for="conference in papers">
@@ -421,6 +426,171 @@
                 <button type="button" class="w3-button w3-half" v-on:click="editConference">Save</button>
             </footer>
         </form>
+
+    </div>
+</div>
+
+<!-- View Papers In Conference Modal -->
+<div id="view-papers-modal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+        <header class="w3-container presentation">
+            <span onclick="document.getElementById('view-papers-modal').style.display='none'" class="cms-button w3-button w3-display-topright w3-round-large">&times;</span>
+            <h1>Papers Submitted</h1>
+        </header>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section1')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section1" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section2')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section2" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section3')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section3" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section4')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section4" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section5')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section5" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section6')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section6" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section7')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section7" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section8')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section8" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section9')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section9" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section10')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section10" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
+
+        <!-- Paper Panel -->
+        <div class="w3-panel">
+            <!-- Paper Name -->
+            <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" onclick="openAccordionTab('section11')">
+                <p class="w3-left w3-large w3-padding" style="width: 100%;">Paper title<span class="icon material-icons w3-right md-24">expand_more</span></p>
+            </div>
+            <!-- Dropdown -->
+            <div id="section11" class="w3-row w3-hide">
+                <button class="w3-button w3-third"><a href="#" download="#">Download Abstract</a></button>
+                <button class="w3-button w3-third"><a href="#" download="#">Download Paper</a></button>
+                <button class="w3-button w3-third">Bid For Review</button>
+            </div>
+        </div>
 
     </div>
 </div>

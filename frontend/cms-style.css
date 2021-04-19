@@ -13,6 +13,10 @@ body, html {
     background-color: var(--text-color);
 }
 
+button a {
+    text-decoration: none;
+}
+
 #home-tab {
     height: 100%;
     display: block;
@@ -66,15 +70,12 @@ body, html {
     background-color: var(--bg-color);
     color: var(--text-color);
     text-decoration: none;
-    width: 10%;
-}
-
-.w3-sidebar {
-    position: absolute ;
+    width: 200px;
+    position: absolute !important;
 }
 
 .dashboard-content-tab {
-    margin-left: 10%;
+    margin-left: 200px;
 }
 
 #dashboard-conferences-tab {
@@ -136,3 +137,16 @@ form textarea {
     color: var(--bg-color-darker);
     font-weight: bold;
 }
+
+.icon {
+    text-align: center;
+    vertical-align: middle;
+    transform: translateY(-12%);
+    cursor: pointer;
+}
+
+/* Rules for sizing the icon. */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }

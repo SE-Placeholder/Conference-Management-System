@@ -268,6 +268,10 @@ Vue.createApp({
             editConferenceModal.$data.date = new Date(Date.parse(conference.date)).toISOString().replace(/\..*$/, '')
             editConferenceModal.$data.id = conference.id
             document.querySelector('#edit-conference-modal').style.display = 'block'
+        },
+
+        showViewPapersModal(conference) {
+            document.querySelector('#view-papers-modal').style.display = 'block'
         }
     }
 })
@@ -277,4 +281,15 @@ Vue.createApp({
 function openTab(scopeClass, tabName) {
     document.querySelectorAll(scopeClass).forEach(div => div.style.display = "none")
     document.getElementById(tabName).style.display = "block";
+}
+
+/* Show Dropdown On Accordion View*/
+function openAccordionTab(tabID) {
+    console.log("S-a produs click");
+    var x = document.getElementById(tabID);
+    if (x.className.indexOf("w3-show") === -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
 }
