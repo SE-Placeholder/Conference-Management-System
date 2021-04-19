@@ -13,8 +13,7 @@ Vue.createApp({
         api.auth.isAuthenticated()
             .then(response => {
                 this.authenticated = response.data.authenticated
-                this.logged_user = 'zsigi'
-                //response.data.user
+                this.logged_user = response.data.username
             })
             .catch(error => alert(JSON.stringify(error)))
     },
@@ -94,7 +93,7 @@ Vue.createApp({
                 keywords: [...this.keywords_list],
                 abstract: this.abstract,
                 paper: this.paper,
-                authors: this.authors_list
+                authors: [...this.authors_list]
             })
                 .then(response => window.location.reload())
                 .catch(error => alert(JSON.stringify(error)))
@@ -249,12 +248,16 @@ Vue.createApp({
 Vue.createApp({
     data() {
         return {
-            conferences: []
+            conferences: [],
+            papers: []
         }
     },
     mounted() {
         api.user.conferences()
             .then(response => this.conferences = response.data)
+            .catch(error => alert(JSON.stringify(error)))
+        api.user.papers()
+            .then(response => this.papers = response.data)
             .catch(error => alert(JSON.stringify(error)))
     },
     methods: {

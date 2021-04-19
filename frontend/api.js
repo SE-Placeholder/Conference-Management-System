@@ -13,6 +13,7 @@ const endpoints = {
     conferenceDetails: 'conferences/<id>',
     joinConference: 'conferences/<id>/join',
     userConferences: '/user/conferences',
+    userPapers: '/user/papers',
     papers: 'papers'
 }
 
@@ -50,7 +51,9 @@ const api = {
     },
     user: {
         conferences: () =>
-            client.get(endpoints.userConferences)
+            client.get(endpoints.userConferences),
+        papers: () =>
+            client.get(endpoints.userPapers)
     },
     papers: {
         list: () =>
@@ -59,7 +62,9 @@ const api = {
             data = new FormData()
             data.append('title', title)
             data.append('conference', conference)
-            data.append('contributors', authors)
+            console.warn('authors', authors)
+
+            if (authors.length) data.append('contributors', authors)
             data.append('abstract', abstract)
             // TODO: rename
             data.append('proposal', paper)
