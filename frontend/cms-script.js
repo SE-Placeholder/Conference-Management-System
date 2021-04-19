@@ -169,8 +169,6 @@ editConferenceModal = Vue.createApp({
     },
     methods: {
         editConference() {
-            console.log(this.steering_committee_list)
-            alert('alo')
             api.conferences.update({
                 id: this.id,
                 title: this.title,

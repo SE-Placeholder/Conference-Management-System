@@ -92,10 +92,10 @@
 
         <!-- Listener -->
         <h3 class="w3-container w3-xlarge">Listener</h3>
-        <div v-if="conferences.listener && conferences.listener.length === 0">You are not attending any conference</div>
+        <div v-if="conferences.listener && conferences.listener.length === 0" class="w3-container w3-small w3-margin-left">You are not attending any conference</div>
         <div v-for="conference in conferences.listener">
             <!-- My Conference Details Card -->
-            <div class="w3-panel">
+            <div class="w3-panel w3-margin-left">
                 <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
                     <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
                     <div class="w3-bar">
@@ -111,10 +111,10 @@
 
         <!-- Steering -->
         <h3 class="w3-container w3-xlarge">Steering</h3>
-        <div v-if="conferences.steeringCommittee && conferences.steeringCommittee.length === 0">You are not steering any conference</div>
+        <div v-if="conferences.steeringCommittee && conferences.steeringCommittee.length === 0" class="w3-container w3-small w3-margin-left">You are not steering any conference</div>
         <div v-for="conference in conferences.steeringCommittee">
             <!-- My Conference Details Card -->
-            <div class="w3-panel">
+            <div class="w3-panel w3-margin-left">
                 <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
                     <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
                     <div class="w3-bar">
