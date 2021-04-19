@@ -92,6 +92,7 @@
 
         <!-- Listener -->
         <h3 class="w3-container w3-xlarge">Listener</h3>
+        <div v-if="conferences.listener && conferences.listener.length === 0">You are not attending any conference</div>
         <div v-for="conference in conferences.listener">
             <!-- My Conference Details Card -->
             <div class="w3-panel">
@@ -110,6 +111,7 @@
 
         <!-- Steering -->
         <h3 class="w3-container w3-xlarge">Steering</h3>
+        <div v-if="conferences.steeringCommittee && conferences.steeringCommittee.length === 0">You are not steering any conference</div>
         <div v-for="conference in conferences.steeringCommittee">
             <!-- My Conference Details Card -->
             <div class="w3-panel">
