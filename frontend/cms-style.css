@@ -69,6 +69,10 @@ body, html {
     width: 10%;
 }
 
+.w3-sidebar {
+    position: absolute ;
+}
+
 .dashboard-content-tab {
     margin-left: 10%;
 }
