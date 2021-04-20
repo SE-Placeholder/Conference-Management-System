@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet, ModelViewSet
@@ -25,9 +25,10 @@ class ConferenceViewSet(ModelViewSet):
             user=request.user)
 
         response = serializer.data
-        response['steering_committee'] = [request.user.username]
+        response['steering_committee'] = map(lambda role: role.user.username, Role.objects.filter(role=RoleTypes.STEERING_COMMITTEE, conference=conference))
         return Response(response, status=status.HTTP_201_CREATED)
 
+    # TODO: allow only conference steering committee members to update conference
     def partial_update(self, request, *args, **kwargs):
         steering_committee = []
         errors = []
@@ -44,8 +45,9 @@ class ConferenceViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         conference = serializer.save()
 
-        for role in Role.objects.filter(role=RoleTypes.STEERING_COMMITTEE, conference=conference):
-            role.delete()
+        if 'steering_committee' in request.data:
+            for role in Role.objects.filter(role=RoleTypes.STEERING_COMMITTEE, conference=conference):
+                role.delete()
 
         for user in steering_committee:
             Role.objects.create(role=RoleTypes.STEERING_COMMITTEE,
@@ -53,7 +55,7 @@ class ConferenceViewSet(ModelViewSet):
                                 conference=conference)
 
         response = serializer.data
-        response['steering_committee'] = map(lambda user: user.username, steering_committee)
+        response['steering_committee'] = map(lambda role: role.user.username, Role.objects.filter(role=RoleTypes.STEERING_COMMITTEE, conference=conference))
         return Response(response, status=status.HTTP_200_OK)
 
 
