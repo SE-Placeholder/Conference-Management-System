@@ -1,8 +1,7 @@
 from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import LoginView, PasswordResetView, PasswordResetConfirmView
-from dj_rest_auth.views import LogoutView, PasswordChangeView, UserDetailsView
+from dj_rest_auth.views import LogoutView, PasswordChangeView
 from django.urls import path
-from rest_framework_simplejwt.views import TokenVerifyView
 
 from authentication.views import IsAuthenticatedView
 
@@ -15,7 +14,5 @@ urlpatterns = [
     path('/password/reset', PasswordResetView.as_view(), name='password_reset'),
     # TODO: custom serializer for password reset confirm
     path('/password/reset/confirm/<slug:uidb64>/<slug:token>', PasswordResetConfirmView.as_view(),
-         name='password_reset_confirm'),
-    # TODO: path('/token/verify', TokenVerifyView.as_view(), name='token_verify'),
-    # TODO: path('/token/refresh', get_refresh_view().as_view(), name='token_refresh')
+         name='password_reset_confirm')
 ]
