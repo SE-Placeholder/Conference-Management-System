@@ -25,3 +25,11 @@ class UserConferencesView(APIView):
             'steeringCommittee': steering_committee_conferences.data,
             'listener': listener_conferences.data
         }, status=status.HTTP_200_OK)
+
+
+class UserPapersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        roles = Role.objects.filter(user=request.user)
+        

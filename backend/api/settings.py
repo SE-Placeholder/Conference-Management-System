@@ -28,6 +28,8 @@ SECRET_KEY = '!zt)bjdkce8n+6pf81$^y%gjcidl5yhtygo8kyu#fh=v1km7v@'
 DEBUG = True
 SILENCED_SYSTEM_CHECKS = ["urls.W002"]
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 ALLOWED_HOSTS = [
     'localhost',
     'kind-wind-83282.pktriot.net'
@@ -45,15 +47,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     'rest_framework',
-    # 'rest_framework.authtoken',
     'dj_rest_auth',
     'dj_rest_auth.registration',
 
     'allauth',
     'allauth.account',
-    # 'allauth.socialaccount',
-    # 'allauth.socialaccount.providers.facebook',
-
     'corsheaders',
 
     'dummy',
@@ -107,7 +105,6 @@ JWT_AUTH_COOKIE = 'auth'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
-
     ]
 }
 
