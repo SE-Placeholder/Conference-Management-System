@@ -15,6 +15,13 @@
 </head>
 <body>
 
+<!-- Preloader -->
+<div id="loader-wrapper">
+    <div id="loader"></div>
+    <div class="loader-section section-left"></div>
+    <div class="loader-section section-right"></div>
+</div>
+
 <!-- Navigation Menu -->
 <div id="menu" class="w3-bar w3-xlarge">
     <a class="w3-bar-item w3-button w3-ripple w3-left" onclick="openTab('.menu-tab', 'home-tab')">HOME</a>
@@ -22,7 +29,7 @@
     <a v-if="authenticated" class="w3-bar-item w3-button w3-ripple w3-left" onclick="openTab('.menu-tab', 'dashboard-tab')">Dashboard</a>
     <a v-if="authenticated" class="w3-bar-item w3-button w3-ripple w3-round-large w3-left" @click.prevent="showAddConference" style="border: 1px solid var(--text-color)">Add Conference <span class="icon material-icons md-24">add_circle_outline</span></a>
     <a v-if="authenticated" class="w3-bar-item w3-button w3-ripple w3-right" @click.prevent="logout">Sign Out</a>
-    <a v-if="authenticated" class="w3-bar-item w3-right w3-text-grey">&#8226;{{logged_user}}&#8226;</a>
+    <a v-if="authenticated" class="w3-bar-item w3-right w3-text-grey">&#8226;{{username}}&#8226;</a>
     <a v-if="!authenticated" class="w3-bar-item w3-button w3-ripple w3-right" @click.prevent="showLogin">Sign In</a>
 </div>
 
