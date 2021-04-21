@@ -152,6 +152,25 @@ form textarea {
 .material-icons.md-48 { font-size: 48px; }
 
 
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color-darker);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-color-lighter);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-color);
+}
+
+
 /* Preloader */
 #loader-wrapper {
     position: fixed;
@@ -172,7 +191,7 @@ form textarea {
     margin: -75px 0 0 -75px;
     border-radius: 50%;
     border: 3px solid transparent;
-    border-top-color: #3498db;
+    border-top-color: var(--text-color);
 
     animation: spin 2s linear infinite;
 
@@ -188,7 +207,7 @@ form textarea {
     bottom: 5px;
     border-radius: 50%;
     border: 3px solid transparent;
-    border-top-color: #e74c3c;
+    border-top-color: var(--contrast-color);
 
     animation: spin 3s linear infinite;
 }
@@ -202,7 +221,7 @@ form textarea {
     bottom: 15px;
     border-radius: 50%;
     border: 3px solid transparent;
-    border-top-color: #f9c922;
+    border-top-color: var(--text-color);
 
     animation: spin 1.5s linear infinite;
 }
@@ -221,7 +240,7 @@ form textarea {
     top: 0;
     width: 51%;
     height: 100%;
-    background: #222222;
+    background: var(--bg-color);
     z-index: 1000;
     transform: translateX(0);
 }
