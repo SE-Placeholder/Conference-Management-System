@@ -1,27 +1,67 @@
-<!-- Script Section -->
+function openTab(scopeClass, tabName) {
+    document.querySelectorAll(scopeClass).forEach(div => div.style.display = "none")
+    document.getElementById(tabName).style.display = "block"
+}
 
-/* Menu */
-Vue.createApp({
+function openAccordionTab(tabID) {
+    element = document.getElementById(tabID)
+    if (element.classList.contains("w3-show"))
+        element.classList.remove("w3-show")
+    else
+        element.classList.add("w3-show")
+}
+
+document.addEventListener('readystatechange', () => {
+    if (document.readyState == 'complete') {
+        loginModal = loginModal.mount('#login-modal')
+        signupModal = signupModal.mount('#signup-modal')
+        submitProposalModal = submitProposalModal.mount('#submit-proposal-modal')
+        addConferenceModal = addConferenceModal.mount('#add-conference-modal')
+        editConferenceModal = editConferenceModal.mount('#edit-conference-modal')
+        joinConferenceModal = joinConferenceModal.mount('#join-conference-modal')
+
+        menuComponent = menuComponent.mount('#menu')
+    }
+})
+
+dataStore = {
+    properties: {},
+    set: (property, value) => {
+        dataStore.properties[property] = value
+    },
+    get: property => {
+        return dataStore.properties[property]
+    }
+}
+
+
+menuComponent = Vue.createApp({
     data() {
         return {
-            //TODO: move to data store
             authenticated: false,
-            logged_user: ""
+            username: ""
         }
     },
     mounted() {
-        api.auth.isAuthenticated()
+        api.auth.info()
             .then(response => {
                 this.authenticated = response.data.authenticated
-                this.logged_user = response.data.username
+                this.username = response.data.username
+                dataStore.set('authenticated', response.data.authenticated)
+                dataStore.set('username', response.data.username)
+
+                homeTabComponent = homeTabComponent.mount('#home-tab')
+
+                if (response.data.authenticated) {
+                    dahsboardTabComponent = dahsboardTabComponent.mount('#dashboard-tab')
+                }
             })
-            .catch(error => alert(JSON.stringify(error)))
     },
     methods: {
         logout() {
             api.auth.logout()
                 .then(response => window.location.reload())
-                .catch(error => alert(JSON.stringify(error)))
+                .catch(error => alert(JSON.stringify(error.response)))
         },
         showLogin() {
             document.querySelector('#login-modal').style.display = 'block'
@@ -31,10 +71,71 @@ Vue.createApp({
         }
     }
 })
-    .mount('#menu')
 
-/* Login */
-Vue.createApp({
+
+homeTabComponent = Vue.createApp({
+    data() {
+        return {
+            conferences: []
+        }
+    },
+    mounted() {
+        api.conferences.list()
+            .then(response => {
+                this.conferences = response.data
+                document.body.classList.add("loaded")
+            })
+            .catch(error => alert(JSON.stringify(error)))
+    },
+    methods: {
+        showSubmissionModal(id) {
+            window.selectedConference = id
+            document.getElementById('submit-proposal-modal').style.display = 'block'
+        },
+        showConfirmJoinModal(id, name) {
+            window.selectedConference = id
+            document.getElementById('join-conference-modal-title').innerText = name
+            document.getElementById('join-conference-modal').style.display = 'block'
+        }
+    }
+})
+
+
+dahsboardTabComponent = Vue.createApp({
+    data() {
+        return {
+            conferences: [],
+            papers: []
+        }
+    },
+    mounted() {
+        api.user.conferences()
+            .then(response => this.conferences = response.data)
+            .catch(error => alert(JSON.stringify(error)))
+        api.user.papers()
+            .then(response => this.papers = response.data)
+            .catch(error => alert(JSON.stringify(error)))
+    },
+    methods: {
+        showEditConferenceModal(conference) {
+            editConferenceModal.$data.title = conference.title
+            editConferenceModal.$data.description = conference.description
+            editConferenceModal.$data.location = conference.location
+            editConferenceModal.$data.fee = conference.fee
+            editConferenceModal.$data.deadline = new Date(Date.parse(conference.deadline)).toISOString().replace(/\..*$/, '')
+            editConferenceModal.$data.date = new Date(Date.parse(conference.date)).toISOString().replace(/\..*$/, '')
+            editConferenceModal.$data.id = conference.id
+            document.querySelector('#edit-conference-modal').style.display = 'block'
+        },
+
+        showViewPapersModal(conference) {
+            document.querySelector('#view-papers-modal').style.display = 'block'
+        }
+    }
+})
+
+
+loginModal = Vue.createApp({
     data() {
         return {
             username: '',
@@ -49,10 +150,9 @@ Vue.createApp({
         }
     }
 })
-    .mount('#login-modal')
 
-/* Sign up */
-Vue.createApp({
+
+signupModal = Vue.createApp({
     data() {
         return {
             username: '',
@@ -69,10 +169,9 @@ Vue.createApp({
         }
     }
 })
-    .mount('#signup-modal')
 
-/* Submit proposal */
-Vue.createApp({
+
+submitProposalModal = Vue.createApp({
     data() {
         return {
             title: '',
@@ -122,10 +221,9 @@ Vue.createApp({
         }
     }
 })
-    .mount('#submit-proposal-modal')
 
-/* Create Conference */
-Vue.createApp({
+
+addConferenceModal = Vue.createApp({
     data() {
         return {
             title: '',
@@ -151,9 +249,8 @@ Vue.createApp({
         }
     }
 })
-    .mount('#add-conference-modal')
 
-/* Edit Conference */
+
 editConferenceModal = Vue.createApp({
     data() {
         return {
@@ -199,10 +296,9 @@ editConferenceModal = Vue.createApp({
         }
     }
 })
-    .mount('#edit-conference-modal')
 
-/* Join Conference */
-Vue.createApp({
+
+joinConferenceModal = Vue.createApp({
     data() {
         return {}
     },
@@ -214,82 +310,3 @@ Vue.createApp({
         }
     }
 })
-    .mount('#join-conference-modal')
-
-/* Home tab */
-Vue.createApp({
-    data() {
-        return {
-            conferences: []
-        }
-    },
-    mounted() {
-        api.conferences.list()
-            .then(response => this.conferences = response.data)
-            .catch(error => console.log(error))
-    },
-    methods: {
-        showSubmissionModal(id) {
-            window.selectedConference = id
-            document.getElementById('submit-proposal-modal').style.display = 'block'
-        },
-        showConfirmJoinModal(id, name) {
-            window.selectedConference = id
-            document.getElementById('join-conference-modal-title').innerText = name
-            document.getElementById('join-conference-modal').style.display = 'block'
-        }
-    }
-})
-    .mount('#home-tab')
-
-/* Dashboard tab */
-Vue.createApp({
-    data() {
-        return {
-            conferences: [],
-            papers: []
-        }
-    },
-    mounted() {
-        api.user.conferences()
-            .then(response => this.conferences = response.data)
-            .catch(error => alert(JSON.stringify(error)))
-        api.user.papers()
-            .then(response => this.papers = response.data)
-            .catch(error => alert(JSON.stringify(error)))
-    },
-    methods: {
-        showEditConferenceModal(conference) {
-            editConferenceModal.$data.title = conference.title
-            editConferenceModal.$data.description = conference.description
-            editConferenceModal.$data.location = conference.location
-            editConferenceModal.$data.fee = conference.fee
-            editConferenceModal.$data.deadline = new Date(Date.parse(conference.deadline)).toISOString().replace(/\..*$/, '')
-            editConferenceModal.$data.date = new Date(Date.parse(conference.date)).toISOString().replace(/\..*$/, '')
-            editConferenceModal.$data.id = conference.id
-            document.querySelector('#edit-conference-modal').style.display = 'block'
-        },
-
-        showViewPapersModal(conference) {
-            document.querySelector('#view-papers-modal').style.display = 'block'
-        }
-    }
-})
-    .mount('#dashboard-tab')
-
-/* Tabified Navigation Menu Switch*/
-function openTab(scopeClass, tabName) {
-    document.querySelectorAll(scopeClass).forEach(div => div.style.display = "none")
-    document.getElementById(tabName).style.display = "block";
-}
-
-/* Show Dropdown On Accordion View*/
-function openAccordionTab(tabID) {
-    console.log("S-a produs click");
-    var x = document.getElementById(tabID);
-    if (x.className.indexOf("w3-show") === -1) {
-        x.className += " w3-show";
-    } else {
-        x.className = x.className.replace(" w3-show", "");
-    }
-}

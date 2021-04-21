@@ -3,10 +3,10 @@ const client = axios.create({
 })
 
 const endpoints = {
+    info: 'auth/info',
     login: 'auth/login',
     logout: 'auth/logout',
     register: 'auth/register',
-    isAuthenticated: 'auth/is-authenticated',
     changePassword: 'auth/password/change',
     resetPassword: 'auth/password/reset',
     conferences: 'conferences',
@@ -24,14 +24,14 @@ const pathEncode = (endpoint, ...arguments) =>
 
 const api = {
     auth: {
+        info: () =>
+            client.get(endpoints.info),
         login: (username, password) =>
             client.post(endpoints.login, {username, password}),
         logout: () =>
             client.post(endpoints.logout),
         register: (username, email, password1, password2) =>
             client.post(endpoints.register, {username, email, password1, password2}),
-        isAuthenticated: () =>
-            client.get(endpoints.isAuthenticated),    
         changePassword: () =>
             console.error("NOT IMPLEMENTED"),
         resetPassword: email =>
@@ -99,10 +99,12 @@ client.interceptors.response.use(
     },
 
     error => {
-        if (error.response.config.url == endpoints.isAuthenticated && error.response.status == 401) {
-            return Promise.resolve({...error.response, data:{...error.response.data, authenticated:false}})
+        if (error.response.config.url == endpoints.info && error.response.status == 401) {
+            window.localStorage.removeItem('x-jwt-access-token')
+            return Promise.resolve({...error.response, data: {...error.response.data, authenticated: false}})
         }
         if (error.response.config.url == endpoints.logout && error.response.status == 401) {
+            window.localStorage.removeItem('x-jwt-access-token')
             return Promise.resolve(error.response)
         }
 
