@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
 from rest_framework import status, permissions
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet, ModelViewSet
 
 from conference.models import Conference
 from conference.serializers import ConferenceSerializer
-from role.models import RoleTypes, Role
+from role.models import SteeringCommitteeRole, ListenerRole
 
 
 class ConferenceViewSet(ModelViewSet):
@@ -14,18 +15,20 @@ class ConferenceViewSet(ModelViewSet):
     serializer_class = ConferenceSerializer
     lookup_field = 'id'
 
+    def get_permissions(self):
+        return [AllowAny()] if self.action in ['list', 'retrieve'] else [IsAuthenticated()]
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         conference = serializer.save()
 
-        Role.objects.create(
-            role=RoleTypes.STEERING_COMMITTEE,
+        SteeringCommitteeRole.objects.create(
             conference=conference,
             user=request.user)
 
         response = serializer.data
-        response['steering_committee'] = map(lambda role: role.user.username, Role.objects.filter(role=RoleTypes.STEERING_COMMITTEE, conference=conference))
+        response['steering_committee'] = map(lambda role: role.user.username, SteeringCommitteeRole.objects.filter(conference=conference))
         return Response(response, status=status.HTTP_201_CREATED)
 
     # TODO: allow only conference steering committee members to update conference
@@ -46,16 +49,16 @@ class ConferenceViewSet(ModelViewSet):
         conference = serializer.save()
 
         if 'steering_committee' in request.data:
-            for role in Role.objects.filter(role=RoleTypes.STEERING_COMMITTEE, conference=conference):
+            for role in SteeringCommitteeRole.objects.filter(conference=conference):
                 role.delete()
 
         for user in steering_committee:
-            Role.objects.create(role=RoleTypes.STEERING_COMMITTEE,
-                                user=user,
-                                conference=conference)
+            SteeringCommitteeRole.objects.create(
+                user=user,
+                conference=conference)
 
         response = serializer.data
-        response['steering_committee'] = map(lambda role: role.user.username, Role.objects.filter(role=RoleTypes.STEERING_COMMITTEE, conference=conference))
+        response['steering_committee'] = map(lambda role: role.user.username, SteeringCommitteeRole.objects.filter(conference=conference))
         return Response(response, status=status.HTTP_200_OK)
 
 
@@ -64,11 +67,10 @@ class JoinConferenceView(APIView):
         try:
             conference = Conference.objects.get(id=id)
 
-            if Role.objects.filter(role=RoleTypes.LISTENER, user=request.user, conference=conference).exists():
+            if ListenerRole.objects.filter(user=request.user, conference=conference).exists():
                 return Response({'status': 'Already registered for this conference'}, status=status.HTTP_400_BAD_REQUEST)
 
-            Role.objects.create(
-                role=RoleTypes.LISTENER,
+            ListenerRole.objects.create(
                 user=request.user,
                 conference=conference)
             return Response({'status': 'Successfully joined conference'}, status=status.HTTP_201_CREATED)

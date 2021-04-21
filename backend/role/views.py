@@ -1,25 +1,34 @@
+from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from conference.models import Conference
 from conference.serializers import ConferenceSerializer
-from role.models import Role, RoleTypes
+from role.models import SteeringCommitteeRole, ListenerRole, AuthorRole
+
+
+# change to userserializer
+class UserListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        users = map(lambda user: {'username': user.username, 'email': user.email}, User.objects.all())
+        return Response(users, status=status.HTTP_200_OK)
 
 
 class UserConferencesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        roles = Role.objects.filter(user=request.user)
-
         steering_committee_conferences = ConferenceSerializer(
             map(lambda role: role.conference,
-                roles.filter(role=RoleTypes.STEERING_COMMITTEE)), many=True)
+                SteeringCommitteeRole.objects.filter(user=request.user)), many=True)
 
         listener_conferences = ConferenceSerializer(
             map(lambda role: role.conference,
-                roles.filter(role=RoleTypes.LISTENER)), many=True)
+                ListenerRole.objects.filter(user=request.user)), many=True)
 
         return Response({
             'steeringCommittee': steering_committee_conferences.data,
@@ -31,5 +40,25 @@ class UserPapersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        roles = Role.objects.filter(user=request.user)
-        
+        roles = AuthorRole.objects.filter(user=request.user)
+
+        conferences = {}
+
+        for role in roles:
+            paper = role.paper
+            conference = paper.conference
+            if conference.id not in conferences:
+                conferences[conference.id] = []
+            conferences[conference.id].append({
+                'title': paper.title
+            })
+
+        data = []
+        for conferenceid, papers in conferences.items():
+            data.append({
+                'id': conferenceid,
+                'title': Conference.objects.get(id=conferenceid).title,
+                'papers': papers
+            })
+
+        return Response(data, status=status.HTTP_200_OK)

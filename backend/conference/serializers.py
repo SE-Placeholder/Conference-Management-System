@@ -4,7 +4,7 @@ from rest_framework.serializers import ModelSerializer
 from conference.models import Conference
 from paper.models import Paper
 from paper.serializers import PaperSerializer
-from role.models import Role, RoleTypes
+from role.models import SteeringCommitteeRole
 
 
 class ConferenceSerializer(ModelSerializer):
@@ -28,7 +28,7 @@ class ConferenceSerializer(ModelSerializer):
     @staticmethod
     def get_steering_committee(conference):
         return map(lambda role: role.user.username,
-                   Role.objects.filter(role=RoleTypes.STEERING_COMMITTEE, conference=conference))
+                   SteeringCommitteeRole.objects.filter(conference=conference))
 
     @staticmethod
     def get_papers(conference):

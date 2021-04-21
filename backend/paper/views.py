@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from paper.models import Paper
 from paper.serializers import PaperSerializer
-from role.models import Role, RoleTypes
+from role.models import AuthorRole
 
 
 class PaperViewSet(ModelViewSet):
@@ -30,13 +30,12 @@ class PaperViewSet(ModelViewSet):
         paper = serializer.save()
 
         for user in authors:
-            Role.objects.create(
-                role=RoleTypes.AUTHOR,
+            AuthorRole.objects.create(
                 user=user,
                 paper=paper)
 
         response = serializer.data
-        response['authors'] = map(lambda role: role.user.username, Role.objects.filter(role=RoleTypes.AUTHOR, paper=paper))
+        response['authors'] = map(lambda role: role.user.username, AuthorRole.objects.filter(paper=paper))
         return Response(response, status=status.HTTP_201_CREATED)
 
     # TODO: allow only authors to update conference
@@ -57,15 +56,15 @@ class PaperViewSet(ModelViewSet):
         paper = serializer.save()
 
         if 'authors' in request.data:
-            for role in Role.objects.filter(role=RoleTypes.AUTHOR, paper=paper):
+            for role in AuthorRole.objects.filter(paper=paper):
                 role.delete()
 
         for user in authors:
-            Role.objects.create(
-                role=RoleTypes.AUTHOR,
+            AuthorRole.objects.create(
                 user=user,
                 paper=paper)
 
         response = serializer.data
-        response['authors'] = map(lambda role: role.user.username, Role.objects.filter(role=RoleTypes.AUTHOR, paper=paper))
+        # TODO: change to userSerializer
+        response['authors'] = map(lambda role: role.user.username, AuthorRole.objects.filter(paper=paper))
         return Response(response, status=status.HTTP_200_OK)

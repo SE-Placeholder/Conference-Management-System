@@ -4,7 +4,7 @@ from rest_framework.fields import ListField, SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from paper.models import Paper
-from role.models import Role, RoleTypes
+from role.models import AuthorRole
 
 
 class PaperSerializer(ModelSerializer):
@@ -26,4 +26,4 @@ class PaperSerializer(ModelSerializer):
     @staticmethod
     def get_authors(paper):
         return map(lambda role: role.user.username,
-                   Role.objects.filter(role=RoleTypes.AUTHOR, paper=paper))
+                   AuthorRole.objects.filter(paper=paper))
