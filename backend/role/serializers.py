@@ -1,9 +1,6 @@
 from django.contrib.auth.models import User
-from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
-from conference.serializers import ConferenceSerializer
-from paper.serializers import PaperSerializer
 # from role.models import Role
 
 # class RoleSerializer(ModelSerializer):

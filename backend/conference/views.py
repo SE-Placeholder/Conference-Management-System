@@ -8,6 +8,7 @@ from rest_framework.viewsets import ViewSet, ModelViewSet
 from conference.models import Conference
 from conference.serializers import ConferenceSerializer
 from role.models import SteeringCommitteeRole, ListenerRole
+from role.serializers import UserSerializer
 
 
 class ConferenceViewSet(ModelViewSet):
@@ -28,7 +29,9 @@ class ConferenceViewSet(ModelViewSet):
             user=request.user)
 
         response = serializer.data
-        response['steering_committee'] = map(lambda role: role.user.username, SteeringCommitteeRole.objects.filter(conference=conference))
+        response['steering_committee'] = UserSerializer(
+            [request.user],
+            many=True).data
         return Response(response, status=status.HTTP_201_CREATED)
 
     # TODO: allow only conference steering committee members to update conference
@@ -58,7 +61,9 @@ class ConferenceViewSet(ModelViewSet):
                 conference=conference)
 
         response = serializer.data
-        response['steering_committee'] = map(lambda role: role.user.username, SteeringCommitteeRole.objects.filter(conference=conference))
+        response['steering_committee'] = UserSerializer(
+            steering_committee,
+            many=True).data
         return Response(response, status=status.HTTP_200_OK)
 
 
