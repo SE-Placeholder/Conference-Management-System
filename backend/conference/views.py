@@ -11,6 +11,8 @@ from role.models import SteeringCommitteeRole, ListenerRole
 from role.serializers import UserSerializer
 
 
+# TODO: remove duplicate users from input
+# TODO: helper methods to reduce code duplication
 class ConferenceViewSet(ModelViewSet):
     queryset = Conference.objects.all()
     serializer_class = ConferenceSerializer
@@ -68,6 +70,7 @@ class ConferenceViewSet(ModelViewSet):
 
 
 class JoinConferenceView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request, id):
         try:
             conference = Conference.objects.get(id=id)

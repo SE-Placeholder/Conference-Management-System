@@ -6,8 +6,10 @@ from rest_framework.viewsets import ModelViewSet
 from paper.models import Paper
 from paper.serializers import PaperSerializer
 from role.models import AuthorRole
+from role.serializers import UserSerializer
 
 
+# TODO: remove duplicate authors from input
 class PaperViewSet(ModelViewSet):
     queryset = Paper.objects.all()
     serializer_class = PaperSerializer
@@ -35,7 +37,7 @@ class PaperViewSet(ModelViewSet):
                 paper=paper)
 
         response = serializer.data
-        response['authors'] = map(lambda role: role.user.username, AuthorRole.objects.filter(paper=paper))
+        response['authors'] = UserSerializer(authors, many=True).data
         return Response(response, status=status.HTTP_201_CREATED)
 
     # TODO: allow only authors to update conference
@@ -65,6 +67,5 @@ class PaperViewSet(ModelViewSet):
                 paper=paper)
 
         response = serializer.data
-        # TODO: change to userSerializer
-        response['authors'] = map(lambda role: role.user.username, AuthorRole.objects.filter(paper=paper))
+        response['authors'] = UserSerializer(authors, many=True).data
         return Response(response, status=status.HTTP_200_OK)

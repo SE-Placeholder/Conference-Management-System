@@ -1,6 +1,4 @@
-from django.contrib.auth.models import User
-from rest_framework.exceptions import ValidationError
-from rest_framework.fields import ListField, SerializerMethodField
+from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from paper.models import Paper
