@@ -3,15 +3,18 @@ function openTab(scopeClass, tabName) {
     document.getElementById(tabName).style.display = "block"
 }
 
-function openAccordionTab(tabID) {
-    element = document.getElementById(tabID)
-    if (element.classList.contains("w3-show"))
-        element.classList.remove("w3-show")
-    else
-        element.classList.add("w3-show")
+function showModal(id) {
+    document.getElementById(id).style.display = 'block'
 }
 
+function hideModal(id) {
+    document.getElementById(id).style.display = 'none'
+}
+
+
 document.addEventListener('readystatechange', () => {
+    api.setUnauthorizedCallback(() => showModal('login-modal'))
+
     if (document.readyState == 'complete') {
         loginModal = loginModal.mount('#login-modal')
         signupModal = signupModal.mount('#signup-modal')
@@ -19,6 +22,7 @@ document.addEventListener('readystatechange', () => {
         addConferenceModal = addConferenceModal.mount('#add-conference-modal')
         editConferenceModal = editConferenceModal.mount('#edit-conference-modal')
         joinConferenceModal = joinConferenceModal.mount('#join-conference-modal')
+        viewPapersModal = viewPapersModal.mount('#view-papers-modal')
 
         menuComponent = menuComponent.mount('#menu')
     }
@@ -51,10 +55,8 @@ menuComponent = Vue.createApp({
                 dataStore.set('username', response.data.username)
 
                 homeTabComponent = homeTabComponent.mount('#home-tab')
-
-                if (response.data.authenticated) {
+                if (response.data.authenticated)
                     dahsboardTabComponent = dahsboardTabComponent.mount('#dashboard-tab')
-                }
             })
     },
     methods: {
@@ -64,10 +66,10 @@ menuComponent = Vue.createApp({
                 .catch(error => alert(JSON.stringify(error.response)))
         },
         showLogin() {
-            document.querySelector('#login-modal').style.display = 'block'
+            showModal('login-modal')
         },
         showAddConference() {
-            document.querySelector('#add-conference-modal').style.display = 'block'
+            showModal('add-conference-modal')
         }
     }
 })
@@ -89,13 +91,13 @@ homeTabComponent = Vue.createApp({
     },
     methods: {
         showSubmissionModal(id) {
-            window.selectedConference = id
-            document.getElementById('submit-proposal-modal').style.display = 'block'
+            submitProposalModal.$data.id = id
+            showModal('submit-proposal-modal')
         },
-        showConfirmJoinModal(id, name) {
-            window.selectedConference = id
-            document.getElementById('join-conference-modal-title').innerText = name
-            document.getElementById('join-conference-modal').style.display = 'block'
+        showConfirmJoinModal(id, title) {
+            joinConferenceModal.$data.id = id
+            joinConferenceModal.$data.title = title
+            showModal('join-conference-modal')
         }
     }
 })
@@ -129,7 +131,8 @@ dahsboardTabComponent = Vue.createApp({
         },
 
         showViewPapersModal(conference) {
-            document.querySelector('#view-papers-modal').style.display = 'block'
+            viewPapersModal.$data.papers = [...conference.papers]
+            showModal('view-papers-modal')
         }
     }
 })
@@ -174,6 +177,7 @@ signupModal = Vue.createApp({
 submitProposalModal = Vue.createApp({
     data() {
         return {
+            id: null,
             title: '',
             // author: '',
             abstract: '',
@@ -300,13 +304,34 @@ editConferenceModal = Vue.createApp({
 
 joinConferenceModal = Vue.createApp({
     data() {
-        return {}
+        return {
+            id: null,
+            title: ''
+        }
     },
     methods: {
         joinConference() {
-            api.conferences.join(window.selectedConference)
+            api.conferences.join(this.id)
                 .then(response => window.location.reload())
                 .catch(error => alert(JSON.stringify(error)))
+        }
+    }
+})
+
+
+viewPapersModal = Vue.createApp({
+    data() {
+        return {
+            papers: []
+        }
+    },
+    methods: {
+        openAccordionTab(id) {
+            element = document.getElementById('view-papers-section' + id)
+            if (element.classList.contains("w3-show"))
+                element.classList.remove("w3-show")
+            else
+                element.classList.add("w3-show")
         }
     }
 })
