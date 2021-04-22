@@ -18,8 +18,6 @@
 <!-- Preloader -->
 <div id="loader-wrapper">
     <div id="loader"></div>
-    <div class="loader-section section-left"></div>
-    <div class="loader-section section-right"></div>
 </div>
 
 <!-- Navigation Menu -->
@@ -262,6 +260,7 @@
             </label>
 
             <label>
+                <!-- TODO: make user press enter -->
                 <span>Keywords</span>
                 <span class="w3-block">
                     <div v-for='(tag, index) in keywords_list' :key='tag' class="tag w3-tag w3-round-xxlarge">
@@ -422,13 +421,13 @@
             <label>
                 <span>Add steering committee member</span>
                 <span class="w3-block">
-                    <div v-for='(tag, index) in steering_committee_list' :key='tag' class="tag w3-tag w3-round-xxlarge">
-                        <span @click='removeTag(index, steering_committee_list)'>x</span>
-                        {{ tag }}
+                    <div v-for='(user, index) in steering_committee' :key='user' class="tag w3-tag w3-round-xxlarge">
+                        <span @click='removeTag(index, steering_committee)'>x</span>
+                        {{user}}
                     </div>
                 </span>
 
-                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Email" @keydown.enter='addTag($event, steering_committee_list)' @keydown.delete='removeLastTag($event, steering_committee_list)'>
+                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Email" @keydown.enter='addTag($event, steering_committee)' @keydown.delete='removeLastTag($event, steering_committee)'>
             </label>
 
             <footer class="w3-container w3-footer w3-row">
@@ -448,6 +447,7 @@
             <h1>Papers Submitted</h1>
         </header>
 
+        <!-- TODO: rename paper object to submission, or paper field to final -->
         <!-- Paper Panel Oficial -->
         <div v-for="paper in papers">
             <div class="w3-panel">
@@ -457,9 +457,9 @@
                 </div>
                 <!-- Dropdown -->
                 <div :id="'view-papers-section' + paper.id" class="w3-row w3-hide">
-                    <!-- TODO: Populate the href tags of the abstract and papers with its corresponding path in database-->
-                    <button class="w3-button w3-third"><a href="#" download="#"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
-                    <button class="w3-button w3-third"><a href="#" download="#"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
+                    <!-- TODO: make this not hardcoded -->
+                    <button :class="['w3-button', 'w3-third', paper.abstract? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+paper.abstract"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
+                    <button :class="['w3-button', 'w3-third', paper.paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+paper.paper"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
                     <button class="w3-button w3-third"><span class="icon material-icons md-18">rate_review</span> Bid For Review</button>
                 </div>
             </div>

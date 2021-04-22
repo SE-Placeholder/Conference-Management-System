@@ -54,6 +54,8 @@ menuComponent = Vue.createApp({
                 dataStore.set('authenticated', response.data.authenticated)
                 dataStore.set('username', response.data.username)
 
+                document.body.classList.add("loaded")
+
                 homeTabComponent = homeTabComponent.mount('#home-tab')
                 if (response.data.authenticated)
                     dahsboardTabComponent = dahsboardTabComponent.mount('#dashboard-tab')
@@ -85,13 +87,13 @@ homeTabComponent = Vue.createApp({
         api.conferences.list()
             .then(response => {
                 this.conferences = response.data
-                document.body.classList.add("loaded")
+                // document.body.classList.add("loaded")
             })
             .catch(error => alert(JSON.stringify(error)))
     },
     methods: {
         showSubmissionModal(id) {
-            submitProposalModal.$data.id = id
+            submitProposalModal.$data.conferenceId = id
             showModal('submit-proposal-modal')
         },
         showConfirmJoinModal(id, title) {
@@ -127,6 +129,7 @@ dahsboardTabComponent = Vue.createApp({
             editConferenceModal.$data.deadline = new Date(Date.parse(conference.deadline)).toISOString().replace(/\..*$/, '')
             editConferenceModal.$data.date = new Date(Date.parse(conference.date)).toISOString().replace(/\..*$/, '')
             editConferenceModal.$data.id = conference.id
+            editConferenceModal.$data.steering_committee = conference.steering_committee.map(user => user.username)
             document.querySelector('#edit-conference-modal').style.display = 'block'
         },
 
@@ -177,9 +180,8 @@ signupModal = Vue.createApp({
 submitProposalModal = Vue.createApp({
     data() {
         return {
-            id: null,
+            conferenceId: null,
             title: '',
-            // author: '',
             abstract: '',
             paper: '',
             keywords_list: [],
@@ -191,7 +193,7 @@ submitProposalModal = Vue.createApp({
         submitProposal() {
             api.papers.create({
                 title: this.title,
-                conference: window.selectedConference,
+                conference: this.conferenceId,
                 topics: [...this.topics_list],
                 keywords: [...this.keywords_list],
                 abstract: this.abstract,
@@ -265,7 +267,7 @@ editConferenceModal = Vue.createApp({
             location: '',
             deadline: new Date().toISOString().replace(/\..*$/, ''),
             fee: 0,
-            steering_committee_list: []
+            steering_committee: []
         }
     },
     methods: {
@@ -277,7 +279,8 @@ editConferenceModal = Vue.createApp({
                 date: this.date,
                 location: this.location,
                 deadline: this.deadline,
-                fee: this.fee
+                fee: this.fee,
+                steering_committee: [...this.steering_committee]
             })
                 .then(response => window.location.reload())
                 .catch(error => alert(JSON.stringify(error)))
