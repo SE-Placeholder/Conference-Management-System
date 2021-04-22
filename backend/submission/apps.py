@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class PaperConfig(AppConfig):
+class SubmissionConfig(AppConfig):
     name = 'submission'

@@ -3,16 +3,16 @@ from rest_framework.fields import JSONField
 from rest_framework.serializers import ModelSerializer
 
 from api.utils import get_user
-from submission.models import Paper
+from submission.models import Submission
 from role.models import AuthorRole
 from role.serializers import UserSerializer
 
 
-class PaperSerializer(ModelSerializer):
+class SubmissionSerializer(ModelSerializer):
     authors = JSONField(binary=True, write_only=True, required=False)
 
     class Meta:
-        model = Paper
+        model = Submission
         fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'authors']
 
     def create(self, validated_data):
@@ -29,14 +29,14 @@ class PaperSerializer(ModelSerializer):
         if errors:
             raise ValidationError({'authors': errors})
 
-        paper = super().create(validated_data)
+        submission = super().create(validated_data)
 
         for user in authors:
             AuthorRole.objects.create(
                 user=user,
-                paper=paper)
+                submission=submission)
 
-        return paper
+        return submission
 
     def update(self, instance, validated_data):
         authors = []
@@ -52,20 +52,20 @@ class PaperSerializer(ModelSerializer):
         if errors:
             raise ValidationError({'authors': errors})
 
-        paper = super().update(instance, validated_data)
+        submission = super().update(instance, validated_data)
 
         if authors:
-            for role in AuthorRole.objects.filter(paper=paper):
+            for role in AuthorRole.objects.filter(submission=submission):
                 role.delete()
 
         for user in authors:
-            AuthorRole.objects.create(user=user, paper=paper)
+            AuthorRole.objects.create(user=user, submission=submission)
 
-        return paper
+        return submission
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['authors'] = UserSerializer(
-            map(lambda role: role.user, AuthorRole.objects.filter(paper=instance)),
+            map(lambda role: role.user, AuthorRole.objects.filter(submission=instance)),
             many=True).data
         return representation

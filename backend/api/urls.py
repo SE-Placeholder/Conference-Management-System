@@ -8,10 +8,9 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
 
     path('auth', include('authentication.urls')),
-    path('dummy', include('dummy.urls')),
 
     path('conferences', include('conference.urls')),
-    path('papers', include('paper.urls')),
+    path('submissions', include('submission.urls')),
 
     path('user', include('role.urls'))
 ]

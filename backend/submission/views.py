@@ -1,16 +1,16 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from submission.models import Paper
-from submission.serializers import PaperSerializer
+from submission.models import Submission
+from submission.serializers import SubmissionSerializer
 from role.models import AuthorRole
 
 
-# create paper: allow authenticated users
-# list papers: allow any
-# update paper: allow only users with author role for that paper
-# retrieve paper: allow any
-class PaperPermissions(BasePermission):
+# create submission: allow authenticated users
+# list submissions: allow any
+# update submission: allow only users with author role for that submission
+# retrieve submission: allow any
+class SubmissionPermissions(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
@@ -21,11 +21,11 @@ class PaperPermissions(BasePermission):
             return True
         if not bool(request.user and request.user.is_authenticated):
             return False
-        return AuthorRole.objects.filter(user=request.user, paper=obj).exists()
+        return AuthorRole.objects.filter(user=request.user, submission=obj).exists()
 
 
-class PaperViewSet(ModelViewSet):
-    queryset = Paper.objects.all()
-    serializer_class = PaperSerializer
-    permission_classes = [PaperPermissions]
+class SubmissionViewSet(ModelViewSet):
+    queryset = Submission.objects.all()
+    serializer_class = SubmissionSerializer
+    permission_classes = [SubmissionPermissions]
     lookup_field = 'id'

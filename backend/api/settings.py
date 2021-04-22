@@ -55,12 +55,10 @@ INSTALLED_APPS = [
     'allauth.account',
     'corsheaders',
 
-    'dummy',
-
     'authentication',
     'role',
     'conference',
-    'paper'
+    'submission'
 ]
 
 MIDDLEWARE = [

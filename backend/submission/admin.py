@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from submission.models import Paper
+from submission.models import Submission
 
-admin.site.register(Paper)
+admin.site.register(Submission)

@@ -1,22 +1,23 @@
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import SerializerMethodField, ListField, JSONField
+from rest_framework.fields import SerializerMethodField, JSONField
 from rest_framework.serializers import ModelSerializer
 
 from api.utils import get_user
 from conference.models import Conference
-from paper.models import Paper
-from paper.serializers import PaperSerializer
+from submission.models import Submission
+from submission.serializers import SubmissionSerializer
 from role.models import SteeringCommitteeRole
 from role.serializers import UserSerializer
 
 
 class ConferenceSerializer(ModelSerializer):
     steering_committee = JSONField(binary=True, write_only=True, required=False)
-    papers = SerializerMethodField()
+    submissions = SerializerMethodField()
 
     class Meta:
         model = Conference
-        fields = ['id', 'title', 'description', 'deadline', 'location', 'date', 'fee', 'steering_committee', 'papers']
+        fields = ['id', 'title', 'description', 'deadline', 'location', 'date', 'fee', 'steering_committee',
+                  'submissions']
 
     def create(self, validated_data):
         steering_committee = [self.context['request'].user]
@@ -35,9 +36,7 @@ class ConferenceSerializer(ModelSerializer):
         conference = super().create(validated_data)
 
         for user in steering_committee:
-            SteeringCommitteeRole.objects.create(
-                user=user,
-                conference=conference)
+            SteeringCommitteeRole.objects.create(user=user, conference=conference)
 
         return conference
 
@@ -74,8 +73,6 @@ class ConferenceSerializer(ModelSerializer):
         return data
 
     @staticmethod
-    def get_papers(conference):
-        papers = PaperSerializer(
-            Paper.objects.filter(conference=conference),
-            many=True)
-        return papers.data
+    def get_submissions(conference):
+        submissions = SubmissionSerializer(Submission.objects.filter(conference=conference), many=True)
+        return submissions.data

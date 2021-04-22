@@ -36,7 +36,7 @@ class UserConferencesView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-class UserPapersView(APIView):
+class UserSubmissionsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -45,20 +45,20 @@ class UserPapersView(APIView):
         conferences = {}
 
         for role in roles:
-            paper = role.paper
-            conference = paper.conference
+            submission = role.submission
+            conference = submission.conference
             if conference.id not in conferences:
                 conferences[conference.id] = []
             conferences[conference.id].append({
-                'title': paper.title
+                'title': submission.title
             })
 
         data = []
-        for conferenceid, papers in conferences.items():
+        for conferenceid, submission in conferences.items():
             data.append({
                 'id': conferenceid,
                 'title': Conference.objects.get(id=conferenceid).title,
-                'papers': papers
+                'submissions': submission
             })
 
         return Response(data, status=status.HTTP_200_OK)

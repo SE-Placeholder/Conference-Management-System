@@ -18,7 +18,16 @@
 - - should be configured to link to `https://se-placeholder.cf/recover-password.html?id=<uidb64>&token=<token>` which will make the request to the api
 
 ## frontend
+- [high priority] modal for editing papers
+- [medium priority] modal for paper bidding
+- [medium priority] disable `get a ticket` button for conferences that the user already joined
 - [medium priority] make tag inputs more intuitive
+- [medium priority] also update application state on the frontend
+- - when the application state changes (the user creates a new conference, for example) the window reloads (current behavior)
+- - update the components on state change, without reloading
+- [low priority] show `no papers submitted` when viewing paper list for a conferene with no submissions
+- [low priority] paper list modal needs bottom margin
+- [low priority] popup box for info and error messages
 - - currently tag inputs look the same way as text inuts
 - - for tag inputs the user has to press enter to add the input text to the tag list
 - [low priority] rename paper object to submission
