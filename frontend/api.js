@@ -15,9 +15,9 @@ const endpoints = {
     joinConference: 'conferences/<id>/join',
 
     userConferences: '/user/conferences',
-    userPapers: '/user/papers',
+    userSubmissions: '/user/submissions',
 
-    papers: 'papers'
+    submissions: 'submissions'
 }
 
 const pathEncode = (endpoint, ...arguments) =>
@@ -55,12 +55,12 @@ const api = {
     user: {
         conferences: () =>
             client.get(endpoints.userConferences),
-        papers: () =>
-            client.get(endpoints.userPapers)
+        submissions: () =>
+            client.get(endpoints.userSubmissions)
     },
-    papers: {
+    submissions: {
         list: () =>
-            client.get(endpoints.papers),
+            client.get(endpoints.submissions),
         create: ({title, conference, topics, keywords, abstract, paper, authors}) => {
             data = new FormData()
             data.append('title', title)
@@ -70,7 +70,7 @@ const api = {
             data.append('paper', paper)
             data.append('keywords', JSON.stringify(keywords))
             data.append('topics', JSON.stringify(topics))
-            return client.post(endpoints.papers, data)
+            return client.post(endpoints.submissions, data)
         }
     },
     setUnauthorizedCallback: callback =>

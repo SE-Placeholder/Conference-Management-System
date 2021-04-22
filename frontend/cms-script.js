@@ -22,7 +22,7 @@ document.addEventListener('readystatechange', () => {
         addConferenceModal = addConferenceModal.mount('#add-conference-modal')
         editConferenceModal = editConferenceModal.mount('#edit-conference-modal')
         joinConferenceModal = joinConferenceModal.mount('#join-conference-modal')
-        viewPapersModal = viewPapersModal.mount('#view-papers-modal')
+        viewSubmissionsModal = viewSubmissionsModal.mount('#view-papers-modal')
 
         menuComponent = menuComponent.mount('#menu')
     }
@@ -109,15 +109,16 @@ dahsboardTabComponent = Vue.createApp({
     data() {
         return {
             conferences: [],
-            papers: []
+            submissions: []
         }
     },
     mounted() {
+        // TODO: join these on the backend
         api.user.conferences()
             .then(response => this.conferences = response.data)
             .catch(error => alert(JSON.stringify(error)))
-        api.user.papers()
-            .then(response => this.papers = response.data)
+        api.user.submissions()
+            .then(response => this.submissions = response.data)
             .catch(error => alert(JSON.stringify(error)))
     },
     methods: {
@@ -133,8 +134,8 @@ dahsboardTabComponent = Vue.createApp({
             document.querySelector('#edit-conference-modal').style.display = 'block'
         },
 
-        showViewPapersModal(conference) {
-            viewPapersModal.$data.papers = [...conference.papers]
+        showViewSubmissionsModal(conference) {
+            viewSubmissionsModal.$data.submissions = [...conference.submissions]
             showModal('view-papers-modal')
         }
     }
@@ -191,7 +192,7 @@ submitProposalModal = Vue.createApp({
     },
     methods: {
         submitProposal() {
-            api.papers.create({
+            api.submissions.create({
                 title: this.title,
                 conference: this.conferenceId,
                 topics: [...this.topics_list],
@@ -322,10 +323,10 @@ joinConferenceModal = Vue.createApp({
 })
 
 
-viewPapersModal = Vue.createApp({
+viewSubmissionsModal = Vue.createApp({
     data() {
         return {
-            papers: []
+            submissions: []
         }
     },
     methods: {
