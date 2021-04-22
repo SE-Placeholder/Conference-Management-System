@@ -3,7 +3,7 @@ from rest_framework.fields import JSONField
 from rest_framework.serializers import ModelSerializer
 
 from api.utils import get_user
-from paper.models import Paper
+from submission.models import Paper
 from role.models import AuthorRole
 from role.serializers import UserSerializer
 

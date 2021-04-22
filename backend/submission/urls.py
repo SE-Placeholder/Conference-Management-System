@@ -1,6 +1,6 @@
 from django.urls import path
 
-from paper.views import PaperViewSet
+from submission.views import PaperViewSet
 
 urlpatterns = [
     path('', PaperViewSet.as_view({'get': 'list', 'post': 'create'})),

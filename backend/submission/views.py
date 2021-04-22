@@ -1,8 +1,8 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from paper.models import Paper
-from paper.serializers import PaperSerializer
+from submission.models import Paper
+from submission.serializers import PaperSerializer
 from role.models import AuthorRole
 
 
