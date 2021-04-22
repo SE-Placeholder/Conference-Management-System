@@ -233,10 +233,10 @@ form textarea {
 }
 
 .loaded #loader-wrapper {
-    animation: yeet 1s ease-out forwards;
+    animation: fade-out 1s ease-in forwards;
 }
 
-@keyframes yeet {
+@keyframes fade-out {
     0% {
         opacity: initial;
         visibility: initial;
