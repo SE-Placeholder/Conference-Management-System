@@ -28,3 +28,11 @@ class ListenerRole(Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.conference.title}'
+
+
+class ReviewerRole(Model):
+    user = ForeignKey(User, on_delete=models.CASCADE)
+    proposal = ForeignKey(Proposal, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user.username} - {self.proposal.title}'

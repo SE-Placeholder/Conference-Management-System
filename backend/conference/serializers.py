@@ -79,3 +79,20 @@ class ConferenceSerializer(ModelSerializer):
     def get_proposals(conference):
         proposals = ProposalSerializer(Proposal.objects.filter(conference=conference), many=True)
         return proposals.data
+
+    @staticmethod
+    def get_needs_reviewer_repartition(conference):
+        print(timezone.now())
+        print(conference.bidding_deadline)
+        if timezone.now() < conference.bidding_deadline:
+            return False
+
+        proposals = Proposal.objects.filter(conference=conference)
+        if ReviewerRole.objects.filter(**{'proposal__in': proposals}).exists():
+            return False
+
+        return True
+
+
+class DesignateReviewersSerializer(Serializer):
+    repartition = JSONField(binary=True)

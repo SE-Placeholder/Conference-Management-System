@@ -35,6 +35,7 @@ class ProposalViewSet(ModelViewSet):
 
 
 # TODO: this code makes me want to die, will refactor later
+# TODO: use serializer
 class BidProposalView(APIView):
     permission_classes = [IsAuthenticated]
 
