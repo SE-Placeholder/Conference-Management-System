@@ -4,20 +4,20 @@ from rest_framework.serializers import ModelSerializer
 
 from api.utils import get_user
 from conference.models import Conference
-from submission.models import Submission
-from submission.serializers import SubmissionSerializer
+from proposal.models import Proposal
+from proposal.serializers import ProposalSerializer
 from role.models import SteeringCommitteeRole
 from role.serializers import UserSerializer
 
 
 class ConferenceSerializer(ModelSerializer):
     steering_committee = JSONField(binary=True, write_only=True, required=False)
-    submissions = SerializerMethodField()
+    proposals = SerializerMethodField()
 
     class Meta:
         model = Conference
         fields = ['id', 'title', 'description', 'deadline', 'location', 'date', 'fee', 'steering_committee',
-                  'submissions']
+                  'proposals']
 
     def create(self, validated_data):
         steering_committee = [self.context['request'].user]
@@ -73,6 +73,6 @@ class ConferenceSerializer(ModelSerializer):
         return data
 
     @staticmethod
-    def get_submissions(conference):
-        submissions = SubmissionSerializer(Submission.objects.filter(conference=conference), many=True)
-        return submissions.data
+    def get_proposals(conference):
+        proposals = ProposalSerializer(Proposal.objects.filter(conference=conference), many=True)
+        return proposals.data

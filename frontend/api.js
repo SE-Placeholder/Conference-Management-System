@@ -1,5 +1,6 @@
 const client = axios.create({
-    baseURL: 'https://kind-wind-83282.pktriot.net/'
+    // baseURL: 'https://kind-wind-83282.pktriot.net/'
+    baseURL: 'http://localhost:1337/'
 })
 
 const endpoints = {
@@ -15,9 +16,9 @@ const endpoints = {
     joinConference: 'conferences/<id>/join',
 
     userConferences: '/user/conferences',
-    userSubmissions: '/user/submissions',
+    userProposals: '/user/proposals',
 
-    submissions: 'submissions'
+    proposals: 'proposals'
 }
 
 const pathEncode = (endpoint, ...arguments) =>
@@ -55,12 +56,12 @@ const api = {
     user: {
         conferences: () =>
             client.get(endpoints.userConferences),
-        submissions: () =>
-            client.get(endpoints.userSubmissions)
+        proposals: () =>
+            client.get(endpoints.userProposals)
     },
-    submissions: {
+    proposals: {
         list: () =>
-            client.get(endpoints.submissions),
+            client.get(endpoints.proposals),
         create: ({title, conference, topics, keywords, abstract, paper, authors}) => {
             data = new FormData()
             data.append('title', title)
@@ -70,7 +71,7 @@ const api = {
             data.append('paper', paper)
             data.append('keywords', JSON.stringify(keywords))
             data.append('topics', JSON.stringify(topics))
-            return client.post(endpoints.submissions, data)
+            return client.post(endpoints.proposals, data)
         }
     },
     setUnauthorizedCallback: callback =>

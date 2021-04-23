@@ -10,7 +10,7 @@ urlpatterns = [
     path('auth', include('authentication.urls')),
 
     path('conferences', include('conference.urls')),
-    path('submissions', include('submission.urls')),
+    path('proposals', include('proposal.urls')),
 
     path('user', include('role.urls'))
 ]

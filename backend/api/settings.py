@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'authentication',
     'role',
     'conference',
-    'submission'
+    'proposal'
 ]
 
 MIDDLEWARE = [

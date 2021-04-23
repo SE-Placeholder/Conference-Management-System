@@ -136,7 +136,7 @@
                         <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditConferenceModal(conference)">
                             Edit
                         </button>
-                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showViewSubmissionsModal(conference)">
+                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showViewProposalsModal(conference)">
                             View Papers
                         </button>
                     </div>
@@ -149,16 +149,17 @@
     <div id="dashboard-papers-tab" class="dashboard-content-tab w3-container w3-cell">
         <h2 class="w3-container w3-xxlarge">My Papers</h2>
 
-        <div v-for="conference in submissions">
+        <!-- TODO: rename proposal to something more suggestive (here it's a list of conferences that contain information about proposals) -->
+        <div v-for="conference in proposals">
             <!-- My Papers On Conference Details Card -->
             <div class="w3-panel">
                 <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
                     <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
                     <!-- Papers List -->
-                    <div v-for="submission in conference.submissions">
+                    <div v-for="proposal in conference.proposals">
                         <div class="w3-bar">
                             <div class="w3-bar-item">
-                                <article class="conference-details-primary w3-large">{{submission.title}}</article>
+                                <article class="conference-details-primary w3-large">{{proposal.title}}</article>
                             </div>
                             <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="">
                                 Edit
@@ -448,17 +449,17 @@
         </header>
 
         <!-- Paper Panel Oficial -->
-        <div v-for="submission in submissions">
+        <div v-for="proposal in proposals">
             <div class="w3-panel">
                 <!-- Paper Name -->
-                <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" v-on:click="openAccordionTab(submission.id)">
-                    <p class="w3-left w3-large w3-padding" style="width: 100%;">{{submission.title}}<span class="icon material-icons w3-right md-24">expand_more</span></p>
+                <div class="w3-container w3-block w3-row w3-border w3-hover-grey w3-round" style="cursor: pointer" v-on:click="openAccordionTab(proposal.id)">
+                    <p class="w3-left w3-large w3-padding" style="width: 100%;">{{proposal.title}}<span class="icon material-icons w3-right md-24">expand_more</span></p>
                 </div>
                 <!-- Dropdown -->
-                <div :id="'view-papers-section' + submission.id" class="w3-row w3-hide">
+                <div :id="'view-papers-section' + proposal.id" class="w3-row w3-hide">
                     <!-- TODO: make this not hardcoded -->
-                    <button :class="['w3-button', 'w3-third', submission.abstract? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+submission.abstract"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
-                    <button :class="['w3-button', 'w3-third', submission.paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+submission.paper"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
+                    <button :class="['w3-button', 'w3-third', proposal.abstract? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.abstract"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
+                    <button :class="['w3-button', 'w3-third', proposal.paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.paper"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
                     <button class="w3-button w3-third"><span class="icon material-icons md-18">rate_review</span> Bid For Review</button>
                 </div>
             </div>

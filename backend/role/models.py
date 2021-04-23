@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Model, ForeignKey
 
 from conference.models import Conference
-from submission.models import Submission
+from proposal.models import Proposal
 
 
 class SteeringCommitteeRole(Model):
@@ -16,10 +16,10 @@ class SteeringCommitteeRole(Model):
 
 class AuthorRole(Model):
     user = ForeignKey(User, on_delete=models.CASCADE)
-    submission = ForeignKey(Submission, on_delete=models.CASCADE)
+    proposal = ForeignKey(Proposal, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.user.username} - {self.submission.title}'
+        return f'{self.user.username} - {self.proposal.title}'
 
 
 class ListenerRole(Model):

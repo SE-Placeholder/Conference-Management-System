@@ -1,16 +1,16 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from submission.models import Submission
-from submission.serializers import SubmissionSerializer
+from proposal.models import Proposal
+from proposal.serializers import ProposalSerializer
 from role.models import AuthorRole
 
 
-# create submission: allow authenticated users
-# list submissions: allow any
-# update submission: allow only users with author role for that submission
-# retrieve submission: allow any
-class SubmissionPermissions(BasePermission):
+# create proposal: allow authenticated users
+# list proposals: allow any
+# update proposal: allow only users with author role for that proposal
+# retrieve proposal: allow any
+class ProposalPermissions(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
@@ -21,11 +21,11 @@ class SubmissionPermissions(BasePermission):
             return True
         if not bool(request.user and request.user.is_authenticated):
             return False
-        return AuthorRole.objects.filter(user=request.user, submission=obj).exists()
+        return AuthorRole.objects.filter(user=request.user, proposal=obj).exists()
 
 
-class SubmissionViewSet(ModelViewSet):
-    queryset = Submission.objects.all()
-    serializer_class = SubmissionSerializer
-    permission_classes = [SubmissionPermissions]
+class ProposalViewSet(ModelViewSet):
+    queryset = Proposal.objects.all()
+    serializer_class = ProposalSerializer
+    permission_classes = [ProposalPermissions]
     lookup_field = 'id'
