@@ -44,8 +44,8 @@ const api = {
             client.get(endpoints.conferences),
         retrieve: id =>
             client.get(pathEncode(endpoints.conferenceDetails, id)),
-        create: ({title, description, date, location, deadline, fee}) =>
-            client.post(endpoints.conferences, {title, description, date, location, deadline, fee}),
+        create: ({title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline}) =>
+            client.post(endpoints.conferences, {title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline}),
         update: ({id, title, description, date, location, deadline, fee, steering_committee}) =>
             client.post(pathEncode(endpoints.conferenceDetails, id), {
                 title, description, date, location, deadline, fee, steering_committee: JSON.stringify(steering_committee)

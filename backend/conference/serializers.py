@@ -1,23 +1,26 @@
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField, JSONField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer
 
 from api.utils import get_user
 from conference.models import Conference
 from proposal.models import Proposal
 from proposal.serializers import ProposalSerializer
-from role.models import SteeringCommitteeRole
+from role.models import SteeringCommitteeRole, ReviewerRole
 from role.serializers import UserSerializer
 
 
 class ConferenceSerializer(ModelSerializer):
     steering_committee = JSONField(binary=True, write_only=True, required=False)
     proposals = SerializerMethodField()
+    needs_reviewer_repartition = SerializerMethodField()
 
     class Meta:
         model = Conference
-        fields = ['id', 'title', 'description', 'deadline', 'location', 'date', 'fee', 'steering_committee',
-                  'proposals']
+        fields = ['id', 'title', 'description', 'location', 'date', 'fee',
+                  'abstract_deadline', 'proposal_deadline', 'bidding_deadline',
+                  'steering_committee', 'proposals', 'needs_reviewer_repartition']
 
     def create(self, validated_data):
         steering_committee = [self.context['request'].user]

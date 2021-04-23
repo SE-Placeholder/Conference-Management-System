@@ -248,8 +248,10 @@ addConferenceModal = Vue.createApp({
                 description: this.description,
                 date: this.date,
                 location: this.location,
-                deadline: this.deadline,
-                fee: this.fee
+                fee: this.fee,
+                abstract_deadline: this.deadline,
+                proposal_deadline: this.deadline,
+                bidding_deadline: this.deadline
             })
                 .then(response => window.location.reload())
                 .catch(error => alert(JSON.stringify(error)))
@@ -279,8 +281,10 @@ editConferenceModal = Vue.createApp({
                 description: this.description,
                 date: this.date,
                 location: this.location,
-                deadline: this.deadline,
                 fee: this.fee,
+                abstract_deadline: this.deadline,
+                proposal_deadline: this.deadline,
+                bidding_deadline: this.deadline,
                 steering_committee: [...this.steering_committee]
             })
                 .then(response => window.location.reload())

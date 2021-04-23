@@ -1,14 +1,17 @@
-from django.db import models
+from django.db.models import Model, CharField, DateTimeField, FloatField
 
 
-class Conference(models.Model):
-    title = models.CharField(max_length=64)
-    description = models.CharField(max_length=1024)
-    deadline = models.DateTimeField()
-    location = models.CharField(max_length=64)
-    date = models.DateTimeField()
-    fee = models.FloatField()
+class Conference(Model):
+    title = CharField(max_length=64)
+    description = CharField(max_length=1024)
+    location = CharField(max_length=64)
+    date = DateTimeField()
+    fee = FloatField()
+
+    abstract_deadline = DateTimeField()
+    proposal_deadline = DateTimeField()
+    bidding_deadline = DateTimeField()
 
     def __str__(self):
-        return f'{self.title} - {self.description[:32]}'
+        return f'{self.title} - {self.description}'
 
