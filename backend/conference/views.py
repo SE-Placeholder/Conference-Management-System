@@ -34,6 +34,7 @@ class ConferenceViewSet(ModelViewSet):
     lookup_field = 'id'
 
 
+# TODO: refactor
 class JoinConferenceView(APIView):
     permission_classes = [IsAuthenticated]
 
