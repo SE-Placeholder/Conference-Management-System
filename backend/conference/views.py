@@ -7,7 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 from api.utils import get_user
 from conference.models import Conference
 from conference.serializers import ConferenceSerializer, DesignateReviewersSerializer
-from proposal.models import Proposal
+from proposal.models import Proposal, Bid
 from role.models import ListenerRole, SteeringCommitteeRole, ReviewerRole
 
 
@@ -87,5 +87,8 @@ class DesignateReviewersView(APIView):
 
             for reviewer in reviewers:
                 reviewer.save()
+
+            for bid in Bid.objects.filter(proposal=proposal):
+                bid.delete()
 
         return Response({'status': 'Reviewer roles successfully assigned'})

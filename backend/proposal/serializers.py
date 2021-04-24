@@ -4,7 +4,7 @@ from rest_framework.serializers import ModelSerializer
 
 from api.utils import get_user
 from proposal.models import Proposal, Bid
-from role.models import AuthorRole
+from role.models import AuthorRole, ReviewerRole
 from role.serializers import UserSerializer
 
 
@@ -34,10 +34,11 @@ class BidSerializer(ModelSerializer):
 class ProposalSerializer(ModelSerializer):
     authors = JSONField(binary=True, write_only=True, required=False)
     bids = SerializerMethodField()
+    reviewers = SerializerMethodField()
 
     class Meta:
         model = Proposal
-        fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'bids', 'authors']
+        fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'bids', 'reviewers', 'authors']
 
     def create(self, validated_data):
         authors = [self.context['request'].user]
@@ -95,3 +96,10 @@ class ProposalSerializer(ModelSerializer):
     @staticmethod
     def get_bids(proposal):
         return BidSerializer(Bid.objects.filter(proposal=proposal), many=True).data
+
+    @staticmethod
+    def get_reviewers(proposal):
+        return UserSerializer(
+            map(lambda reviewer: reviewer.user, ReviewerRole.objects.filter(proposal=proposal)),
+            many=True
+        ).data
