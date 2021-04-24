@@ -1,19 +1,43 @@
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import JSONField
+from rest_framework.fields import JSONField, SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from api.utils import get_user
-from proposal.models import Proposal
+from proposal.models import Proposal, Bid
 from role.models import AuthorRole
 from role.serializers import UserSerializer
 
 
+# TODO: handle qualifier representation on model
+class BidSerializer(ModelSerializer):
+    user = SerializerMethodField()
+    qualifier = SerializerMethodField()
+
+    class Meta:
+        model = Bid
+        fields = ['user', 'qualifier']
+
+    @staticmethod
+    def get_user(bid):
+        return bid.user.username
+
+    @staticmethod
+    def get_qualifier(bid):
+        qualifiers = {
+            -1: 'negative',
+            0: 'neutral',
+            1: 'positive'
+        }
+        return qualifiers[bid.qualifier]
+
+
 class ProposalSerializer(ModelSerializer):
     authors = JSONField(binary=True, write_only=True, required=False)
+    bids = SerializerMethodField()
 
     class Meta:
         model = Proposal
-        fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'authors']
+        fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'bids', 'authors']
 
     def create(self, validated_data):
         authors = [self.context['request'].user]
@@ -67,3 +91,7 @@ class ProposalSerializer(ModelSerializer):
             map(lambda role: role.user, AuthorRole.objects.filter(proposal=instance)),
             many=True).data
         return representation
+
+    @staticmethod
+    def get_bids(proposal):
+        return BidSerializer(Bid.objects.filter(proposal=proposal), many=True).data
