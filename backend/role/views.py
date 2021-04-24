@@ -9,15 +9,6 @@ from conference.serializers import ConferenceSerializer
 from role.models import SteeringCommitteeRole, ListenerRole, AuthorRole
 
 
-# change to userserializer
-class UserListView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        users = map(lambda user: {'username': user.username, 'email': user.email}, User.objects.all())
-        return Response(users, status=status.HTTP_200_OK)
-
-
 class UserConferencesView(APIView):
     permission_classes = [IsAuthenticated]
 

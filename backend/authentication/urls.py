@@ -3,10 +3,10 @@ from dj_rest_auth.views import LoginView, PasswordResetView, PasswordResetConfir
 from dj_rest_auth.views import LogoutView, PasswordChangeView
 from django.urls import path
 
-from authentication.views import UserInfoView
+from authentication.views import StateInfoView
 
 urlpatterns = [
-    path('/info', UserInfoView.as_view(), name='info'),
+    path('/info', StateInfoView.as_view(), name='info'),
     path('/login', LoginView.as_view(), name='login'),
     path('/logout', LogoutView.as_view(), name='logout'),
     path('/register', RegisterView.as_view(), name='register'),
