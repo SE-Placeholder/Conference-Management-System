@@ -1,6 +1,6 @@
 const client = axios.create({
-    // baseURL: 'https://kind-wind-83282.pktriot.net/'
-    baseURL: 'http://localhost:1337/'
+    baseURL: 'https://kind-wind-83282.pktriot.net/'
+    // baseURL: 'http://localhost:1337/'
 })
 
 const endpoints = {
@@ -18,7 +18,9 @@ const endpoints = {
     userConferences: '/user/conferences',
     userProposals: '/user/proposals',
 
-    proposals: 'proposals'
+    proposals: 'proposals',
+    bidProposal: 'proposals/<id>/bid',
+    assignReviewers: 'proposals/<id>/assign-reviewers'
 }
 
 const pathEncode = (endpoint, ...arguments) =>
@@ -72,7 +74,9 @@ const api = {
             data.append('keywords', JSON.stringify(keywords))
             data.append('topics', JSON.stringify(topics))
             return client.post(endpoints.proposals, data)
-        }
+        },
+        bid: (id, qualifier) => client.post(pathEncode(endpoints.bidProposal, id), {qualifier}),
+        assignReviewers: (id, reviewers) => client.post(pathEncode(endpoints.assignReviewers, id), {reviewers})
     },
     setUnauthorizedCallback: callback =>
         api.unauthorizedCallback = callback

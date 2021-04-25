@@ -135,8 +135,16 @@ dahsboardTabComponent = Vue.createApp({
         },
 
         showViewProposalsModal(conference) {
+            // conference.proposals.forEach(proposal => {
+            //     proposal.current_reviewers = ['zsigi']
+            // })
             viewProposalsModal.$data.proposals = [...conference.proposals]
+            viewProposalsModal.$data.proposals.forEach(proposal => proposal.assigned_reviewers = ['zsigi'])
             showModal('view-papers-modal')
+        },
+
+        showEditProposalModal(conference) {
+            showModal('edit-proposal-modal')
         }
     }
 })
@@ -335,11 +343,37 @@ viewProposalsModal = Vue.createApp({
     },
     methods: {
         openAccordionTab(id) {
-            element = document.getElementById('view-papers-section' + id)
-            if (element.classList.contains("w3-show"))
-                element.classList.remove("w3-show")
-            else
-                element.classList.add("w3-show")
+            document.getElementById('view-papers-section' + id).classList.toggle("w3-show")
+        },
+        showPopup(id) {
+            document.getElementById('bid-popup' + id).classList.toggle("w3-show")
+        },
+        showReviewers(proposal) {
+            document.getElementById('reviewers-popup' + proposal.id).classList.toggle("w3-show")
+        },
+        bid(id, qualifier) {
+            api.proposals.bid(id, qualifier)
+                .then(response => alert(response))
+        },
+        saveReviewers(proposal) {
+            api.proposals.assignReviewers(proposal.id, proposal.assigned_reviewers)
+                .then(response => console.log(response))
+        },
+        addTag(event, tag_list) {
+            event.preventDefault()
+            var val = event.target.value.trim()
+            if (val.length > 0) {
+                tag_list.push(val)
+                event.target.value = ''
+            }
+        },
+        removeTag(index, tag_list) {
+            tag_list.splice(index, 1)
+        },
+        removeLastTag(event, tag_list) {
+            if (event.target.value.length === 0) {
+                this.removeTag(tag_list.length - 1, tag_list)
+            }
         }
     }
 })

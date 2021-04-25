@@ -161,7 +161,7 @@
                             <div class="w3-bar-item">
                                 <article class="conference-details-primary w3-large">{{proposal.title}}</article>
                             </div>
-                            <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="">
+                            <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditProposalModal(conference)">
                                 Edit
                             </button>
                         </div>
@@ -448,7 +448,7 @@
             <h1>Papers Submitted</h1>
         </header>
 
-        <!-- Paper Panel Oficial -->
+        <!-- Paper Panel Official -->
         <div v-for="proposal in proposals">
             <div class="w3-panel">
                 <!-- Paper Name -->
@@ -460,10 +460,113 @@
                     <!-- TODO: make this not hardcoded -->
                     <button :class="['w3-button', 'w3-third', proposal.abstract? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.abstract"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
                     <button :class="['w3-button', 'w3-third', proposal.paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.paper"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
-                    <button class="w3-button w3-third"><span class="icon material-icons md-18">rate_review</span> Bid For Review</button>
+<!--                    <button class="w3-button w3-third" v-on:click="showPopup(proposal.id)">-->
+<!--                        <span class="icon material-icons md-18">rate_review</span>-->
+<!--                        Bid For Review-->
+<!--                    </button>-->
+                    <div :id="'bid-popup' + proposal.id" class="w3-hide w3-row">
+                        <button class="w3-button w3-third" v-on:click="bid(proposal.id, 2)">ACCEPT</button>
+                        <button class="w3-button w3-third" v-on:click="bid(proposal.id, 1)">DON'T CARE</button>
+                        <button class="w3-button w3-third" v-on:click="bid(proposal.id, 0)">REJECT</button>
+                    </div>
+
+                    <button class="w3-button w3-third" v-on:click="showReviewers(proposal)">
+                        <span class="icon material-icons md-18">rate_review</span>
+                        View Reviewers
+                    </button>
+
+                    <div :id="'reviewers-popup' + proposal.id" class="w3-hide w3-row">
+                        <label class="">
+                            <span class="w3-col" style="width: auto">Reviewers assigned:</span>
+                            <span class="w3-rest">
+                                <div v-for='(tag, index) in proposal.assigned_reviewers' :key='tag' class="tag w3-tag w3-round-xxlarge">
+                                    <span @click='removeTag(index, proposal.assigned_reviewers)'>x</span>
+                                    {{ tag }}
+                                </div>
+                            </span>
+
+                            <input type="text" class="w3-input w3-margin-bottom w3-col w3-right" style="width: 25%; margin-bottom: 0 !important" placeholder="Add Reviewers &plus;" @keydown.enter='addTag($event, proposal.assigned_reviewers)' @keydown.delete='removeLastTag($event, proposal.assigned_reviewers)'>
+                            <button class="w3-button w3-right" v-on:click="saveReviewers(proposal)">
+                                Save
+                            </button>
+
+                        </label>
+                    </div>
+
                 </div>
+
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Edit Proposal Modal -->
+<div id="edit-proposal-modal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+        <header class="w3-container presentation">
+            <span onclick="document.getElementById('edit-proposal-modal').style.display='none'" class="cms-button w3-button w3-display-topright">&times;</span>
+            <h1>Edit Proposal</h1>
+        </header>
+
+        <form class="w3-container w3-margin-top">
+            <label>
+                <span>Title</span>
+                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Proposal Title" v-model="title" required>
+            </label>
+
+            <label>
+                <!-- TODO: make user press enter -->
+                <span>Keywords</span>
+                <span class="w3-block">
+                    <div v-for='(tag, index) in keywords_list' :key='tag' class="tag w3-tag w3-round-xxlarge">
+                        <span @click='removeTag(index, keywords_list)'>x</span>
+                        {{ tag }}
+                    </div>
+                </span>
+
+                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Keywords" @keydown.enter='addTag($event, keywords_list)' @keydown.delete='removeLastTag($event, keywords_list)'>
+            </label>
+
+            <label>
+                <span>Topics</span>
+                <span class="w3-block">
+                    <div v-for='(tag, index) in topics_list' :key='tag' class="tag w3-tag w3-round-xxlarge">
+                        <span @click='removeTag(index, topics_list)'>x</span>
+                        {{ tag }}
+                    </div>
+                </span>
+
+                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Topics" @keydown.enter='addTag($event, topics_list)' @keydown.delete='removeLastTag($event, topics_list)'>
+            </label>
+
+            <label>
+                <span>Co-authors (if any)</span>
+                <span class="w3-block">
+                    <div v-for='(tag, index) in authors_list' :key='tag' class="tag w3-tag w3-round-xxlarge">
+                        <span @click='removeTag(index, authors_list)'>x</span>
+                        {{ tag }}
+                    </div>
+                </span>
+
+                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Keywords" @keydown.enter='addTag($event, authors_list)' @keydown.delete='removeLastTag($event, authors_list)'>
+            </label>
+
+            <label>
+                <span>Abstract</span>
+                <input type="file" class="w3-input w3-margin-bottom" id="update-abstract" v-on:change="abstractUpload()" required>
+            </label>
+
+            <label>
+                <span>Paper (PDF)</span>
+                <input type="file" class="w3-input w3-margin-bottom" id="update-paper" v-on:change="paperUpload()" required>
+            </label>
+        </form>
+
+        <footer class="w3-container w3-footer w3-row">
+            <button type="button" class="w3-button w3-half" onclick="document.getElementById('edit-proposal-modal').style.display='none'">Cancel</button>
+            <button type="button" class="w3-button w3-half" v-on:click="editProposal">Save</button>
+        </footer>
+
     </div>
 </div>
 
