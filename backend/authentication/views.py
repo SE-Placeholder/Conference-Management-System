@@ -14,5 +14,6 @@ class StateInfoView(APIView):
         return Response({
             "authenticated": True,
             "username": request.user.username,
+            "user_id": request.user.id,
             "user_list": UserSerializer(User.objects.all(), many=True).data
         }, status=status.HTTP_200_OK)

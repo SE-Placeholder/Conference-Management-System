@@ -14,13 +14,12 @@ from role.serializers import UserSerializer
 class ConferenceSerializer(ModelSerializer):
     steering_committee = JSONField(binary=True, write_only=True, required=False)
     proposals = SerializerMethodField()
-    needs_reviewer_repartition = SerializerMethodField()
 
     class Meta:
         model = Conference
         fields = ['id', 'title', 'description', 'location', 'date', 'fee',
                   'abstract_deadline', 'proposal_deadline', 'bidding_deadline',
-                  'steering_committee', 'proposals', 'needs_reviewer_repartition']
+                  'steering_committee', 'proposals']
 
     def create(self, validated_data):
         steering_committee = [self.context['request'].user]
@@ -80,19 +79,15 @@ class ConferenceSerializer(ModelSerializer):
         proposals = ProposalSerializer(Proposal.objects.filter(conference=conference), many=True)
         return proposals.data
 
-    @staticmethod
-    def get_needs_reviewer_repartition(conference):
-        print(timezone.now())
-        print(conference.bidding_deadline)
-        if timezone.now() < conference.bidding_deadline:
-            return False
-
-        proposals = Proposal.objects.filter(conference=conference)
-        if ReviewerRole.objects.filter(**{'proposal__in': proposals}).exists():
-            return False
-
-        return True
-
-
-class DesignateReviewersSerializer(Serializer):
-    repartition = JSONField(binary=True)
+    # @staticmethod
+    # def get_needs_reviewer_repartition(conference):
+    #     print(timezone.now())
+    #     print(conference.bidding_deadline)
+    #     if timezone.now() < conference.bidding_deadline:
+    #         return False
+    #
+    #     proposals = Proposal.objects.filter(conference=conference)
+    #     if ReviewerRole.objects.filter(**{'proposal__in': proposals}).exists():
+    #         return False
+    #
+    #     return True

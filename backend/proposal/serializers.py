@@ -1,6 +1,6 @@
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import JSONField, SerializerMethodField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.fields import JSONField, SerializerMethodField, ListField
+from rest_framework.serializers import ModelSerializer, Serializer
 
 from api.utils import get_user
 from proposal.models import Proposal, Bid
@@ -19,7 +19,7 @@ class BidSerializer(ModelSerializer):
 
     @staticmethod
     def get_user(bid):
-        return bid.user.username
+        return UserSerializer(bid.user).data
 
     @staticmethod
     def get_qualifier(bid):
@@ -28,7 +28,8 @@ class BidSerializer(ModelSerializer):
             0: 'neutral',
             1: 'positive'
         }
-        return qualifiers[bid.qualifier]
+        return bid.qualifier
+        # qualifiers[bid.qualifier]
 
 
 class ProposalSerializer(ModelSerializer):
@@ -103,3 +104,7 @@ class ProposalSerializer(ModelSerializer):
             map(lambda reviewer: reviewer.user, ReviewerRole.objects.filter(proposal=proposal)),
             many=True
         ).data
+
+
+class AssignReviewersSerializer(Serializer):
+    reviewers = ListField()

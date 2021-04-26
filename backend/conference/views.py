@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.utils import get_user
 from conference.models import Conference
-from conference.serializers import ConferenceSerializer, DesignateReviewersSerializer
+from conference.serializers import ConferenceSerializer
 from proposal.models import Proposal, Bid
 from role.models import ListenerRole, SteeringCommitteeRole, ReviewerRole
 
@@ -52,43 +52,3 @@ class JoinConferenceView(APIView):
             return Response({'status': 'Successfully joined conference'}, status=status.HTTP_201_CREATED)
         except Conference.DoesNotExist:
             return Response({'status': 'Conference does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-
-# TODO: change permission class, allow only steering committee members
-# TODO: error checking and move everything into serializer
-class DesignateReviewersView(APIView):
-    # permission_classes = [IsAuthenticated]
-
-    def post(self, request, id):
-        serializer = DesignateReviewersSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        reviewers = []
-        errors = []
-
-        for repartition in serializer.validated_data['repartition']:
-            # TODO: check if proposal field exists and if the proposal is valid
-            proposal = repartition['proposal']
-            proposal = Proposal.objects.get(id=proposal)
-
-            # TODO: check if reviewers field exists
-            for reviewer in repartition['reviewers']:
-                user = get_user(reviewer)
-                if user:
-                    reviewers.append(ReviewerRole(
-                        user=user,
-                        proposal=proposal))
-                else:
-                    errors.append(f'user {reviewer} not found.')
-
-            if errors:
-                return Response({'error': errors}, status=status.HTTP_400_BAD_REQUEST)
-
-            for reviewer in reviewers:
-                reviewer.save()
-
-            for bid in Bid.objects.filter(proposal=proposal):
-                bid.delete()
-
-        return Response({'status': 'Reviewer roles successfully assigned'})

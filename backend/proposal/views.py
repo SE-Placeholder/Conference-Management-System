@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
+from api.utils import get_user
 from proposal.models import Proposal, Bid
-from proposal.serializers import ProposalSerializer
-from role.models import AuthorRole, SteeringCommitteeRole
+from proposal.serializers import ProposalSerializer, AssignReviewersSerializer
+from role.models import AuthorRole, SteeringCommitteeRole, ReviewerRole
 
 
 # create proposal: allow authenticated users
@@ -58,11 +59,14 @@ class BidProposalView(APIView):
                 if qualifier not in [-1, 0, 1]:
                     return Response({'status': 'Qualifier should be either -1, 0 or 1'}, status=status.HTTP_400_BAD_REQUEST)
 
+                for bid in Bid.objects.filter(user=request.user, proposal=proposal):
+                    bid.delete()
+
                 Bid.objects.create(
                     user=request.user,
                     proposal=proposal,
-                    qualifier=qualifier
-                )
+                    qualifier=qualifier)
+
             except ValueError:
                 return Response({'status': 'Qualifier should be either -1, 0 or 1'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -70,3 +74,43 @@ class BidProposalView(APIView):
 
         except Proposal.DoesNotExist:
             return Response({'status': 'Proposal does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# TODO: change permission class, allow only steering committee members
+# TODO: error checking and move everything into serializer
+class AssignReviewersView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        serializer = AssignReviewersSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # TODO: check
+        proposal = Proposal.objects.get(id=id)
+
+        reviewers = []
+        errors = []
+
+        for reviewer in serializer.validated_data['reviewers']:
+            user = get_user(reviewer)
+            if user:
+                reviewers.append(ReviewerRole(
+                    user=user,
+                    proposal=proposal))
+            else:
+                errors.append(f'user {reviewer} not found.')
+
+        if errors:
+            return Response({'error': errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        for role in ReviewerRole.objects.filter(proposal=proposal):
+            role.delete()
+
+        for reviewer in reviewers:
+            reviewer.save()
+
+        for bid in Bid.objects.filter(proposal=proposal):
+            bid.delete()
+
+        return Response({'status': 'Reviewer roles successfully assigned'})
