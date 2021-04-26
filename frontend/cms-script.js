@@ -53,6 +53,7 @@ menuComponent = Vue.createApp({
                 this.username = response.data.username
                 dataStore.set('authenticated', response.data.authenticated)
                 dataStore.set('username', response.data.username)
+                dataStore.set('user_id', response.data.user_id)
 
                 document.body.classList.add("loaded")
 
@@ -140,6 +141,7 @@ dahsboardTabComponent = Vue.createApp({
             // })
             viewProposalsModal.$data.proposals = [...conference.proposals]
             viewProposalsModal.$data.proposals.forEach(proposal => proposal.assigned_reviewers = ['zsigi'])
+            viewProposalsModal.$data.bidding_deadline = conference.bidding_deadline
             showModal('view-papers-modal')
         },
 
@@ -338,7 +340,8 @@ joinConferenceModal = Vue.createApp({
 viewProposalsModal = Vue.createApp({
     data() {
         return {
-            proposals: []
+            proposals: [],
+            bidding_deadline: new Date()
         }
     },
     methods: {
@@ -353,7 +356,26 @@ viewProposalsModal = Vue.createApp({
         },
         bid(id, qualifier) {
             api.proposals.bid(id, qualifier)
-                .then(response => alert(response))
+                .then(response => {
+                    this.proposals.forEach(proposal => {
+                        if (proposal.id == id) {
+                            // console.log(proposal.bids)
+                            // TODO: check user andfor empty bids array
+                            proposal.bids[0].qualifier = qualifier
+                        }
+                    })
+                    }
+                    // window.location.reload()
+                )
+                .catch(error => console.log(error))
+        },
+        //TODO: refactor... too bad
+        bidChoice(choice, bids) {
+            bid = [...bids].find(bid => bid.user.id == dataStore.get("user_id"))
+            return bid && bid.qualifier == choice
+        },
+        isBiddingPhase() {
+            return new Date() < new Date(this.bidding_deadline)
         },
         saveReviewers(proposal) {
             api.proposals.assignReviewers(proposal.id, proposal.assigned_reviewers)

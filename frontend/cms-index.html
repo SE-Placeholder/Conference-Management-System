@@ -460,20 +460,22 @@
                     <!-- TODO: make this not hardcoded -->
                     <button :class="['w3-button', 'w3-third', proposal.abstract? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.abstract"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
                     <button :class="['w3-button', 'w3-third', proposal.paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.paper"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
-<!--                    <button class="w3-button w3-third" v-on:click="showPopup(proposal.id)">-->
-<!--                        <span class="icon material-icons md-18">rate_review</span>-->
-<!--                        Bid For Review-->
-<!--                    </button>-->
-                    <div :id="'bid-popup' + proposal.id" class="w3-hide w3-row">
-                        <button class="w3-button w3-third" v-on:click="bid(proposal.id, 2)">ACCEPT</button>
-                        <button class="w3-button w3-third" v-on:click="bid(proposal.id, 1)">DON'T CARE</button>
-                        <button class="w3-button w3-third" v-on:click="bid(proposal.id, 0)">REJECT</button>
-                    </div>
 
-                    <button class="w3-button w3-third" v-on:click="showReviewers(proposal)">
+                    <button v-if="isBiddingPhase()" class="w3-button w3-third" v-on:click="showPopup(proposal.id)">
+                        <span class="icon material-icons md-18">rate_review</span>
+                        Bid For Review
+                    </button>
+
+                    <button v-else class="w3-button w3-third" v-on:click="showReviewers(proposal)">
                         <span class="icon material-icons md-18">rate_review</span>
                         View Reviewers
                     </button>
+
+                    <div :id="'bid-popup' + proposal.id" class="w3-hide w3-row">
+                        <button  :class="['w3-button', 'w3-third', bidChoice(1, proposal.bids)? 'w3-green' : 'w3-white']" v-on:click="bid(proposal.id, 1)">ACCEPT</button>
+                        <button  :class="['w3-button', 'w3-third', bidChoice(0, proposal.bids)? 'w3-green' : 'w3-white']" v-on:click="bid(proposal.id, 0)">DON'T CARE</button>
+                        <button  :class="['w3-button', 'w3-third', bidChoice(-1, proposal.bids)? 'w3-green' : 'w3-white']" v-on:click="bid(proposal.id, -1)">REJECT</button>
+                    </div>
 
                     <div :id="'reviewers-popup' + proposal.id" class="w3-hide w3-row">
                         <label class="">
