@@ -17,13 +17,3 @@ class Proposal(models.Model):
 
     def __str__(self):
         return f'{self.title}'
-
-
-class Bid(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    proposal = models.ForeignKey(Proposal, on_delete=models.CASCADE)
-    qualifier = models.SmallIntegerField()
-
-    def __str__(self):
-        qualifiers = {-1: 'negative', 0: 'neutral', 1: 'positive'}
-        return f'{self.user.username} bid {qualifiers[self.qualifier]} for {self.proposal.title}'

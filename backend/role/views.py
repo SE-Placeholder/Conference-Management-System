@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 
 from conference.models import Conference
 from conference.serializers import ConferenceSerializer
+from proposal.views import BidPermissions
 from role.models import SteeringCommitteeRole, ListenerRole, AuthorRole
 
 
@@ -28,7 +29,7 @@ class UserConferencesView(APIView):
 
 
 class UserProposalsView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, BidPermissions]
 
     def get(self, request):
         roles = AuthorRole.objects.filter(user=request.user)

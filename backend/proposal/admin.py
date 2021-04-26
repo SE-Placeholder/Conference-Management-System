@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-from proposal.models import Proposal, Bid
+from proposal.models import Proposal
 
 admin.site.register(Proposal)
-admin.site.register(Bid)
