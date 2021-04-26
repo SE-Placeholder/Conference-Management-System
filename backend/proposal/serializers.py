@@ -3,32 +3,9 @@ from rest_framework.fields import JSONField, SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from api.utils import get_user
-from proposal.models import Proposal, Bid
-from role.models import AuthorRole, ReviewerRole
-from role.serializers import UserSerializer
-
-
-# TODO: handle qualifier representation on model
-class BidSerializer(ModelSerializer):
-    user = SerializerMethodField()
-    qualifier = SerializerMethodField()
-
-    class Meta:
-        model = Bid
-        fields = ['user', 'qualifier']
-
-    @staticmethod
-    def get_user(bid):
-        return bid.user.username
-
-    @staticmethod
-    def get_qualifier(bid):
-        qualifiers = {
-            -1: 'negative',
-            0: 'neutral',
-            1: 'positive'
-        }
-        return qualifiers[bid.qualifier]
+from proposal.models import Proposal
+from role.models import AuthorRole, ReviewerRole, SteeringCommitteeRole, BidRole
+from role.serializers import UserSerializer, BidSerializer
 
 
 class ProposalSerializer(ModelSerializer):
@@ -58,6 +35,9 @@ class ProposalSerializer(ModelSerializer):
 
         for user in authors:
             AuthorRole.objects.create(user=user, proposal=proposal)
+
+        for bidder in SteeringCommitteeRole.objects.filter(conference=proposal.conference):
+            BidRole.objects.create(user=bidder.user, proposal=proposal).save()
 
         return proposal
 
@@ -95,7 +75,7 @@ class ProposalSerializer(ModelSerializer):
 
     @staticmethod
     def get_bids(proposal):
-        return BidSerializer(Bid.objects.filter(proposal=proposal), many=True).data
+        return BidSerializer(BidRole.objects.filter(proposal=proposal), many=True).data
 
     @staticmethod
     def get_reviewers(proposal):

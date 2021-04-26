@@ -1,18 +1,22 @@
+from django.core import serializers
+from django.db import IntegrityError
 from rest_framework import status
 from rest_framework.permissions import BasePermission, SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from proposal.models import Proposal, Bid
+from proposal.models import Proposal
 from proposal.serializers import ProposalSerializer
-from role.models import AuthorRole, SteeringCommitteeRole
-
+from role.models import AuthorRole, SteeringCommitteeRole, BidRole
 
 # create proposal: allow authenticated users
 # list proposals: allow any
 # update proposal: allow only users with author role for that proposal
 # retrieve proposal: allow any
+from role.serializers import BidSerializer
+
+
 class ProposalPermissions(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
@@ -27,46 +31,63 @@ class ProposalPermissions(BasePermission):
         return AuthorRole.objects.filter(user=request.user, proposal=obj).exists()
 
 
+class ProposalBidPermissions(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated)
+
+    def has_object_permission(self, request, view, obj):
+        return bool(request.user and
+                    request.user.is_authenticated and
+                    SteeringCommitteeRole.objects.filter(user=request.user, conference=obj.conference).exists()
+                    )
+
+
+# TODO?: Modify the 2 classes into one
+class BidPermissions(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated)
+
+    def has_object_permission(self, request, view, obj):
+        return bool(request.user and
+                    request.user.is_authenticated and
+                    SteeringCommitteeRole.objects.filter(user=request.user, conference=obj.proposal.conference).exists()
+                    )
+
+
 class ProposalViewSet(ModelViewSet):
-    queryset = Proposal.objects.all()
     serializer_class = ProposalSerializer
-    permission_classes = [ProposalPermissions]
+    permission_classes = [ProposalPermissions, ProposalBidPermissions]
     lookup_field = 'id'
 
+    def get_queryset(self):
+        return Proposal.objects.filter(conference__committee__user=self.request.user)
 
-# TODO: this code makes me want to die, will refactor later
-# TODO: use serializer
-class BidProposalView(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def post(self, request, id):
+class BidProposalView(ModelViewSet):
+    serializer_class = BidSerializer
+    permission_classes = [IsAuthenticated, BidPermissions]
+
+    def get_queryset(self):
+        return BidRole.objects.filter(proposal=self.kwargs['id'])
+
+    def retrieve(self, request, *args, **kwargs):
+        data = self.get_queryset().all().values()
+
+        if len(data) == 0:
+            return Response({}, status=status.HTTP_200_OK)
+
+        self.kwargs['pk'] = data[0]['id']
+        return super().retrieve(request, *args, *kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        if len(self.get_queryset().all().values()) == 0:
+            return self.create(request)
+        self.kwargs['pk'] = self.get_queryset().all().values()[0]['id']
+        return super().partial_update(request, *args, *kwargs)
+
+    def create(self, request, id=-1):
         try:
-            proposal = Proposal.objects.get(id=id)
-
-            if not SteeringCommitteeRole.objects.filter(user=request.user, conference=proposal.conference).exists():
-                return Response(
-                    {'status': 'You need to be part of the steering committee to bid proposals'},
-                    status=status.HTTP_401_UNAUTHORIZED)
-
-            if 'qualifier' not in request.data:
-                return Response(
-                    {'status': 'Qualifier not found in request body'},
-                    status=status.HTTP_400_BAD_REQUEST)
-
-            try:
-                qualifier = int(request.data['qualifier'])
-                if qualifier not in [-1, 0, 1]:
-                    return Response({'status': 'Qualifier should be either -1, 0 or 1'}, status=status.HTTP_400_BAD_REQUEST)
-
-                Bid.objects.create(
-                    user=request.user,
-                    proposal=proposal,
-                    qualifier=qualifier
-                )
-            except ValueError:
-                return Response({'status': 'Qualifier should be either -1, 0 or 1'}, status=status.HTTP_400_BAD_REQUEST)
-
-            return Response({'status': 'Bid successfully submitted'}, status=status.HTTP_201_CREATED)
-
-        except Proposal.DoesNotExist:
-            return Response({'status': 'Proposal does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            new_bid = BidRole(proposal_id=id, user=request.user, qualifier=request.data['qualifier']).save()
+        except IntegrityError as error:
+            return self.partial_update(request)
+        return Response(new_bid, status=status.HTTP_201_CREATED)
