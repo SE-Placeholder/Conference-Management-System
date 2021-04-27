@@ -19,6 +19,7 @@ const endpoints = {
     userProposals: '/user/proposals',
 
     proposals: 'proposals',
+    proposalDetails: 'proposals/<id>',
     bidProposal: 'proposals/<id>/bid',
     assignReviewers: 'proposals/<id>/assign-reviewers'
 }
@@ -55,12 +56,6 @@ const api = {
         join: id =>
             client.post(pathEncode(endpoints.joinConference, id))
     },
-    user: {
-        conferences: () =>
-            client.get(endpoints.userConferences),
-        proposals: () =>
-            client.get(endpoints.userProposals)
-    },
     proposals: {
         list: () =>
             client.get(endpoints.proposals),
@@ -74,6 +69,18 @@ const api = {
             data.append('keywords', JSON.stringify(keywords))
             data.append('topics', JSON.stringify(topics))
             return client.post(endpoints.proposals, data)
+        },
+        // update: ({id, title, conference, topics, keywords, abstract, paper, authors}) => {
+        update: ({id, title, topics, keywords, abstract, paper, authors}) => {
+            data = new FormData()
+            data.append('title', title)
+            // data.append('conference', conference)
+            data.append('authors', JSON.stringify(authors))
+            data.append('abstract', abstract)
+            data.append('paper', paper)
+            data.append('keywords', JSON.stringify(keywords))
+            data.append('topics', JSON.stringify(topics))
+            return client.post(pathEncode(endpoints.proposalDetails, id), data)
         },
         bid: (id, qualifier) => client.post(pathEncode(endpoints.bidProposal, id), {qualifier}),
         assignReviewers: (id, reviewers) => client.post(pathEncode(endpoints.assignReviewers, id), {reviewers})

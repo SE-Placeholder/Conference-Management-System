@@ -13,13 +13,14 @@ from authentication.serializers import UserSerializer
 # TODO: refactor
 class ConferenceSerializer(ModelSerializer):
     steering_committee = JSONField(binary=True, write_only=True, required=False)
+    listeners = SerializerMethodField()
     proposals = SerializerMethodField()
 
     class Meta:
         model = Conference
         fields = ['id', 'title', 'description', 'location', 'date', 'fee',
                   'abstract_deadline', 'proposal_deadline', 'bidding_deadline',
-                  'steering_committee', 'proposals']
+                  'steering_committee', 'listeners', 'proposals']
 
     def create(self, validated_data):
         steering_committee = [self.context['request'].user]
@@ -78,6 +79,14 @@ class ConferenceSerializer(ModelSerializer):
     def get_proposals(conference):
         proposals = ProposalSerializer(Proposal.objects.filter(conference=conference), many=True)
         return proposals.data
+
+    @staticmethod
+    def get_listeners(conference):
+        proposals = UserSerializer(
+            map(lambda role: role.user, ListenerRole.objects.filter(conference=conference)),
+            many=True)
+        return proposals.data
+
 
 
 class JoinConferenceSerializer(Serializer):

@@ -56,7 +56,7 @@
                         <div class="w3-bar-item">
                             <article class="conference-details-primary w3-large">{{conference.description}}</article>
                             <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
-                            <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section>
+                            <!-- <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section> -->
                             <section class="conference-details-secondary w3-small">Fee: <span>${{conference.fee}}</span></section>
                             <section class="conference-details-secondary w3-small w3-display-bottomleft w3-margin">
                                 Want to propose a paper?
@@ -66,7 +66,7 @@
                         <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding-64 w3-margin" v-on:click="showConfirmJoinModal(conference.id, conference.title)">
                             Get a ticket
                             <p class="conference-details-secondary w3-tiny w3-margin-0 w3-center">
-                                Deadline: {{new Date(conference.deadline).toDateString()}}
+                                Deadline: {{new Date(conference.date).toDateString()}}
                             </p>
                         </button>
                     </div>
@@ -112,7 +112,7 @@
                         <div class="w3-bar-item">
                             <article class="conference-details-primary w3-large">{{conference.description}}</article>
                             <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
-                            <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section>
+                            <section class="conference-details-secondary w3-small">Date: <span>{{new Date(conference.date).toDateString()}}</span></section>
                         </div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@
                         <div class="w3-bar-item">
                             <article class="conference-details-primary w3-large">{{conference.description}}</article>
                             <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
-                            <section class="conference-details-secondary w3-small">Date: <span>{{conference.date}}</span></section>
+                            <section class="conference-details-secondary w3-small">Date: <span>{{new Date(conference.date).toDateString()}}</span></section>
                         </div>
                         <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditConferenceModal(conference)">
                             Edit
@@ -161,7 +161,7 @@
                             <div class="w3-bar-item">
                                 <article class="conference-details-primary w3-large">{{proposal.title}}</article>
                             </div>
-                            <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditProposalModal(conference)">
+                            <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditProposalModal(proposal)">
                                 Edit
                             </button>
                         </div>
@@ -566,7 +566,7 @@
 
         <footer class="w3-container w3-footer w3-row">
             <button type="button" class="w3-button w3-half" onclick="document.getElementById('edit-proposal-modal').style.display='none'">Cancel</button>
-            <button type="button" class="w3-button w3-half" v-on:click="editProposal">Save</button>
+            <button type="button" class="w3-button w3-half" v-on:click="updateProposal()">Save</button>
         </footer>
 
     </div>
