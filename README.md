@@ -48,12 +48,12 @@ Technologies:
 
 ## Week 10 (26 April - 2 May)
 
-- Paper reviewing phase: functionality for PC members to assign papers to reviewers, paper evaluation and scoring
+- Paper reviewing phase (first iteration): functionality for PC members to assign papers to reviewers
 
 ## Bonus Week - Holiday (3 - 9 May)
 
 ## Week 11 (10 - 16 May)
-
+- Paper reviewing phase (second iteration): functionality for paper scoring and review submission
 - Paper presentation phase: presentation sections, and participations
 
 # Phase 3
