@@ -44,9 +44,10 @@ class ReviewerRole(Model):
 
 
 class BidRole(Model):
+    qualifier_choices = [(-1, 'negative'), (0, 'neutral'), (1, 'positive')]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bids')
     proposal = models.ForeignKey(Proposal, on_delete=models.CASCADE, related_name='bids')
-    qualifier = models.SmallIntegerField(choices=[(-1, 'negative'), (0, 'neutral'), (1, 'positive')], null=True, blank=True)
+    qualifier = models.SmallIntegerField(choices=qualifier_choices, null=True, blank=True)
 
     class Meta:
         unique_together = (("user", "proposal"),)
