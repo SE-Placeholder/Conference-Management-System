@@ -37,8 +37,8 @@ class ProposalSerializer(ModelSerializer):
         for user in authors:
             AuthorRole.objects.create(user=user, proposal=proposal)
 
-        for bidder in SteeringCommitteeRole.objects.filter(conference=proposal.conference):
-            BidRole.objects.create(user=bidder.user, proposal=proposal).save()
+        # for bidder in SteeringCommitteeRole.objects.filter(conference=proposal.conference):
+        #     BidRole.objects.create(user=bidder.user, proposal=proposal).save()
 
         return proposal
 
@@ -64,6 +64,9 @@ class ProposalSerializer(ModelSerializer):
 
         for user in authors:
             AuthorRole.objects.create(user=user, proposal=proposal)
+
+        # for bidder in SteeringCommitteeRole.objects.filter(conference=proposal.conference):
+        #     BidRole.objects.create(user=bidder.user, proposal=proposal).save()
 
         return proposal
 

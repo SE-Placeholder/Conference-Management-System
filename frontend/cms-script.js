@@ -19,6 +19,7 @@ document.addEventListener('readystatechange', () => {
         loginModal = loginModal.mount('#login-modal')
         signupModal = signupModal.mount('#signup-modal')
         submitProposalModal = submitProposalModal.mount('#submit-proposal-modal')
+        editProposalModal = editProposalModal.mount('#edit-proposal-modal')
         addConferenceModal = addConferenceModal.mount('#add-conference-modal')
         editConferenceModal = editConferenceModal.mount('#edit-conference-modal')
         joinConferenceModal = joinConferenceModal.mount('#join-conference-modal')
@@ -50,17 +51,25 @@ menuComponent = Vue.createApp({
         api.auth.info()
             .then(response => {
                 this.authenticated = response.data.authenticated
-                this.username = response.data.username
                 dataStore.set('authenticated', response.data.authenticated)
-                dataStore.set('username', response.data.username)
-                dataStore.set('user_id', response.data.user_id)
+
+                if (this.authenticated) {
+                    this.username = response.data.user.username
+                    dataStore.set('user', response.data.user)
+                }
 
                 document.body.classList.add("loaded")
 
-                homeTabComponent = homeTabComponent.mount('#home-tab')
-                if (response.data.authenticated)
-                    dahsboardTabComponent = dahsboardTabComponent.mount('#dashboard-tab')
+                api.conferences.list()
+                    .then(response => {
+                        dataStore.set('conferences', response.data)
+                        homeTabComponent = homeTabComponent.mount('#home-tab')
+                        if (this.authenticated)
+                            dahsboardTabComponent = dahsboardTabComponent.mount('#dashboard-tab')
+                    })
+                    .catch(error => console.log(error))
             })
+            .catch(error => console.log(error))
     },
     methods: {
         logout() {
@@ -85,22 +94,23 @@ homeTabComponent = Vue.createApp({
         }
     },
     mounted() {
-        api.conferences.list()
-            .then(response => {
-                this.conferences = response.data
-                // document.body.classList.add("loaded")
-            })
-            .catch(error => alert(JSON.stringify(error)))
+        this.conferences = dataStore.get('conferences')
     },
     methods: {
         showSubmissionModal(id) {
             submitProposalModal.$data.conferenceId = id
-            showModal('submit-proposal-modal')
+            if (dataStore.get('authenticated'))
+                showModal('submit-proposal-modal')
+            else
+                showModal('login-modal')
         },
         showConfirmJoinModal(id, title) {
             joinConferenceModal.$data.id = id
             joinConferenceModal.$data.title = title
-            showModal('join-conference-modal')
+            if (dataStore.get('authenticated'))
+                showModal('join-conference-modal')
+            else
+                showModal('login-modal')
         }
     }
 })
@@ -114,13 +124,22 @@ dahsboardTabComponent = Vue.createApp({
         }
     },
     mounted() {
-        // TODO: join these on the backend
-        api.user.conferences()
-            .then(response => this.conferences = response.data)
-            .catch(error => alert(JSON.stringify(error)))
-        api.user.proposals()
-            .then(response => this.proposals = response.data)
-            .catch(error => alert(JSON.stringify(error)))
+        allConferences = dataStore.get('conferences')
+        currentUser = dataStore.get('user')
+        this.conferences = {
+            steeringCommittee: allConferences.filter(conference => {
+                return conference.steering_committee.map(user => user.id).includes(currentUser.id)
+            }),
+            listener: allConferences.filter(conference => {
+                return conference.listeners.map(user => user.id).includes(currentUser.id)
+            })
+        }
+        this.proposals = allConferences.map(conference => {
+            conference = {...conference}
+            conference.proposals = conference.proposals.filter(proposal => 
+                proposal.authors.map(user => user.id).includes(currentUser.id))
+            return conference
+        }).filter(conference => conference.proposals.length > 0)
     },
     methods: {
         showEditConferenceModal(conference) {
@@ -128,7 +147,9 @@ dahsboardTabComponent = Vue.createApp({
             editConferenceModal.$data.description = conference.description
             editConferenceModal.$data.location = conference.location
             editConferenceModal.$data.fee = conference.fee
-            editConferenceModal.$data.deadline = new Date(Date.parse(conference.deadline)).toISOString().replace(/\..*$/, '')
+            editConferenceModal.$data.abstractDeadline = new Date(Date.parse(conference.abstract_deadline)).toISOString().replace(/\..*$/, '')
+            editConferenceModal.$data.proposalDeadline = new Date(Date.parse(conference.proposal_deadline)).toISOString().replace(/\..*$/, '')
+            editConferenceModal.$data.biddingDeadline = new Date(Date.parse(conference.bidding_deadline)).toISOString().replace(/\..*$/, '')
             editConferenceModal.$data.date = new Date(Date.parse(conference.date)).toISOString().replace(/\..*$/, '')
             editConferenceModal.$data.id = conference.id
             editConferenceModal.$data.steering_committee = conference.steering_committee.map(user => user.username)
@@ -136,16 +157,23 @@ dahsboardTabComponent = Vue.createApp({
         },
 
         showViewProposalsModal(conference) {
-            // conference.proposals.forEach(proposal => {
-            //     proposal.current_reviewers = ['zsigi']
-            // })
-            viewProposalsModal.$data.proposals = [...conference.proposals]
-            viewProposalsModal.$data.proposals.forEach(proposal => proposal.assigned_reviewers = ['zsigi'])
+            viewProposalsModal.$data.proposals = [...conference.proposals].map(proposal => {
+                proposal.assigned_reviewers = proposal.bids.filter(bid => bid.qualifier >= 0).map(bid => bid.user.username)
+                return proposal
+            })
             viewProposalsModal.$data.bidding_deadline = conference.bidding_deadline
             showModal('view-papers-modal')
         },
 
-        showEditProposalModal(conference) {
+        showEditProposalModal(proposal) {
+            editProposalModal.$data.paperId = proposal.id
+            editProposalModal.$data.conferenceId = proposal.conference
+            editProposalModal.$data.title = proposal.title
+            editProposalModal.$data.abstract = proposal.abstract || ''
+            editProposalModal.$data.paper = proposal.paper || ''
+            editProposalModal.$data.keywords_list = proposal.keywords
+            editProposalModal.$data.topics_list = proposal.topics
+            editProposalModal.$data.authors_list = proposal.authors.map(user => user.username)
             showModal('edit-proposal-modal')
         }
     }
@@ -240,6 +268,60 @@ submitProposalModal = Vue.createApp({
 })
 
 
+editProposalModal = Vue.createApp({
+    data() {
+        return {
+            paperId: null,
+            // conferenceId: null,
+            title: '',
+            abstract: '',
+            paper: '',
+            keywords_list: [],
+            topics_list: [],
+            authors_list: []
+        }
+    },
+    methods: {
+        updateProposal() {
+            api.proposals.update({
+                id: this.paperId,
+                title: this.title,
+                // conference: this.conferenceId,
+                topics: [...this.topics_list],
+                keywords: [...this.keywords_list],
+                abstract: this.abstract,
+                paper: this.paper,
+                authors: [...this.authors_list]
+            })
+                .then(response => window.location.reload())
+                .catch(error => alert(JSON.stringify(error)))
+        },
+        abstractUpload() {
+            this.abstract = document.querySelector('#update-abstract').files[0]
+        },
+        paperUpload() {
+            this.paper = document.querySelector('#update-paper').files[0]
+        },
+        addTag(event, tag_list) {
+            event.preventDefault()
+            var val = event.target.value.trim()
+            if (val.length > 0) {
+                tag_list.push(val)
+                event.target.value = ''
+            }
+        },
+        removeTag(index, tag_list) {
+            tag_list.splice(index, 1)
+        },
+        removeLastTag(event, tag_list) {
+            if (event.target.value.length === 0) {
+                this.removeTag(tag_list.length - 1, tag_list)
+            }
+        }
+    }
+})
+
+
 addConferenceModal = Vue.createApp({
     data() {
         return {
@@ -247,7 +329,9 @@ addConferenceModal = Vue.createApp({
             description: '',
             date: new Date().toISOString().replace(/\..*$/, ''),
             location: '',
-            deadline: new Date().toISOString().replace(/\..*$/, ''),
+            abstractDeadline: new Date().toISOString().replace(/\..*$/, ''),
+            proposalDeadline: new Date().toISOString().replace(/\..*$/, ''),
+            biddingDeadline: new Date().toISOString().replace(/\..*$/, ''),
             fee: 0
         }
     },
@@ -259,9 +343,9 @@ addConferenceModal = Vue.createApp({
                 date: this.date,
                 location: this.location,
                 fee: this.fee,
-                abstract_deadline: this.deadline,
-                proposal_deadline: this.deadline,
-                bidding_deadline: this.deadline
+                abstract_deadline: this.abstractDeadline,
+                proposal_deadline: this.proposalDeadline,
+                bidding_deadline: this.biddingDeadline
             })
                 .then(response => window.location.reload())
                 .catch(error => alert(JSON.stringify(error)))
@@ -278,7 +362,9 @@ editConferenceModal = Vue.createApp({
             description: '',
             date: new Date().toISOString().replace(/\..*$/, ''),
             location: '',
-            deadline: new Date().toISOString().replace(/\..*$/, ''),
+            abstractDeadline: new Date().toISOString().replace(/\..*$/, ''),
+            proposalDeadline: new Date().toISOString().replace(/\..*$/, ''),
+            biddingDeadline: new Date().toISOString().replace(/\..*$/, ''),
             fee: 0,
             steering_committee: []
         }
@@ -292,9 +378,9 @@ editConferenceModal = Vue.createApp({
                 date: this.date,
                 location: this.location,
                 fee: this.fee,
-                abstract_deadline: this.deadline,
-                proposal_deadline: this.deadline,
-                bidding_deadline: this.deadline,
+                abstract_deadline: this.abstractDeadline,
+                proposal_deadline: this.proposalDeadline,
+                bidding_deadline: this.biddingDeadline,
                 steering_committee: [...this.steering_committee]
             })
                 .then(response => window.location.reload())
@@ -331,7 +417,7 @@ joinConferenceModal = Vue.createApp({
         joinConference() {
             api.conferences.join(this.id)
                 .then(response => window.location.reload())
-                .catch(error => alert(JSON.stringify(error)))
+                .catch(error => alert(JSON.stringify(error.data)))
         }
     }
 })
@@ -359,9 +445,12 @@ viewProposalsModal = Vue.createApp({
                 .then(response => {
                     this.proposals.forEach(proposal => {
                         if (proposal.id == id) {
-                            // console.log(proposal.bids)
+                            bid = proposal.bids.filter(bid => bid.user.id == dataStore.get('user').id)
+                            if (bid.length == 1) {
+                                bid[0].qualifier = qualifier
+                            }
                             // TODO: check user andfor empty bids array
-                            proposal.bids[0].qualifier = qualifier
+                            // proposal.bids[0].qualifier = qualifier
                         }
                     })
                     }
@@ -371,7 +460,7 @@ viewProposalsModal = Vue.createApp({
         },
         //TODO: refactor... too bad
         bidChoice(choice, bids) {
-            bid = [...bids].find(bid => bid.user.id == dataStore.get("user_id"))
+            bid = [...bids].find(bid => bid.user.id == dataStore.get("user").id)
             return bid && bid.qualifier == choice
         },
         isBiddingPhase() {
@@ -379,7 +468,7 @@ viewProposalsModal = Vue.createApp({
         },
         saveReviewers(proposal) {
             api.proposals.assignReviewers(proposal.id, proposal.assigned_reviewers)
-                .then(response => console.log(response))
+                .then(response => window.location.reload())
         },
         addTag(event, tag_list) {
             event.preventDefault()
