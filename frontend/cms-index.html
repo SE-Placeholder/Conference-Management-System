@@ -294,7 +294,7 @@
                     </div>
                 </span>
 
-                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Keywords" @keydown.enter='addTag($event, authors_list)' @keydown.delete='removeLastTag($event, authors_list)'>
+                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Co-authors" @keydown.enter='addTag($event, authors_list)' @keydown.delete='removeLastTag($event, authors_list)'>
             </label>
 
             <label>
@@ -449,7 +449,7 @@
                     </div>
                 </span>
 
-                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Email" @keydown.enter='addTag($event, steering_committee)' @keydown.delete='removeLastTag($event, steering_committee)'>
+                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username/Email" @keydown.enter='addTag($event, steering_committee)' @keydown.delete='removeLastTag($event, steering_committee)'>
             </label>
 
             <footer class="w3-container w3-footer w3-row">
@@ -482,22 +482,26 @@
                     <button :class="['w3-button', 'w3-third', proposal.abstract? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.abstract"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
                     <button :class="['w3-button', 'w3-third', proposal.paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.paper"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
 
+                    <!-- Bid Button -->
                     <button v-if="isBiddingPhase()" class="w3-button w3-third" v-on:click="showPopup(proposal.id)">
                         <span class="icon material-icons md-18">rate_review</span>
                         Bid For Review
                     </button>
 
+                    <!--View Reviewers Button-->
                     <button v-else class="w3-button w3-third" v-on:click="showReviewers(proposal)">
                         <span class="icon material-icons md-18">rate_review</span>
                         View Reviewers
                     </button>
 
+                    <!--Bid Dropdown-->
                     <div :id="'bid-popup' + proposal.id" class="w3-hide w3-row">
                         <button  :class="['w3-button', 'w3-third', bidChoice(1, proposal.bids)? 'w3-green' : 'w3-white']" v-on:click="bid(proposal.id, 1)">ACCEPT</button>
                         <button  :class="['w3-button', 'w3-third', bidChoice(0, proposal.bids)? 'w3-green' : 'w3-white']" v-on:click="bid(proposal.id, 0)">DON'T CARE</button>
                         <button  :class="['w3-button', 'w3-third', bidChoice(-1, proposal.bids)? 'w3-green' : 'w3-white']" v-on:click="bid(proposal.id, -1)">REJECT</button>
                     </div>
 
+                    <!--View Reviewers Dropdown-->
                     <div :id="'reviewers-popup' + proposal.id" class="w3-hide w3-row">
                         <label class="">
                             <span class="w3-col" style="width: auto">Reviewers assigned:</span>
