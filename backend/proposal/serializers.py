@@ -3,9 +3,10 @@ from rest_framework.fields import JSONField, SerializerMethodField, ListField
 from rest_framework.serializers import ModelSerializer, Serializer
 
 from api.utils import get_user
+from authentication.serializers import UserSerializer
 from proposal.models import Proposal
 from role.models import AuthorRole, ReviewerRole, SteeringCommitteeRole, BidRole
-from role.serializers import UserSerializer, BidSerializer
+from role.serializers import BidSerializer
 
 
 class ProposalSerializer(ModelSerializer):

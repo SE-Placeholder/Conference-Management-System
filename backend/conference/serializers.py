@@ -1,14 +1,14 @@
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField, JSONField
-from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework.serializers import ModelSerializer
 
 from api.utils import get_user
 from conference.models import Conference
 from proposal.models import Proposal
 from proposal.serializers import ProposalSerializer
-from role.models import SteeringCommitteeRole, ReviewerRole
-from role.serializers import UserSerializer
+from role.models import SteeringCommitteeRole
+from authentication.serializers import UserSerializer
 
 
 class ConferenceSerializer(ModelSerializer):

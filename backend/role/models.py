@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Model, ForeignKey
+from django.db.models import Model, ForeignKey, CharField
 
 from conference.models import Conference
 from proposal.models import Proposal
@@ -33,9 +33,14 @@ class ListenerRole(Model):
 class ReviewerRole(Model):
     user = ForeignKey(User, on_delete=models.CASCADE)
     proposal = ForeignKey(Proposal, on_delete=models.CASCADE)
+    review = CharField(max_length=1024, null=True, blank=True)
+    qualifier = models.SmallIntegerField(
+        choices=[(-3, 'strong reject'), (-2, 'reject'), (-1, 'weak reject'),
+                 (0, 'borderline'), (1, 'weak accept'), (2, 'accept'), (3, 'strong accept')],
+        null=True, blank=True)
 
     def __str__(self):
-        return f'{self.user.username} - {self.proposal.title}'
+        return f'{self.user.username} rated {self.proposal.title} with {self.get_qualifier_display()}'
 
 
 class BidRole(Model):
@@ -47,6 +52,5 @@ class BidRole(Model):
         unique_together = (("user", "proposal"),)
 
     def __str__(self):
-        qualifiers = {-1: 'negative', 0: 'neutral', 1: 'positive'}
-        return f'{self.user.username} bid {self.qualifier and qualifiers[self.qualifier] or "None"} for {self.proposal.title}'
+        return f'{self.user.username} bid {self.get_qualifier_display()} for {self.proposal.title}'
 

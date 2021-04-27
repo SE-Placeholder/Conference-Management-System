@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from role.serializers import UserSerializer
+from authentication.serializers import UserSerializer
 
 
 class StateInfoView(APIView):
@@ -13,7 +13,6 @@ class StateInfoView(APIView):
     def get(self, request):
         return Response({
             "authenticated": True,
-            "username": request.user.username,
-            "user_id": request.user.id,
+            "user": UserSerializer(request.user).data,
             "user_list": UserSerializer(User.objects.all(), many=True).data
         }, status=status.HTTP_200_OK)
