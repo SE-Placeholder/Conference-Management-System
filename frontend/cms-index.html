@@ -479,8 +479,8 @@
                 <!-- Dropdown -->
                 <div :id="'view-papers-section' + proposal.id" class="w3-row w3-hide">
                     <!-- TODO: make this not hardcoded -->
-                    <button :class="['w3-button', 'w3-third', proposal.abstract? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.abstract"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
-                    <button :class="['w3-button', 'w3-third', proposal.paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.paper"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
+                    <button :class="['w3-button', 'w3-third', proposal.abstract? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.abstract" target="_blank"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
+                    <button :class="['w3-button', 'w3-third', proposal.paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+proposal.paper" target="_blank"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
 
                     <!-- Bid Button -->
                     <button v-if="isBiddingPhase()" class="w3-button w3-third" v-on:click="showPopup(proposal.id)">

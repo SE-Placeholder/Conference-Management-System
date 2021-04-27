@@ -158,7 +158,13 @@ dahsboardTabComponent = Vue.createApp({
 
         showViewProposalsModal(conference) {
             viewProposalsModal.$data.proposals = [...conference.proposals].map(proposal => {
-                proposal.assigned_reviewers = proposal.bids.filter(bid => bid.qualifier >= 0).map(bid => bid.user.username)
+                console.log(proposal)
+                reviewers = proposal.reviewers.map(user => user.username)
+                if (reviewers.length > 0) {
+                    proposal.assigned_reviewers = reviewers
+                } else {
+                    proposal.assigned_reviewers = proposal.bids.filter(bid => bid.qualifier >= 0).map(bid => bid.user.username)
+                }
                 return proposal
             })
             viewProposalsModal.$data.bidding_deadline = conference.bidding_deadline
@@ -169,8 +175,10 @@ dahsboardTabComponent = Vue.createApp({
             editProposalModal.$data.paperId = proposal.id
             editProposalModal.$data.conferenceId = proposal.conference
             editProposalModal.$data.title = proposal.title
-            editProposalModal.$data.abstract = proposal.abstract || ''
-            editProposalModal.$data.paper = proposal.paper || ''
+            editProposalModal.$data.abstract = ''
+            editProposalModal.$data.paper = ''
+            // editProposalModal.$data.abstract = proposal.abstract || ''
+            // editProposalModal.$data.paper = proposal.paper || ''
             editProposalModal.$data.keywords_list = proposal.keywords
             editProposalModal.$data.topics_list = proposal.topics
             editProposalModal.$data.authors_list = proposal.authors.map(user => user.username)
@@ -448,6 +456,8 @@ viewProposalsModal = Vue.createApp({
                             bid = proposal.bids.filter(bid => bid.user.id == dataStore.get('user').id)
                             if (bid.length == 1) {
                                 bid[0].qualifier = qualifier
+                            } else {
+                                proposal.bids.push({user: dataStore.get('user'), qualifier: qualifier})
                             }
                             // TODO: check user andfor empty bids array
                             // proposal.bids[0].qualifier = qualifier
@@ -468,7 +478,7 @@ viewProposalsModal = Vue.createApp({
         },
         saveReviewers(proposal) {
             api.proposals.assignReviewers(proposal.id, proposal.assigned_reviewers)
-                .then(response => window.location.reload())
+                .then(response => console.log(response))
         },
         addTag(event, tag_list) {
             event.preventDefault()
