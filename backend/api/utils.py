@@ -24,3 +24,10 @@ def get_user(identifier):
             return User.objects.get(email=identifier)
         except User.DoesNotExist:
             return None
+
+
+def try_except(expression, exception):
+    try:
+        return expression()
+    except:
+        raise exception

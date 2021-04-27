@@ -13,6 +13,6 @@ class StateInfoView(APIView):
     def get(self, request):
         return Response({
             "authenticated": True,
-            "user": UserSerializer(request.user).data,
-            "user_list": UserSerializer(User.objects.all(), many=True).data
+            "user": UserSerializer(request.user).data
+            # , "user_list": UserSerializer(User.objects.all(), many=True).data
         }, status=status.HTTP_200_OK)

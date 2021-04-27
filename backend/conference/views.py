@@ -4,12 +4,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from api.utils import get_user
 from conference.models import Conference
-from conference.serializers import ConferenceSerializer
-    # , DesignateReviewersSerializer
-from proposal.models import Proposal
-from role.models import ListenerRole, SteeringCommitteeRole, ReviewerRole
+from conference.serializers import ConferenceSerializer, JoinConferenceSerializer
+from role.models import SteeringCommitteeRole
 
 
 # create conference: allow authenticated users
@@ -37,19 +34,14 @@ class ConferenceViewSet(ModelViewSet):
     lookup_field = 'id'
 
 
-# TODO: refactor
 class JoinConferenceView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, id):
-        try:
-            conference = Conference.objects.get(id=id)
-
-            if ListenerRole.objects.filter(user=request.user, conference=conference).exists():
-                return Response({'status': 'Already registered for this conference'},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-            ListenerRole.objects.create(user=request.user, conference=conference)
-            return Response({'status': 'Successfully joined conference'}, status=status.HTTP_201_CREATED)
-        except Conference.DoesNotExist:
-            return Response({'status': 'Conference does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = JoinConferenceSerializer(data=request.data)
+        serializer.context['id'] = id
+        serializer.context['user'] = request.user
+        serializer.is_valid(raise_exception=True)
+        # TODO: return this?
+        listener_role = serializer.save()
+        return Response({'detail': 'Successfully joined conference.'}, status=status.HTTP_201_CREATED)

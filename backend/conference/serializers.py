@@ -1,16 +1,16 @@
-from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField, JSONField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer
 
-from api.utils import get_user
+from api.utils import get_user, try_except
 from conference.models import Conference
 from proposal.models import Proposal
 from proposal.serializers import ProposalSerializer
-from role.models import SteeringCommitteeRole
+from role.models import SteeringCommitteeRole, ListenerRole
 from authentication.serializers import UserSerializer
 
 
+# TODO: refactor
 class ConferenceSerializer(ModelSerializer):
     steering_committee = JSONField(binary=True, write_only=True, required=False)
     proposals = SerializerMethodField()
@@ -79,15 +79,15 @@ class ConferenceSerializer(ModelSerializer):
         proposals = ProposalSerializer(Proposal.objects.filter(conference=conference), many=True)
         return proposals.data
 
-    # @staticmethod
-    # def get_needs_reviewer_repartition(conference):
-    #     print(timezone.now())
-    #     print(conference.bidding_deadline)
-    #     if timezone.now() < conference.bidding_deadline:
-    #         return False
-    #
-    #     proposals = Proposal.objects.filter(conference=conference)
-    #     if ReviewerRole.objects.filter(**{'proposal__in': proposals}).exists():
-    #         return False
-    #
-    #     return True
+
+class JoinConferenceSerializer(Serializer):
+    def create(self, validated_data):
+        user = self.context['user']
+        conference = try_except(
+            lambda: Conference.objects.get(id=self.context['id']),
+            ValidationError({'detail': 'Conference not found.'}))
+
+        if ListenerRole.objects.filter(user=user, conference=conference).exists():
+            raise ValidationError({'detail': 'Already registered for this conference.'})
+
+        return ListenerRole.objects.create(user=user, conference=conference)
