@@ -8,7 +8,7 @@ def get_user_by_name(username):
         return None
 
 
-# TODO: emails are not unique
+# TODO: make emails unique
 def get_user_by_email(email):
     try:
         return User.objects.get(email=email)

@@ -11,6 +11,15 @@ function hideModal(id) {
     document.getElementById(id).style.display = 'none'
 }
 
+dataStore = {
+    properties: {},
+    set: (property, value) => {
+        dataStore.properties[property] = value
+    },
+    get: property => {
+        return dataStore.properties[property]
+    }
+}
 
 document.addEventListener('readystatechange', () => {
     api.setUnauthorizedCallback(() => showModal('login-modal'))
@@ -29,15 +38,6 @@ document.addEventListener('readystatechange', () => {
     }
 })
 
-dataStore = {
-    properties: {},
-    set: (property, value) => {
-        dataStore.properties[property] = value
-    },
-    get: property => {
-        return dataStore.properties[property]
-    }
-}
 
 
 menuComponent = Vue.createApp({
@@ -127,12 +127,10 @@ dahsboardTabComponent = Vue.createApp({
         allConferences = dataStore.get('conferences')
         currentUser = dataStore.get('user')
         this.conferences = {
-            steeringCommittee: allConferences.filter(conference => {
-                return conference.steering_committee.map(user => user.id).includes(currentUser.id)
-            }),
-            listener: allConferences.filter(conference => {
-                return conference.listeners.map(user => user.id).includes(currentUser.id)
-            })
+            steeringCommittee: allConferences.filter(conference => 
+                conference.steering_committee.map(user => user.id).includes(currentUser.id)),
+            listener: allConferences.filter(conference =>
+                conference.listeners.map(user => user.id).includes(currentUser.id))
         }
         this.proposals = allConferences.map(conference => {
             conference = {...conference}
@@ -153,12 +151,12 @@ dahsboardTabComponent = Vue.createApp({
             editConferenceModal.$data.date = new Date(Date.parse(conference.date)).toISOString().replace(/\..*$/, '')
             editConferenceModal.$data.id = conference.id
             editConferenceModal.$data.steering_committee = conference.steering_committee.map(user => user.username)
-            document.querySelector('#edit-conference-modal').style.display = 'block'
+            showModal('edit-conference-modal')
         },
 
         showViewProposalsModal(conference) {
             viewProposalsModal.$data.proposals = [...conference.proposals].map(proposal => {
-                console.log(proposal)
+                // console.log(proposal)
                 reviewers = proposal.reviewers.map(user => user.username)
                 if (reviewers.length > 0) {
                     proposal.assigned_reviewers = reviewers

@@ -1,22 +1,24 @@
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import JSONField, SerializerMethodField, ListField, ChoiceField
+from rest_framework.fields import JSONField, SerializerMethodField, ListField, ChoiceField, CharField
 from rest_framework.serializers import ModelSerializer, Serializer
 
 from api.utils import get_user, try_except
 from authentication.serializers import UserSerializer
 from proposal.models import Proposal
 from role.models import AuthorRole, ReviewerRole, SteeringCommitteeRole, BidRole
-from role.serializers import BidSerializer
+from role.serializers import BidSerializer, ReviewSerializer
 
 
 class ProposalSerializer(ModelSerializer):
     authors = JSONField(binary=True, write_only=True, required=False)
     bids = SerializerMethodField()
     reviewers = SerializerMethodField()
+    reviews = SerializerMethodField()
 
     class Meta:
         model = Proposal
-        fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'bids', 'reviewers', 'authors']
+        # TODO: remove reviewers field
+        fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'bids', 'reviewers', 'reviews', 'authors']
 
     def create(self, validated_data):
         authors = [self.context['request'].user]
@@ -89,6 +91,13 @@ class ProposalSerializer(ModelSerializer):
             many=True
         ).data
 
+    @staticmethod
+    def get_reviews(proposal):
+        return ReviewSerializer(
+            ReviewerRole.objects.filter(proposal=proposal),
+            many=True
+        ).data
+
 
 class BidProposalSerializer(Serializer):
     # TODO: this allows -1, 0 and 1, should be swapped with human readable equivalents
@@ -137,3 +146,22 @@ class AssignReviewersSerializer(Serializer):
             bid.delete()
 
         return reviewers
+
+
+class AddReviewSerializer(Serializer):
+    qualifier = ChoiceField(choices=ReviewerRole.qualifier_choices)
+    review = CharField(max_length=1024)
+
+    def create(self, validated_data):
+        user = self.context['user']
+        proposal = self.context['proposal']
+
+        review = ReviewerRole.objects.filter(user=user, proposal=proposal)
+        if review.exists():
+            review.delete()
+
+        return ReviewerRole.objects.create(
+            user=user,
+            proposal=proposal,
+            qualifier=validated_data.get('qualifier'),
+            review=validated_data.get('review'))

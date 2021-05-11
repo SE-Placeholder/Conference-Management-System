@@ -76,6 +76,7 @@ const api = {
             data.append('title', title)
             // data.append('conference', conference)
             data.append('authors', JSON.stringify(authors))
+            // check if a new file was uploaded
             if (abstract)
                 data.append('abstract', abstract)
             if (paper)

@@ -31,13 +31,12 @@ class ListenerRole(Model):
 
 
 class ReviewerRole(Model):
+    qualifier_choices = [(-3, 'strong reject'), (-2, 'reject'), (-1, 'weak reject'),
+                         (0, 'borderline'), (1, 'weak accept'), (2, 'accept'), (3, 'strong accept')]
     user = ForeignKey(User, on_delete=models.CASCADE)
     proposal = ForeignKey(Proposal, on_delete=models.CASCADE)
     review = CharField(max_length=1024, null=True, blank=True)
-    qualifier = models.SmallIntegerField(
-        choices=[(-3, 'strong reject'), (-2, 'reject'), (-1, 'weak reject'),
-                 (0, 'borderline'), (1, 'weak accept'), (2, 'accept'), (3, 'strong accept')],
-        null=True, blank=True)
+    qualifier = models.SmallIntegerField(choices=qualifier_choices, null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.username} rated {self.proposal.title} with {self.get_qualifier_display()}'

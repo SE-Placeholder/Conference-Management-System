@@ -1,18 +1,14 @@
-from django.db import IntegrityError
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import BasePermission, SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import serializers
-from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from api.utils import get_user, try_except
 from proposal.models import Proposal
-from proposal.serializers import ProposalSerializer, AssignReviewersSerializer, BidProposalSerializer
-from role.models import AuthorRole, SteeringCommitteeRole, BidRole, ReviewerRole
+from proposal.serializers import ProposalSerializer, AssignReviewersSerializer, BidProposalSerializer, \
+    AddReviewSerializer
+from role.models import AuthorRole, SteeringCommitteeRole
 
 
 # create proposal: allow authenticated users
@@ -68,7 +64,7 @@ class BidProposalView(APIView):
 
 # TODO: change permission class, allow only steering committee members
 # TODO: error checking and move everything into serializer
-class AssignReviewersView(BasePermission):
+class AssignReviewersPermissions(BasePermission):
     pass
 
 
@@ -82,3 +78,20 @@ class AssignReviewersView(APIView):
         serializer.save()
         # TODO: return results
         return Response({'detail': 'Reviewers successfully assigned.'}, status=status.HTTP_201_CREATED)
+
+
+class AddReviewPermissions(BasePermission):
+    pass
+
+
+class AddReviewView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        serializer = AddReviewSerializer(data=request.data)
+        serializer.context['user'] = request.user
+        serializer.context['proposal'] = get_object_or_404(Proposal, id=id)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        # TODO: return results
+        return Response({'detail': 'Review successfully assigned.'}, status=status.HTTP_201_CREATED)
