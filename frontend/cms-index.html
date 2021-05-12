@@ -169,6 +169,29 @@
                 </div>
             </div>
         </div>
+
+        <h2 class="w3-container w3-xxlarge">Reviewing</h2>
+
+        <!-- TODO: rename proposal to something more suggestive (here it's a list of conferences that contain information about proposals) -->
+        <div v-for="conference in proposals">
+            <!-- My Papers On Conference Details Card -->
+            <div class="w3-panel">
+                <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
+                    <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
+                    <!-- Papers List -->
+                    <div v-for="proposal in conference.proposals">
+                        <div class="w3-bar">
+                            <div class="w3-bar-item">
+                                <article class="conference-details-primary w3-large">{{proposal.title}}</article>
+                            </div>
+                            <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showReviewProposalModal(proposal)">
+                                Review
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -596,6 +619,40 @@
 
     </div>
 </div>
+
+<!-- Review Proposal Modal -->
+<div id="review-proposal-modal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+        <header class="w3-container presentation">
+            <span onclick="document.getElementById('review-proposal-modal').style.display='none'" class="cms-button w3-button w3-display-topright">&times;</span>
+            <h1>Review Proposal</h1>
+        </header>
+
+        <h2 class="w3-padding">{{title}} - {{authors_list.join(',')}}</h2>
+
+        <button :class="['w3-button', 'w3-half', abstract? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+abstract" target="_blank"><span class="icon material-icons md-18">save_alt</span> Download Abstract</a></button>
+        <button :class="['w3-button', 'w3-half', paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+paper" target="_blank"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
+
+        <form class="w3-container w3-margin-top">
+            <label>
+                <span>Qualifier</span>
+                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Qualifier (-3, -2, -1, 0, 1, 2, 3)" v-model="qualifier" required>
+            </label>
+            <label>
+                <span>Review</span>
+                <textarea class="w3-input w3-margin-bottom" placeholder="Write your review here" v-model="review" required>
+                </textarea>
+            </label>
+        </form>
+
+        <footer class="w3-container w3-footer w3-row">
+            <button type="button" class="w3-button w3-half" onclick="document.getElementById('review-proposal-modal').style.display='none'">Cancel</button>
+            <button type="button" class="w3-button w3-half" v-on:click="reviewProposal()">Save Review</button>
+        </footer>
+
+    </div>
+</div>
+
 
 
 

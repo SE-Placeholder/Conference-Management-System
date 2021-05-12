@@ -21,6 +21,7 @@ const endpoints = {
     proposals: 'proposals',
     proposalDetails: 'proposals/<id>',
     bidProposal: 'proposals/<id>/bid',
+    reviewProposal: 'proposals/<id>/review',
     assignReviewers: 'proposals/<id>/assign-reviewers'
 }
 
@@ -94,7 +95,8 @@ const api = {
             return client.post(pathEncode(endpoints.proposalDetails, id), data)
         },
         bid: (id, qualifier) => client.post(pathEncode(endpoints.bidProposal, id), {qualifier}),
-        assignReviewers: (id, reviewers) => client.post(pathEncode(endpoints.assignReviewers, id), {reviewers})
+        assignReviewers: (id, reviewers) => client.post(pathEncode(endpoints.assignReviewers, id), {reviewers}),
+        review: (id, qualifier, review) => client.post(pathEncode(endpoints.reviewProposal, id), {qualifier, review})
     },
     setUnauthorizedCallback: callback =>
         api.unauthorizedCallback = callback

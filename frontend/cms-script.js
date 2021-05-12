@@ -29,6 +29,7 @@ document.addEventListener('readystatechange', () => {
         signupModal = signupModal.mount('#signup-modal')
         submitProposalModal = submitProposalModal.mount('#submit-proposal-modal')
         editProposalModal = editProposalModal.mount('#edit-proposal-modal')
+        reviewProposalModal = reviewProposalModal.mount('#review-proposal-modal')
         addConferenceModal = addConferenceModal.mount('#add-conference-modal')
         editConferenceModal = editConferenceModal.mount('#edit-conference-modal')
         joinConferenceModal = joinConferenceModal.mount('#join-conference-modal')
@@ -65,7 +66,7 @@ menuComponent = Vue.createApp({
                         dataStore.set('conferences', response.data)
                         homeTabComponent = homeTabComponent.mount('#home-tab')
                         if (this.authenticated)
-                            dahsboardTabComponent = dahsboardTabComponent.mount('#dashboard-tab')
+                            dashboardTabComponent = dashboardTabComponent.mount('#dashboard-tab')
                     })
                     .catch(error => console.log(error))
             })
@@ -116,7 +117,7 @@ homeTabComponent = Vue.createApp({
 })
 
 
-dahsboardTabComponent = Vue.createApp({
+dashboardTabComponent = Vue.createApp({
     data() {
         return {
             conferences: [],
@@ -181,6 +182,22 @@ dahsboardTabComponent = Vue.createApp({
             editProposalModal.$data.topics_list = proposal.topics
             editProposalModal.$data.authors_list = proposal.authors.map(user => user.username)
             showModal('edit-proposal-modal')
+        },
+
+        showReviewProposalModal(proposal) {
+            // console.log(proposal)
+            reviewProposalModal.$data.paperId = proposal.id
+            reviewProposalModal.$data.conferenceId = proposal.conference
+            reviewProposalModal.$data.title = proposal.title
+            reviewProposalModal.$data.abstract = proposal.abstract
+            reviewProposalModal.$data.paper = proposal.paper
+            reviewProposalModal.$data.keywords_list = proposal.keywords
+            reviewProposalModal.$data.topics_list = proposal.topics
+            reviewProposalModal.$data.authors_list = proposal.authors.map(user => user.username)
+            review = proposal.reviews.find(review => review.user.id == dataStore.get('user').id)
+            reviewProposalModal.$data.qualifier = review.qualifier
+            reviewProposalModal.$data.review = review.review
+            showModal('review-proposal-modal')
         }
     }
 })
@@ -493,6 +510,30 @@ viewProposalsModal = Vue.createApp({
             if (event.target.value.length === 0) {
                 this.removeTag(tag_list.length - 1, tag_list)
             }
+        }
+    }
+})
+
+
+reviewProposalModal = Vue.createApp({
+    data() {
+        return {
+            paperId: null,
+            // conferenceId: null,
+            title: '',
+            abstract: '',
+            paper: '',
+            keywords_list: [],
+            topics_list: [],
+            authors_list: [],
+            review: '',
+            qualifier: '',
+        }
+    },
+    methods: {
+        reviewProposal() {
+            api.proposals.review(this.paperId, this.qualifier, this.review)
+                .then(response => hideModal('review-proposal-modal'))
         }
     }
 })
