@@ -164,6 +164,9 @@
                             <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditProposalModal(proposal)">
                                 Edit
                             </button>
+                            <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showReviewsModal(proposal)">
+                                Show reviews
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -654,6 +657,29 @@
 </div>
 
 
+<!-- Show Reviews Modal -->
+<div id="show-reviews-modal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+        <header class="w3-container presentation">
+            <span onclick="document.getElementById('show-reviews-modal').style.display='none'" class="cms-button w3-button w3-display-topright">&times;</span>
+            <h1>Reviews for {{title}}</h1>
+        </header>
+
+
+        <div v-for="review in reviews">
+            <div class="w3-panel">
+                <p>{{review.review}}</p>
+            </div>
+        </div>
+
+
+        <footer class="w3-container w3-footer w3-row">
+            <button type="button" class="w3-button" onclick="document.getElementById('show-reviews-modal').style.display='none'">Cancel</button>
+            <!-- <button type="button" class="w3-button w3-half" v-on:click="reviewProposal()">Save Review</button> -->
+        </footer>
+
+    </div>
+</div>
 
 
 </body>

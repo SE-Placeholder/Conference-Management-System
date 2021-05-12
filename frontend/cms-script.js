@@ -34,6 +34,7 @@ document.addEventListener('readystatechange', () => {
         editConferenceModal = editConferenceModal.mount('#edit-conference-modal')
         joinConferenceModal = joinConferenceModal.mount('#join-conference-modal')
         viewProposalsModal = viewProposalsModal.mount('#view-papers-modal')
+        showReviewsModal = showReviewsModal.mount('#show-reviews-modal')
 
         menuComponent = menuComponent.mount('#menu')
     }
@@ -182,6 +183,21 @@ dashboardTabComponent = Vue.createApp({
             editProposalModal.$data.topics_list = proposal.topics
             editProposalModal.$data.authors_list = proposal.authors.map(user => user.username)
             showModal('edit-proposal-modal')
+        },
+
+        showReviewsModal(proposal) {
+            // editProposalModal.$data.paperId = proposal.id
+            // editProposalModal.$data.conferenceId = proposal.conference
+            // editProposalModal.$data.title = proposal.title
+            // editProposalModal.$data.abstract = ''
+            // editProposalModal.$data.paper = ''
+            // // editProposalModal.$data.abstract = proposal.abstract || ''
+            // // editProposalModal.$data.paper = proposal.paper || ''
+            // editProposalModal.$data.keywords_list = proposal.keywords
+            // editProposalModal.$data.topics_list = proposal.topics
+            // editProposalModal.$data.authors_list = proposal.authors.map(user => user.username)
+            showReviewsModal.$data.reviews = proposal.reviews.filter(review => review.qualifier != null)
+            showModal('show-reviews-modal')
         },
 
         showReviewProposalModal(proposal) {
@@ -528,6 +544,22 @@ reviewProposalModal = Vue.createApp({
             authors_list: [],
             review: '',
             qualifier: '',
+        }
+    },
+    methods: {
+        reviewProposal() {
+            api.proposals.review(this.paperId, this.qualifier, this.review)
+                .then(response => hideModal('review-proposal-modal'))
+        }
+    }
+})
+
+
+showReviewsModal = Vue.createApp({
+    data() {
+        return {
+            title: '',
+            reviews: []
         }
     },
     methods: {
