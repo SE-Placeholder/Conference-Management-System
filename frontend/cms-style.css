@@ -246,3 +246,128 @@ form textarea {
         visibility: hidden;
     }
 }
+
+.decision {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    margin: 30px 0 20px;
+    height: 50px;
+}
+
+.caption {
+    display: block;
+    box-sizing: border-box;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.caption.agree {
+    text-align: right;
+    color: #56ac8a;
+}
+.caption.disagree {
+    text-align: right;
+    color: #5f394d;
+}
+.decision .options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 0 0 500px;
+    margin: 0 30px;
+}
+
+
+
+
+
+.option_container {
+    display: block;
+    margin-bottom: 12px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.option_container input{
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+}
+
+.option_checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #eee;
+    border-radius: 50%;
+    pointer-events: none;
+
+}
+
+
+.option_checkmark.agree {
+    border: 2px solid #56ac8a;
+}
+
+.option_container:hover input ~ .option_checkmark.agree {
+    background-color: #56ac8a;
+}
+
+
+.option_container input:checked ~ .option_checkmark.agree{
+    background-color: #56ac8a;
+}
+
+.option_checkmark.disagree {
+    border: 2px solid #5f394d;
+}
+
+.option_container:hover input ~ .option_checkmark.disagree {
+    background-color: #5f394d;
+}
+
+.option_container input:checked ~ .option_checkmark.disagree {
+    background-color: #5f394d;
+}
+
+.option_checkmark.neutral {
+    border: 2px solid #9b9faa;
+}
+
+.option_container:hover input ~ .option_checkmark.neutral {
+    background-color: #9b9faa;
+}
+
+.option_container input:checked ~ .option_checkmark.neutral {
+    background-color: #9b9faa;
+}
+
+.max{
+    height: 50px;
+    width: 50px;
+}
+
+.med{
+    height: 40px;
+    width: 40px;
+}
+
+.min{
+    height: 30px;
+    width: 30px;
+}
+
+.mini{
+    height: 25px;
+    width: 25px;
+}
+
+
+
+
+
