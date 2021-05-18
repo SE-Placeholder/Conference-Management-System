@@ -122,7 +122,8 @@ dashboardTabComponent = Vue.createApp({
     data() {
         return {
             conferences: [],
-            proposals: []
+            proposals: [],
+            sections: []
         }
     },
     mounted() {
@@ -140,6 +141,17 @@ dashboardTabComponent = Vue.createApp({
                 proposal.authors.map(user => user.id).includes(currentUser.id))
             return conference
         }).filter(conference => conference.proposals.length > 0)
+        this.sections = []
+        for (conference of allConferences) {
+            sections = conference.listeners.filter(listener => listener.user.id == currentUser.id)[0].sections
+            // console.info(sections)
+            this.sections.push(...sections)
+        }
+        // console.log(this.sections)
+        // allConferences[
+        //     {title: 'unu section'},
+        //     {title: 'doi section'}
+        // ]
     },
     methods: {
         showEditConferenceModal(conference) {
