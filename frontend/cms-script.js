@@ -548,6 +548,7 @@ reviewProposalModal = Vue.createApp({
     },
     methods: {
         reviewProposal() {
+            this.qualifier = document.querySelector('input[name="choice"]:checked').value;
             api.proposals.review(this.paperId, this.qualifier, this.review)
                 .then(response => hideModal('review-proposal-modal'))
         }

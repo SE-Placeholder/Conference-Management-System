@@ -637,10 +637,40 @@
         <button :class="['w3-button', 'w3-half', paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+paper" target="_blank"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
 
         <form class="w3-container w3-margin-top">
-            <label>
-                <span>Qualifier</span>
-                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Qualifier (-3, -2, -1, 0, 1, 2, 3)" v-model="qualifier" required>
-            </label>
+            <div class="decision">
+                <div class="caption agree">I like it</div>
+                <div class="options">
+                    <div class="option_container max">
+                        <input class="option " type="radio" name="choice" value="3">
+                        <span class="option_checkmark agree max"></span>
+                    </div>
+                    <div class="option_container med">
+                        <input class="option" type="radio" name="choice" value="2">
+                        <span class="option_checkmark agree med"></span>
+                    </div>
+                    <div class="option_container min">
+                        <input class="option" type="radio" name="choice" value="1">
+                        <span class="option_checkmark agree min"></span>
+                    </div>
+                    <div class="option_container mini">
+                        <input class="option" type="radio" name="choice" value="0">
+                        <span class="option_checkmark neutral mini"></span>
+                    </div>
+                    <div class="option_container min">
+                        <input class="option" type="radio" name="choice" value="-1">
+                        <span class="option_checkmark disagree min"></span>
+                    </div>
+                    <div class="option_container med">
+                        <input class="option" type="radio" name="choice" value="-2">
+                        <span class="option_checkmark disagree med"></span>
+                    </div>
+                    <div class="option_container max">
+                        <input class="option" type="radio" name="choice" value="-3">
+                        <span class="option_checkmark disagree max"></span>
+                    </div>
+                </div>
+                <div class="caption disagree">I don't like it</div>
+            </div>
             <label>
                 <span>Review</span>
                 <textarea class="w3-input w3-margin-bottom" placeholder="Write your review here" v-model="review" required>
