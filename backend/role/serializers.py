@@ -1,7 +1,15 @@
 from rest_framework.serializers import ModelSerializer
 
 from authentication.serializers import UserSerializer
-from role.models import BidRole, ReviewerRole
+from role.models import BidRole, ReviewerRole, ListenerRole
+
+
+class ListenerSerializer(ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = ListenerRole
+        fields = ['user', 'sections']
 
 
 class BidSerializer(ModelSerializer):

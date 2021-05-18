@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.response import Response
@@ -5,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from conference.models import Conference
-from conference.serializers import ConferenceSerializer, JoinConferenceSerializer
+from conference.serializers import ConferenceSerializer, JoinConferenceSerializer, JoinSectionSerializer
 from role.models import SteeringCommitteeRole
 
 
@@ -39,9 +40,22 @@ class JoinConferenceView(APIView):
 
     def post(self, request, id):
         serializer = JoinConferenceSerializer(data=request.data)
-        serializer.context['id'] = id
+        serializer.context['conference'] = get_object_or_404(Conference, id=id)
         serializer.context['user'] = request.user
         serializer.is_valid(raise_exception=True)
         # TODO: return this?
         listener_role = serializer.save()
         return Response({'detail': 'Successfully joined conference.'}, status=status.HTTP_201_CREATED)
+
+
+class JoinSectionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        serializer = JoinSectionSerializer(data=request.data)
+        serializer.context['conference'] = get_object_or_404(Conference, id=id)
+        serializer.context['user'] = request.user
+        serializer.is_valid(raise_exception=True)
+        # TODO: return this?
+        listener_role = serializer.save()
+        return Response({'detail': 'Successfully joined section.'}, status=status.HTTP_201_CREATED)

@@ -1,18 +1,28 @@
+import rest_framework.fields
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import SerializerMethodField, JSONField
+from rest_framework.fields import SerializerMethodField, JSONField, DecimalField
+from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, Serializer
 
 from api.utils import get_user, try_except
-from conference.models import Conference
+from conference.models import Conference, Section
 from proposal.models import Proposal
 from proposal.serializers import ProposalSerializer
 from role.models import SteeringCommitteeRole, ListenerRole
 from authentication.serializers import UserSerializer
+from role.serializers import ListenerSerializer
+
+
+class SectionSerializer(ModelSerializer):
+    class Meta:
+        model = Section
+        fields = ['id', 'title', 'start', 'end', 'conference']
 
 
 # TODO: refactor
 class ConferenceSerializer(ModelSerializer):
     steering_committee = JSONField(binary=True, write_only=True, required=False)
+    sections = JSONField(binary=True, write_only=True, required=False)
     listeners = SerializerMethodField()
     proposals = SerializerMethodField()
 
@@ -20,7 +30,7 @@ class ConferenceSerializer(ModelSerializer):
         model = Conference
         fields = ['id', 'title', 'description', 'location', 'date', 'fee',
                   'abstract_deadline', 'proposal_deadline', 'bidding_deadline',
-                  'steering_committee', 'listeners', 'proposals']
+                  'steering_committee', 'sections', 'listeners', 'proposals']
 
     def create(self, validated_data):
         steering_committee = [self.context['request'].user]
@@ -46,6 +56,16 @@ class ConferenceSerializer(ModelSerializer):
     def update(self, instance, validated_data):
         steering_committee = []
         errors = []
+
+        for section in Section.objects.filter(conference=instance):
+            section.delete()
+
+        for section in validated_data.pop('sections', []):
+            Section.objects.create(
+                title=section["title"],
+                start=section["start"],
+                end=section["end"],
+                conference=instance)
 
         for user_id in list(set(validated_data.pop('steering_committee', []))):
             user = get_user(user_id)
@@ -73,6 +93,9 @@ class ConferenceSerializer(ModelSerializer):
         data['steering_committee'] = UserSerializer(
             map(lambda role: role.user, SteeringCommitteeRole.objects.filter(conference=instance)),
             many=True).data
+        data['sections'] = SectionSerializer(
+            Section.objects.filter(conference=instance),
+            many=True).data
         return data
 
     @staticmethod
@@ -82,21 +105,43 @@ class ConferenceSerializer(ModelSerializer):
 
     @staticmethod
     def get_listeners(conference):
-        proposals = UserSerializer(
-            map(lambda role: role.user, ListenerRole.objects.filter(conference=conference)),
-            many=True)
-        return proposals.data
-
+        listeners = ListenerSerializer(
+            ListenerRole.objects.filter(conference=conference),
+            many=True
+        )
+        return listeners.data
+        # proposals = UserSerializer(
+        #     map(lambda role: role.user, ListenerRole.objects.filter(conference=conference)),
+        #     many=True)
+        # return proposals.data
 
 
 class JoinConferenceSerializer(Serializer):
     def create(self, validated_data):
         user = self.context['user']
-        conference = try_except(
-            lambda: Conference.objects.get(id=self.context['id']),
-            ValidationError({'detail': 'Conference not found.'}))
+        conference = self.context['conference']
 
         if ListenerRole.objects.filter(user=user, conference=conference).exists():
             raise ValidationError({'detail': 'Already registered for this conference.'})
 
         return ListenerRole.objects.create(user=user, conference=conference)
+
+
+class JoinSectionSerializer(Serializer):
+    section = PrimaryKeyRelatedField(queryset=Section.objects.all(), write_only=True)
+
+    def create(self, validated_data):
+        user = self.context['user']
+        conference = self.context['conference']
+
+        if not ListenerRole.objects.filter(user=user, conference=conference).exists():
+            raise ValidationError({'detail': 'Not registered for this conference.'})
+
+        role = ListenerRole.objects.get(user=user, conference=conference)
+        sections = role.sections
+
+        if sections.filter(id=validated_data['section'].id).exists():
+            raise ValidationError({'detail': 'Already joined this section.'})
+
+        sections.add(validated_data['section'])
+        raise ValidationError({'detail': 'Successfully joined section.'})

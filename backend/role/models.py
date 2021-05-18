@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Model, ForeignKey, CharField
+from django.db.models import Model, ForeignKey, CharField, ManyToManyField
 
-from conference.models import Conference
+from conference.models import Conference, Section
 from proposal.models import Proposal
 
 
@@ -25,6 +25,7 @@ class AuthorRole(Model):
 class ListenerRole(Model):
     user = ForeignKey(User, on_delete=models.CASCADE)
     conference = ForeignKey(Conference, on_delete=models.CASCADE)
+    sections = ManyToManyField(Section)
 
     def __str__(self):
         return f'{self.user.username} - {self.conference.title}'
