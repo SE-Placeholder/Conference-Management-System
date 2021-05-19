@@ -221,50 +221,6 @@
                 </ul>
             </div>
         </div>
-
-        <!-- Listener -->
-<!--        <h3 class="w3-container w3-xlarge">Listener</h3>-->
-<!--        <div v-if="conferences.listener && conferences.listener.length === 0" class="w3-container w3-small w3-margin-left">You are not attending any conference</div>-->
-<!--        <div v-for="conference in conferences.listener">-->
-<!--            &lt;!&ndash; My Conference Details Card &ndash;&gt;-->
-<!--            <div class="w3-panel w3-margin-left">-->
-<!--                <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">-->
-<!--                    <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>-->
-<!--                    <div class="w3-bar">-->
-<!--                        <div class="w3-bar-item">-->
-<!--                            <article class="conference-details-primary w3-large">{{conference.description}}</article>-->
-<!--                            <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>-->
-<!--                            <section class="conference-details-secondary w3-small">Date: <span>{{new Date(conference.date).toDateString()}}</span></section>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Steering &ndash;&gt;-->
-<!--        <h3 class="w3-container w3-xlarge">Steering</h3>-->
-<!--        <div v-if="conferences.steeringCommittee && conferences.steeringCommittee.length === 0" class="w3-container w3-small w3-margin-left">You are not steering any conference</div>-->
-<!--        <div v-for="conference in conferences.steeringCommittee">-->
-<!--            &lt;!&ndash; My Conference Details Card &ndash;&gt;-->
-<!--            <div class="w3-panel w3-margin-left">-->
-<!--                <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">-->
-<!--                    <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>-->
-<!--                    <div class="w3-bar">-->
-<!--                        <div class="w3-bar-item">-->
-<!--                            <article class="conference-details-primary w3-large">{{conference.description}}</article>-->
-<!--                            <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>-->
-<!--                            <section class="conference-details-secondary w3-small">Date: <span>{{new Date(conference.date).toDateString()}}</span></section>-->
-<!--                        </div>-->
-<!--                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditConferenceModal(conference)">-->
-<!--                            Edit-->
-<!--                        </button>-->
-<!--                        <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showViewProposalsModal(conference)">-->
-<!--                            View Papers-->
-<!--                        </button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
 
 
@@ -707,45 +663,45 @@
         <button :class="['w3-button', 'w3-half', paper? 'w3-enabled' : 'w3-disabled']"><a :href="'http://kind-wind-83282.pktriot.net'+paper" target="_blank"><span class="icon material-icons md-18">save_alt</span> Download Paper</a></button>
 
         <form class="w3-container w3-margin-top">
-            <div class="decision">
-                <div class="caption agree">I like it</div>
-                <div class="options">
-                    <div class="option_container max">
-                        <input class="option " type="radio" name="choice" value="3">
-                        <span class="option_checkmark agree max"></span>
-                    </div>
-                    <div class="option_container med">
-                        <input class="option" type="radio" name="choice" value="2">
-                        <span class="option_checkmark agree med"></span>
-                    </div>
-                    <div class="option_container min">
-                        <input class="option" type="radio" name="choice" value="1">
-                        <span class="option_checkmark agree min"></span>
-                    </div>
-                    <div class="option_container mini">
-                        <input class="option" type="radio" name="choice" value="0">
-                        <span class="option_checkmark neutral mini"></span>
-                    </div>
-                    <div class="option_container min">
-                        <input class="option" type="radio" name="choice" value="-1">
-                        <span class="option_checkmark disagree min"></span>
-                    </div>
-                    <div class="option_container med">
-                        <input class="option" type="radio" name="choice" value="-2">
-                        <span class="option_checkmark disagree med"></span>
-                    </div>
-                    <div class="option_container max">
-                        <input class="option" type="radio" name="choice" value="-3">
-                        <span class="option_checkmark disagree max"></span>
-                    </div>
-                </div>
-                <div class="caption disagree">I don't like it</div>
-            </div>
             <label>
                 <span>Review</span>
                 <textarea class="w3-input w3-margin-bottom" placeholder="Write your review here" v-model="review" required>
                 </textarea>
             </label>
+            <div class="decision">
+                <div class="caption agree">Accept</div>
+                <div class="options">
+                    <div class="option_container max w3-radio">
+                        <input class="option " type="radio" name="choice" value="3">
+                        <span class="option_checkmark agree max"></span>
+                    </div>
+                    <div class="option_container med w3-radio">
+                        <input class="option" type="radio" name="choice" value="2">
+                        <span class="option_checkmark agree med"></span>
+                    </div>
+                    <div class="option_container min w3-radio">
+                        <input class="option" type="radio" name="choice" value="1">
+                        <span class="option_checkmark agree min"></span>
+                    </div>
+                    <div class="option_container mini w3-radio">
+                        <input class="option" type="radio" name="choice" value="0">
+                        <span class="option_checkmark neutral mini"></span>
+                    </div>
+                    <div class="option_container min w3-radio">
+                        <input class="option" type="radio" name="choice" value="-1">
+                        <span class="option_checkmark disagree min"></span>
+                    </div>
+                    <div class="option_container med w3-radio">
+                        <input class="option" type="radio" name="choice" value="-2">
+                        <span class="option_checkmark disagree med"></span>
+                    </div>
+                    <div class="option_container max w3-radio">
+                        <input class="option" type="radio" name="choice" value="-3">
+                        <span class="option_checkmark disagree max"></span>
+                    </div>
+                </div>
+                <div class="caption disagree">Reject</div>
+            </div>
         </form>
 
         <footer class="w3-container w3-footer w3-row">

@@ -269,11 +269,13 @@ form textarea {
 
 .caption.agree {
     text-align: right;
-    color: #56ac8a;
+    /*color: #56ac8a;*/
+    color: var(--bg-color-darker);
 }
 .caption.disagree {
     text-align: right;
-    color: #5f394d;
+    /*color: #5f394d;*/
+    color: var(--bg-color-darker);
 }
 .decision .options {
     display: flex;
@@ -315,50 +317,50 @@ form textarea {
 
 
 .option_checkmark.agree {
-    border: 2px solid #56ac8a;
+    border: 1px solid var(--bg-color-lighter);
 }
 
 .option_container:hover input ~ .option_checkmark.agree {
-    background-color: #56ac8a;
+    background-color: var(--contrast-color);
 }
 
 
 .option_container input:checked ~ .option_checkmark.agree{
-    background-color: #56ac8a;
+    background-color: var(--contrast-color);
 }
 
 .option_checkmark.disagree {
-    border: 2px solid #5f394d;
+    border: 1px solid var(--bg-color-lighter);
 }
 
 .option_container:hover input ~ .option_checkmark.disagree {
-    background-color: #5f394d;
+    background-color: var(--contrast-color);
 }
 
 .option_container input:checked ~ .option_checkmark.disagree {
-    background-color: #5f394d;
+    background-color: var(--contrast-color);
 }
 
 .option_checkmark.neutral {
-    border: 2px solid #9b9faa;
+    border: 1px solid var(--bg-color-lighter);
 }
 
 .option_container:hover input ~ .option_checkmark.neutral {
-    background-color: #9b9faa;
+    background-color: var(--contrast-color);
 }
 
 .option_container input:checked ~ .option_checkmark.neutral {
-    background-color: #9b9faa;
+    background-color: var(--contrast-color);
 }
 
 .max{
-    height: 50px;
-    width: 50px;
+    height: 40px;
+    width: 40px;
 }
 
 .med{
-    height: 40px;
-    width: 40px;
+    height: 35px;
+    width: 35px;
 }
 
 .min{
