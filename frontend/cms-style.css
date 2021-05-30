@@ -468,5 +468,42 @@ form textarea {
     }
 }
 
+/* Upload file loader */
+.slider{
+    position:absolute;
+    height:8px;
+    overflow-x: hidden;
+    width: 96.65%;
+}
+
+.line{
+    position:absolute;
+    opacity: 0.1;
+    background: var(--bg-color);
+    height:8px;
+    width: 150%;
+}
+
+.subline{
+    position:absolute;
+    background: var(--contrast-color);
+    height:8px;
+}
+.inc{
+    animation: increase 2s infinite;
+}
+.dec{
+    animation: decrease 2s 0.5s infinite;
+}
+
+@keyframes increase {
+    from { left: -5%; width: 5%; }
+    to { left: 130%; width: 100%;}
+}
+@keyframes decrease {
+    from { left: -80%; width: 80%; }
+    to { left: 110%; width: 10%;}
+}
+
 
 

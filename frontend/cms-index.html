@@ -209,15 +209,6 @@
                     <div v-for="section in sections">
                         <li class="timeline-item" :data-date="new Date(section.start).toLocaleString()">Conference id: {{section.conference}} - {{section.title}}</li>
                     </div>
-<!--                    <li class="timeline-item" data-date="22 Jan 2020">Mentor / Participant Registration Begins</li>-->
-<!--                    <li class="timeline-item" data-date="3 Feb 2020">Mentor Registration Closes</li>-->
-<!--                    <li class="timeline-item" data-date="14 Feb 2020">Participant Registration Closes</li>-->
-<!--                    <li class="timeline-item" data-date="17 Feb 2020">Projects Announced</li>-->
-<!--                    <li class="timeline-item" data-date="17-23 Feb 2020">Acceptance Mails Sent</li>-->
-<!--                    <li class="timeline-item" data-date="24-29 Feb 2020">Community Bonding</li>-->
-<!--                    <li class="timeline-item" data-date="1 Mar 2020">Event Begins</li>-->
-<!--                    <li class="timeline-item" data-date="31 May 2020">Event Ends</li>-->
-<!--                    <li class="timeline-item" data-date="15 Jun 2020">Results Out</li>-->
                 </ul>
             </div>
         </div>
@@ -363,6 +354,12 @@
         <footer class="w3-container w3-footer w3-row">
             <button type="button" class="w3-button w3-bar w3-half" onclick="document.getElementById('submit-proposal-modal').style.display='none'">Cancel</button>
             <button type="button" class="w3-button w3-bar w3-half" v-on:click="submitProposal()">Submit</button>
+            <!-- Loader for file upload-->
+            <div class="slider w3-bar w3-bottom">
+                <div class="line"></div>
+                <div class="subline inc"></div>
+                <div class="subline dec"></div>
+            </div>
         </footer>
     </div>
 </div>
