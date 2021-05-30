@@ -124,6 +124,7 @@ dashboardTabComponent = Vue.createApp({
             conferences: [],
             proposals: [],
             sections: []
+            // sectionsWithConferencesName: []
         }
     },
     mounted() {
@@ -147,11 +148,10 @@ dashboardTabComponent = Vue.createApp({
             // console.info(sections)
             this.sections.push(...sections)
         }
-        // console.log(this.sections)
-        // allConferences[
-        //     {title: 'unu section'},
-        //     {title: 'doi section'}
-        // ]
+        //sort sections by date
+        this.sections.sort(function(section1,section2){
+            return new Date(section1.start) - new Date(section2.start);
+        });
     },
     methods: {
         showEditConferenceModal(conference) {
