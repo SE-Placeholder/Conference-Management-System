@@ -13,10 +13,17 @@ from role.serializers import ListenerSerializer
 
 
 class SectionSerializer(ModelSerializer):
+    proposals = SerializerMethodField()
+
     class Meta:
         model = Section
-        fields = ['id', 'title', 'start', 'end', 'conference']
+        fields = ['id', 'title', 'start', 'end', 'conference', 'proposals']
         depth = 1
+
+    def get_proposals(self, section):
+        return ProposalSerializer(
+            Proposal.objects.filter(conference=section.conference),
+            many=True).data
 
 
 class ConferenceSerializer(ModelSerializer):
@@ -58,6 +65,8 @@ class ConferenceSerializer(ModelSerializer):
 
         for section in Section.objects.filter(conference=instance):
             section.delete()
+
+        print(validated_data.get('sections', []))
 
         for section in validated_data.pop('sections', []):
             Section.objects.create(

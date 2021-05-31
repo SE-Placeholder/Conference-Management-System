@@ -12,13 +12,14 @@ from role.serializers import BidSerializer, ReviewSerializer
 class ProposalSerializer(ModelSerializer):
     authors = JSONField(binary=True, write_only=True, required=False)
     bids = SerializerMethodField()
-    reviewers = SerializerMethodField()
+    # reviewers = SerializerMethodField()
     reviews = SerializerMethodField()
 
     class Meta:
         model = Proposal
         # TODO: remove reviewers field
-        fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'bids', 'reviewers', 'reviews', 'authors']
+        # fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'bids', 'reviewers', 'reviews', 'authors']
+        fields = ['id', 'title', 'conference', 'topics', 'keywords', 'abstract', 'paper', 'bids', 'reviews', 'authors']
 
     def create(self, validated_data):
         authors = [self.context['request'].user]
@@ -83,13 +84,13 @@ class ProposalSerializer(ModelSerializer):
     def get_bids(proposal):
         return BidSerializer(BidRole.objects.filter(proposal=proposal), many=True).data
 
-    # TODO: modify
-    @staticmethod
-    def get_reviewers(proposal):
-        return UserSerializer(
-            map(lambda reviewer: reviewer.user, ReviewerRole.objects.filter(proposal=proposal)),
-            many=True
-        ).data
+    # # TODO: modify
+    # @staticmethod
+    # def get_reviewers(proposal):
+    #     return UserSerializer(
+    #         map(lambda reviewer: reviewer.user, ReviewerRole.objects.filter(proposal=proposal)),
+    #         many=True
+    #     ).data
 
     @staticmethod
     def get_reviews(proposal):

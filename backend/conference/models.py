@@ -1,4 +1,4 @@
-from django.db.models import Model, CharField, DateTimeField, FloatField, ForeignKey
+from django.db.models import Model, CharField, DateTimeField, FloatField, ForeignKey, ManyToManyField
 from django.db import models
 
 
@@ -22,6 +22,9 @@ class Section(Model):
     conference = ForeignKey(Conference, on_delete=models.CASCADE)
     start = DateTimeField()
     end = DateTimeField()
+    # here be dragons
+    from proposal.models import Proposal
+    proposals = ManyToManyField(Proposal)
     # session_chair?
 
     def __str__(self):
