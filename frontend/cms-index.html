@@ -207,7 +207,7 @@
                 <h2 class="w3-center">Schedule</h2>
                 <ul class="timeline">
                     <div v-for="section in sections">
-                        <li class="timeline-item" :data-date="new Date(section.start).toLocaleString()">Conference id: {{section.conference}} - {{section.title}}</li>
+                        <li class="timeline-item" :data-date="new Date(section.start).toLocaleString()">{{section.conference.title}} - {{section.title}}</li>
                     </div>
                 </ul>
             </div>
