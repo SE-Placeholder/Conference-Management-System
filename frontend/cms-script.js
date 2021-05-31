@@ -144,9 +144,9 @@ dashboardTabComponent = Vue.createApp({
         }).filter(conference => conference.proposals.length > 0)
         this.sections = []
         for (conference of allConferences) {
-            sections = conference.listeners.filter(listener => listener.user.id == currentUser.id)[0].sections
-            // console.info(sections)
-            this.sections.push(...sections)
+            sections = conference.listeners.find(listener => listener.user.id == currentUser.id)
+            if (sections)
+                this.sections.push(...sections.sections)            
         }
 
         // console.log(this.conferences)

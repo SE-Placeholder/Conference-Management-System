@@ -149,11 +149,11 @@
     <!-- My papers Section -->
     <div id="dashboard-papers-tab" class="dashboard-content-tab w3-container w3-cell">
         <h2 class="w3-container w3-xxlarge">My Papers</h2>
-
+        <h3 class="w3-container w3-xlarge">Proposed</h3>
         <!-- TODO: rename proposal to something more suggestive (here it's a list of conferences that contain information about proposals) -->
         <div v-for="conference in proposals">
             <!-- My Papers On Conference Details Card -->
-            <div class="w3-panel">
+            <div class="w3-panel w3-margin-left">
                 <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
                     <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
                     <!-- Papers List -->
@@ -174,12 +174,12 @@
             </div>
         </div>
 
-        <h2 class="w3-container w3-xxlarge">Reviewing</h2>
+        <h3 class="w3-container w3-xlarge">Reviewing</h3>
 
         <!-- TODO: rename proposal to something more suggestive (here it's a list of conferences that contain information about proposals) -->
         <div v-for="conference in proposals">
             <!-- My Papers On Conference Details Card -->
-            <div class="w3-panel">
+            <div class="w3-panel w3-margin-left">
                 <div class="w3-card w3-round-large w3-leftbar w3-display-container w3-hover-shadow">
                     <h3 class="conference-name w3-padding w3-wide">{{conference.title}}</h3>
                     <!-- Papers List -->
