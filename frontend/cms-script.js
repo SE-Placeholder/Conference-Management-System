@@ -124,17 +124,17 @@ dashboardTabComponent = Vue.createApp({
             conferences: [],
             proposals: [],
             sections: []
-            // sectionsWithConferencesName: []
         }
     },
     mounted() {
         allConferences = dataStore.get('conferences')
         currentUser = dataStore.get('user')
+
         this.conferences = {
             steeringCommittee: allConferences.filter(conference => 
                 conference.steering_committee.map(user => user.id).includes(currentUser.id)),
             listener: allConferences.filter(conference =>
-                conference.listeners.map(user => user.id).includes(currentUser.id))
+                conference.listeners.map(listener => listener.user.id).includes(currentUser.id))
         }
         this.proposals = allConferences.map(conference => {
             conference = {...conference}
@@ -148,7 +148,13 @@ dashboardTabComponent = Vue.createApp({
             // console.info(sections)
             this.sections.push(...sections)
         }
-        //sort sections by date
+
+        // console.log(this.conferences)
+        // console.log(this.sections)
+        // allConferences[
+        //     {title: 'unu section'},
+        //     {title: 'doi section'}
+        // ]
         this.sections.sort(function(section1,section2){
             return new Date(section1.start) - new Date(section2.start);
         });
