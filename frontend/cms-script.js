@@ -171,6 +171,9 @@ dashboardTabComponent = Vue.createApp({
             editConferenceModal.$data.date = new Date(Date.parse(conference.date)).toISOString().replace(/\..*$/, '')
             editConferenceModal.$data.id = conference.id
             editConferenceModal.$data.steering_committee = conference.steering_committee.map(user => user.username)
+            editConferenceModal.$data.sections = conference.sections
+            editConferenceModal.$data.proposals = conference.proposals
+
             showModal('edit-conference-modal')
         },
 
@@ -287,6 +290,7 @@ submitProposalModal = Vue.createApp({
     },
     methods: {
         submitProposal() {
+            document.getElementById("upload-progress").classList.remove("w3-hide")
             api.proposals.create({
                 title: this.title,
                 conference: this.conferenceId,
@@ -296,7 +300,11 @@ submitProposalModal = Vue.createApp({
                 paper: this.paper,
                 authors: [...this.authors_list]
             })
-                .then(response => window.location.reload())
+                .then(response => {
+                    document.getElementById("upload-progress").classList.add("w3-hide")
+                    // hideModal("submit-proposal-modal")
+                    window.location.reload()
+                })
                 .catch(error => alert(JSON.stringify(error)))
         },
         abstractUpload() {
@@ -423,7 +431,10 @@ editConferenceModal = Vue.createApp({
             proposalDeadline: new Date().toISOString().replace(/\..*$/, ''),
             biddingDeadline: new Date().toISOString().replace(/\..*$/, ''),
             fee: 0,
-            steering_committee: []
+            steering_committee: [],
+            sections: [],
+            proposals: [],
+            selectedProposals: [],
         }
     },
     methods: {
@@ -458,6 +469,54 @@ editConferenceModal = Vue.createApp({
             if (event.target.value.length === 0) {
                 this.removeTag(tag_list.length - 1, tag_list)
             }
+        },
+        addProposal() {
+            selectedProposalID = document.getElementById("selected-proposal").value
+            if (selectedProposalID == "yolo") return
+            proposal = this.proposals.find(proposal => proposal.id == selectedProposalID)
+            this.proposals = this.proposals.filter(proposal => proposal.id != selectedProposalID)
+            this.selectedProposals.push(proposal)
+        },
+        deleteSection(sectionID) {
+            deletedSection = this.sections.find(section => section.title == sectionID)
+            api.conferences.update({
+                id: this.id,
+                sections: this.sections.map(section => {
+                    return {
+                        title: section.title,
+                        start: section.start,
+                        end: section.end,
+                        proposals: section.proposals.map(proposal => proposal.id)
+                    }
+                }).filter(section => section.title != sectionID)
+            })
+                .then(response => {
+                    this.sections = this.sections.filter(section => section.title != sectionID)
+                })
+                .catch(error => console.log(error))
+        },
+        addSection() {
+            newSection = {
+                title: document.getElementById("section-name").value,
+                start: document.getElementById("section-start").value,
+                end: new Date(),
+                proposals: this.selectedProposals.map(proposal => proposal.id)
+            }
+            api.conferences.update({
+                id: this.id,
+                sections: this.sections.map(section => {
+                    return {
+                        title: section.title,
+                        start: section.start,
+                        end: section.end,
+                        proposals: section.proposals.map(proposal => proposal.id)
+                    }
+                }).concat(newSection)
+            })
+                .then(response => {
+                    this.sections.push(newSection)
+                })
+                .catch(error => console.log(error))
         }
     }
 })

@@ -355,7 +355,7 @@
             <button type="button" class="w3-button w3-bar w3-half" onclick="document.getElementById('submit-proposal-modal').style.display='none'">Cancel</button>
             <button type="button" class="w3-button w3-bar w3-half" v-on:click="submitProposal()">Submit</button>
             <!-- Loader for file upload-->
-            <div class="slider w3-bar w3-bottom">
+            <div id="upload-progress" class="slider w3-bar w3-bottom w3-hide">
                 <div class="line"></div>
                 <div class="subline inc"></div>
                 <div class="subline dec"></div>
@@ -441,59 +441,112 @@
 
 <!-- Edit Conference Modal -->
 <div id="edit-conference-modal" class="w3-modal">
-    <div class="w3-modal-content w3-animate-top w3-card-4">
+    <div class="w3-modal-content w3-animate-top w3-card-4 w3-margin-bottom">
         <header class="w3-container presentation">
             <span onclick="document.getElementById('edit-conference-modal').style.display='none'" class="cms-button w3-button w3-display-topright">&times;</span>
             <h1>Edit Conference</h1>
         </header>
 
         <form class="w3-container w3-margin-top">
-            <label class="w3-padding-top">
-                <span>Conference Title</span>
-                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Conference Title" v-model="title" required>
-            </label>
 
-            <label class="w3-padding-top">
-                <span>Conference Description</span>
-                <textarea class="w3-input w3-margin-bottom" placeholder="Enter Conference Description" v-model="description" required></textarea>
-            </label>
+            <!-- Conference Details -->
+            <h4>Conference details</h4>
+            <div class="w3-margin-left">
+                <label class="w3-padding-top">
+                    <span>Conference Title</span>
+                    <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Conference Title" v-model="title" required>
+                </label>
 
-            <label class="w3-padding-top">
-                <span>Date</span>
-                <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="date" required>
-            </label>
+                <label class="w3-padding-top">
+                    <span>Conference Description</span>
+                    <textarea class="w3-input w3-margin-bottom" placeholder="Enter Conference Description" v-model="description" required></textarea>
+                </label>
 
-            <label class="w3-padding-top">
-                <span>Location</span>
-                <input type="text" class="w3-input w3-margin-bottom" v-model="location" required>
-            </label>
+                <label class="w3-padding-top">
+                    <span>Date</span>
+                    <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="date" required>
+                </label>
 
-            <label class="w3-padding-top">
-                <span>Fee</span>
-                <input type="number" class="w3-input w3-margin-bottom" v-model="fee" required>
-            </label>
+                <label class="w3-padding-top">
+                    <span>Location</span>
+                    <input type="text" class="w3-input w3-margin-bottom" v-model="location" required>
+                </label>
 
-            
-            <label class="w3-padding-top">
-                <span>Abstract Deadline</span>
-                <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="abstractDeadline" required>
-            </label>
+                <label class="w3-padding-top">
+                    <span>Fee</span>
+                    <input type="number" class="w3-input w3-margin-bottom" v-model="fee" required>
+                </label>
 
-            <label class="w3-padding-top">
-                <span>Proposal Deadline</span>
-                <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="proposalDeadline" required>
-            </label>
+                <label class="w3-padding-top">
+                    <span>Abstract Deadline</span>
+                    <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="abstractDeadline" required>
+                </label>
 
-            <label class="w3-padding-top">
-                <span>Bidding Deadline</span>
-                <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="biddingDeadline" required>
-            </label>
+                <label class="w3-padding-top">
+                    <span>Proposal Deadline</span>
+                    <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="proposalDeadline" required>
+                </label>
 
+                <label class="w3-padding-top">
+                    <span>Bidding Deadline</span>
+                    <input type="datetime-local" class="w3-input w3-margin-bottom" v-model="biddingDeadline" required>
+                </label>
+            </div>
+
+            <!-- Conference Sections Details -->
+            <h4>Conference Sections</h4>
+            <table class="w3-table w3-striped w3-margin-left w3-margin-bottom">
+                <tr>
+                    <th>Section Title</th>
+                    <th>From:</th>
+                    <th>To:</th>
+                    <th></th>
+                </tr>
+                <tr v-for="section in sections" class="">
+                    <td class="">{{section.title}}</td>
+                    <td class="">{{section.start}}</td>
+                    <td class="">{{section.end}}</td>
+                    <td class="w3-red w3-button" v-on:click="deleteSection(section.title)">Yeet</td>
+                </tr>
+            </table>
+
+            <div class="w3-margin-left">
+                <div class="outer-border w3-margin-bottom">
+                    <label>
+                        <input id="section-name" type="text" placeholder="Enter Section Name" class="w3-input w3-padding-top"/>
+                    </label>
+
+                    <label class="w3-cell-row w3-padding">
+                        <span class="w3-cell w3-quarter">
+                            Date and time for this section:
+                        </span>
+                        <input id="section-start" type="datetime-local" class="w3-input w3-padding-top w3-cell w3-threequarter">
+                    </label>
+
+                    <label class="w3-cell-row w3-padding">
+                        <span class="w3-cell w3-quarter">
+                            Select papers for this conference:
+                        </span>
+                        <div v-for="proposal in selectedProposals">
+                            <p>{{proposal.title}}</p>
+                        </div>
+                        <select id="selected-proposal" class="w3-select w3-cell w3-rest">
+                            <option selected default value="yolo" style="font-style: italic">~No paper selected~</option>
+                            <option v-for="proposal in proposals" :value="proposal.id">{{proposal.title}}</option>
+                        </select>
+                        <button v-on:click="addProposal()" type="button" class="w3-button w3-cell" style="width:10%">Add</button>
+                    </label>
+                </div>
+                <button type="button" class="w3-button w3-bar w3-border w3-large" v-on:click="addSection()">Add New Section</button>
+            </div>
+
+
+            <!-- Steering Committee Details -->
             <label>
                 <span>Add steering committee member</span>
                 <span class="w3-block">
                     <div v-for='(user, index) in steering_committee' :key='user' class="tag w3-tag w3-round-xxlarge">
-                        <span @click='removeTag(index, steering_committee)'>x</span>
+                        <span @click='removeTag(index, steering_committee)' style="cursor: pointer">x</span>
                         {{user}}
                     </div>
                 </span>
@@ -501,9 +554,10 @@
                 <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Username/Email" @keydown.enter='addTag($event, steering_committee)' @keydown.delete='removeLastTag($event, steering_committee)'>
             </label>
 
+            <!-- Modal Footer -->
             <footer class="w3-container w3-footer w3-row">
-                <button type="button" class="w3-button w3-half" onclick="document.getElementById('edit-conference-modal').style.display='none'">Cancel</button>
-                <button type="button" class="w3-button w3-half" v-on:click="editConference">Save</button>
+                <button type="button" class="w3-button w3-half w3-large" onclick="document.getElementById('edit-conference-modal').style.display='none'">Cancel</button>
+                <button type="button" class="w3-button w3-half w3-large" v-on:click="editConference">Save</button>
             </footer>
         </form>
 

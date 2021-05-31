@@ -50,7 +50,7 @@ const api = {
             client.get(pathEncode(endpoints.conferenceDetails, id)),
         create: ({title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline}) =>
             client.post(endpoints.conferences, {title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline}),
-        update: ({id, title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline, steering_committee}) =>
+        update: ({id, title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline, steering_committee, sections}) =>
             client.post(pathEncode(endpoints.conferenceDetails, id), {
                 title,
                 description,
@@ -60,7 +60,8 @@ const api = {
                 abstract_deadline,
                 proposal_deadline,
                 bidding_deadline,
-                steering_committee: JSON.stringify(steering_committee)
+                steering_committee: JSON.stringify(steering_committee),
+                sections: JSON.stringify(sections)
             }),
         join: id =>
             client.post(pathEncode(endpoints.joinConference, id))
