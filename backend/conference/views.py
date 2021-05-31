@@ -7,7 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from conference.models import Conference
 from conference.serializers import ConferenceSerializer, JoinConferenceSerializer, JoinSectionSerializer
-from role.models import SteeringCommitteeRole
+from role.models import SteeringCommitteeRole, ListenerRole
 
 
 # create conference: allow authenticated users
@@ -35,6 +35,12 @@ class ConferenceViewSet(ModelViewSet):
     lookup_field = 'id'
 
 
+# join conference: allow authenticated users
+class JoinConferencePermissions(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated)
+
+
 class JoinConferenceView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -48,12 +54,21 @@ class JoinConferenceView(APIView):
         return Response({'detail': 'Successfully joined conference.'}, status=status.HTTP_201_CREATED)
 
 
+# join section: allow authenticated users that have a listener role for the conference in which the section is organized
+class JoinSectionPermissions(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        is_authenticated = bool(request.user and request.user.is_authenticated)
+        return is_authenticated and ListenerRole.objects.filter(user=request.user, conference=obj).exists()
+
+
 class JoinSectionView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, id):
         serializer = JoinSectionSerializer(data=request.data)
-        serializer.context['conference'] = get_object_or_404(Conference, id=id)
+        conference = get_object_or_404(Conference, id=id)
+        # self.check_object_permissions(self.request, conference)
+        serializer.context['conference'] = conference
         serializer.context['user'] = request.user
         serializer.is_valid(raise_exception=True)
         # TODO: return this?

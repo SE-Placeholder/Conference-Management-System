@@ -100,14 +100,11 @@ class ProposalSerializer(ModelSerializer):
 
 
 class BidProposalSerializer(Serializer):
-    # TODO: this allows -1, 0 and 1, should be swapped with human readable equivalents
     qualifier = ChoiceField(choices=BidRole.qualifier_choices)
 
     def create(self, validated_data):
         user = self.context['user']
-        proposal = try_except(
-            lambda: Proposal.objects.get(id=self.context['id']),
-            ValidationError({'detail': 'Proposal not found.'}))
+        proposal = self.context['proposal']
 
         bid = BidRole.objects.filter(user=user, proposal=proposal)
         if bid.exists():
@@ -163,5 +160,5 @@ class AddReviewSerializer(Serializer):
         return ReviewerRole.objects.create(
             user=user,
             proposal=proposal,
-            qualifier=validated_data.get('qualifier'),
-            review=validated_data.get('review'))
+            qualifier=validated_data['qualifier'],
+            review=validated_data['review'])

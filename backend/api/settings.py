@@ -33,6 +33,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 ALLOWED_HOSTS = [
     'localhost',
+    '192.168.1.100',
     'kind-wind-83282.pktriot.net'
 ]
 

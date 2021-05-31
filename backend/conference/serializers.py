@@ -1,10 +1,9 @@
-import rest_framework.fields
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import SerializerMethodField, JSONField, DecimalField
+from rest_framework.fields import SerializerMethodField, JSONField
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, Serializer
 
-from api.utils import get_user, try_except
+from api.utils import get_user
 from conference.models import Conference, Section
 from proposal.models import Proposal
 from proposal.serializers import ProposalSerializer
@@ -17,9 +16,9 @@ class SectionSerializer(ModelSerializer):
     class Meta:
         model = Section
         fields = ['id', 'title', 'start', 'end', 'conference']
+        depth = 1
 
 
-# TODO: refactor
 class ConferenceSerializer(ModelSerializer):
     steering_committee = JSONField(binary=True, write_only=True, required=False)
     sections = JSONField(binary=True, write_only=True, required=False)
@@ -100,20 +99,17 @@ class ConferenceSerializer(ModelSerializer):
 
     @staticmethod
     def get_proposals(conference):
-        proposals = ProposalSerializer(Proposal.objects.filter(conference=conference), many=True)
-        return proposals.data
+        return ProposalSerializer(
+            Proposal.objects.filter(conference=conference),
+            many=True
+        ).data
 
     @staticmethod
     def get_listeners(conference):
-        listeners = ListenerSerializer(
+        return ListenerSerializer(
             ListenerRole.objects.filter(conference=conference),
             many=True
-        )
-        return listeners.data
-        # proposals = UserSerializer(
-        #     map(lambda role: role.user, ListenerRole.objects.filter(conference=conference)),
-        #     many=True)
-        # return proposals.data
+        ).data
 
 
 class JoinConferenceSerializer(Serializer):
@@ -137,8 +133,7 @@ class JoinSectionSerializer(Serializer):
         if not ListenerRole.objects.filter(user=user, conference=conference).exists():
             raise ValidationError({'detail': 'Not registered for this conference.'})
 
-        role = ListenerRole.objects.get(user=user, conference=conference)
-        sections = role.sections
+        sections = ListenerRole.objects.get(user=user, conference=conference).sections
 
         if sections.filter(id=validated_data['section'].id).exists():
             raise ValidationError({'detail': 'Already joined this section.'})

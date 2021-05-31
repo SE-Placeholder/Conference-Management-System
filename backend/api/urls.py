@@ -10,8 +10,6 @@ urlpatterns = [
     path('auth', include('authentication.urls')),
 
     path('conferences', include('conference.urls')),
-    path('proposals', include('proposal.urls')),
-
-    # path('user', include('role.urls'))
+    path('proposals', include('proposal.urls'))
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

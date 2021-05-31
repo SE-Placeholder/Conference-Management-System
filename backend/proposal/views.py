@@ -36,16 +36,15 @@ class ProposalViewSet(ModelViewSet):
     lookup_field = 'id'
 
 
-# TODO: this
+# allow users that are authenticated and have steering committee role
 class BidProposalPermissions(BasePermission):
-    def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated)
-
     def has_object_permission(self, request, view, obj):
-        return bool(request.user and
-                    request.user.is_authenticated and
-                    SteeringCommitteeRole.objects.filter(user=request.user, conference=obj.proposal.conference).exists()
-                    )
+        is_authenticated = bool(request.user and request.user.is_authenticated)
+        is_steering_committee = SteeringCommitteeRole.objects.filter(
+            user=request.user,
+            conference=obj.proposal.conference
+        ).exists()
+        return is_authenticated and is_steering_committee
 
 
 class BidProposalView(APIView):
@@ -53,19 +52,23 @@ class BidProposalView(APIView):
 
     def post(self, request, id):
         serializer = BidProposalSerializer(data=request.data)
-        # TODO: change to get_object_or_404
-        serializer.context['id'] = id
+        serializer.context['proposal'] = get_object_or_404(Proposal, id=id)
         serializer.context['user'] = request.user
+        # self.check_object_permissions(self.request, proposal)
         serializer.is_valid(raise_exception=True)
         # TODO: return this?
         bid_role = serializer.save()
         return Response({'detail': 'Bid successfully submitted.'}, status=status.HTTP_201_CREATED)
 
 
-# TODO: change permission class, allow only steering committee members
-# TODO: error checking and move everything into serializer
 class AssignReviewersPermissions(BasePermission):
-    pass
+    def has_object_permission(self, request, view, obj):
+        is_authenticated = bool(request.user and request.user.is_authenticated)
+        is_steering_committee = SteeringCommitteeRole.objects.filter(
+            user=request.user,
+            conference=obj.proposal.conference
+        ).exists()
+        return is_authenticated and is_steering_committee
 
 
 class AssignReviewersView(APIView):
@@ -74,14 +77,23 @@ class AssignReviewersView(APIView):
     def post(self, request, id):
         serializer = AssignReviewersSerializer(data=request.data)
         serializer.context['proposal'] = get_object_or_404(Proposal, id=id)
+        # self.check_object_permissions(self.request, proposal)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         # TODO: return results
         return Response({'detail': 'Reviewers successfully assigned.'}, status=status.HTTP_201_CREATED)
 
 
+# allow authenticated users that have reviewer role?
 class AddReviewPermissions(BasePermission):
     pass
+    # def has_object_permission(self, request, view, obj):
+    #     is_authenticated = bool(request.user and request.user.is_authenticated)
+    #     is_steering_committee = SteeringCommitteeRole.objects.filter(
+    #         user=request.user,
+    #         conference=obj.proposal.conference
+    #     ).exists()
+    #     return is_authenticated and is_steering_committee
 
 
 class AddReviewView(APIView):

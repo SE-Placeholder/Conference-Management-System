@@ -1,5 +1,5 @@
-from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
+
 
 from authentication.serializers import UserSerializer
 from role.models import BidRole, ReviewerRole, ListenerRole
@@ -7,15 +7,11 @@ from role.models import BidRole, ReviewerRole, ListenerRole
 
 class ListenerSerializer(ModelSerializer):
     user = UserSerializer()
-    # sections = SerializerMethodField()
 
     class Meta:
         model = ListenerRole
         fields = ['user', 'sections']
-        depth = 1
-
-
-
+        depth = 2
 
 
 class BidSerializer(ModelSerializer):
