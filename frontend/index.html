@@ -126,7 +126,7 @@
                                     <option default value="yolo" style="font-style: italic">~No section selected~</option>
                                     <option v-for="section in conference.sections" :value="section.id">{{section.title}}</option>
                                 </select>
-                                <button v-on:click="joinSection(conference.id)" type="button" class="w3-button w3-rest">Add</button>
+                                <button v-on:click="joinSection(conference.id)" type="button" class="cms-button w3-button w3-rest">Add</button>
                             </label>
                         </div>
 
@@ -165,6 +165,9 @@
                             <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
                             <section class="conference-details-secondary w3-small">Date: <span>{{new Date(conference.date).toDateString()}}</span></section>
                         </div>
+                        <button class="cms-button-inversed w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="deleteConference()">
+                            Delete
+                        </button>
                         <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditConferenceModal(conference)">
                             Edit
                         </button>
@@ -792,8 +795,8 @@
         </form>
 
         <footer class="w3-container w3-footer w3-row">
-            <button type="button" class="w3-button w3-half" onclick="document.getElementById('edit-proposal-modal').style.display='none'">Cancel</button>
-            <button type="button" class="w3-button w3-half" v-on:click="updateProposal()">Save</button>
+            <button type="button" class="w3-button w3-half w3-large" onclick="document.getElementById('edit-proposal-modal').style.display='none'">Cancel</button>
+            <button type="button" class="w3-button w3-half w3-large" v-on:click="updateProposal()">Save</button>
         </footer>
 
     </div>

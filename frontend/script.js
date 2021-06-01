@@ -187,6 +187,9 @@ dashboardTabComponent = Vue.createApp({
                 })
                 .catch(error => alert(error.response.data.detail))
         },
+        deleteConference(){
+          console.log("yeet")
+        },
         showEditConferenceModal(conference) {
             editConferenceModal.$data.title = conference.title
             editConferenceModal.$data.description = conference.description
