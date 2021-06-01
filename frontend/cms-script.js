@@ -314,6 +314,15 @@ submitProposalModal = Vue.createApp({
         paperUpload() {
             this.paper = document.querySelector('#upload-paper').files[0]
         },
+        checkIfEmpty(event,divId){
+            event.preventDefault();
+            var value = event.target.value.trim();
+            if (value.length > 0)
+                document.getElementById(divId).style.display = 'block';
+        },
+        hideDiv(divId){
+            document.getElementById(divId).style.display = 'none';
+        },
         addTag(event, tag_list) {
             event.preventDefault()
             var val = event.target.value.trim()
