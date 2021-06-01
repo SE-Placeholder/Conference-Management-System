@@ -142,10 +142,11 @@ class JoinSectionSerializer(Serializer):
         if not ListenerRole.objects.filter(user=user, conference=conference).exists():
             raise ValidationError({'detail': 'Not registered for this conference.'})
 
-        sections = ListenerRole.objects.get(user=user, conference=conference).sections
+        listener_role = ListenerRole.objects.get(user=user, conference=conference)
+        sections = listener_role.sections
 
         if sections.filter(id=validated_data['section'].id).exists():
             raise ValidationError({'detail': 'Already joined this section.'})
 
         sections.add(validated_data['section'])
-        raise ValidationError({'detail': 'Successfully joined section.'})
+        return listener_role
