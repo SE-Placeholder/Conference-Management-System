@@ -68,12 +68,12 @@ class ConferenceSerializer(ModelSerializer):
                 section.delete()
 
         for section in validated_data.pop('sections', []):
-            section = Section.objects.create(
+            new_section = Section.objects.create(
                 title=section["title"],
                 start=section["start"],
                 end=section["end"],
                 conference=instance)
-            section.proposals.set([Proposal.objects.get(id=proposal_id) for proposal_id in section["proposals"]])
+            new_section.proposals.set([Proposal.objects.get(id=proposal_id) for proposal_id in section["proposals"]])
 
         for user_id in list(set(validated_data.pop('steering_committee', []))):
             user = get_user(user_id)

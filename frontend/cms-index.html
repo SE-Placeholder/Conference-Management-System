@@ -504,8 +504,8 @@
                 </tr>
                 <tr v-for="section in sections" class="">
                     <td class="">{{section.title}}</td>
-                    <td class="">{{section.start}}</td>
-                    <td class="">{{section.end}}</td>
+                    <td class="">{{new Date(section.start).toLocaleString()}}</td>
+                    <td class="">{{new Date(section.end).toLocaleString()}}</td>
                     <td class="w3-red w3-button" v-on:click="deleteSection(section.title)">Yeet</td>
                 </tr>
             </table>
