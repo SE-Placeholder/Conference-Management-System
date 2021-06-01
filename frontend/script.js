@@ -439,6 +439,7 @@ addConferenceModal = Vue.createApp({
             abstractDeadline: new Date().toISOString().replace(/\..*$/, ''),
             proposalDeadline: new Date().toISOString().replace(/\..*$/, ''),
             biddingDeadline: new Date().toISOString().replace(/\..*$/, ''),
+            reviewingDeadline: new Date().toISOString().replace(/\..*$/, ''),
             fee: 0
         }
     },
@@ -452,7 +453,8 @@ addConferenceModal = Vue.createApp({
                 fee: this.fee,
                 abstract_deadline: this.abstractDeadline,
                 proposal_deadline: this.proposalDeadline,
-                bidding_deadline: this.biddingDeadline
+                bidding_deadline: this.biddingDeadline,
+                reviewing_deadline: this.reviewingDeadline
             })
                 .then(response => window.location.reload())
                 .catch(error => alert(JSON.stringify(error)))
@@ -472,6 +474,7 @@ editConferenceModal = Vue.createApp({
             abstractDeadline: new Date().toISOString().replace(/\..*$/, ''),
             proposalDeadline: new Date().toISOString().replace(/\..*$/, ''),
             biddingDeadline: new Date().toISOString().replace(/\..*$/, ''),
+            reviewingDeadline: new Date().toISOString().replace(/\..*$/, ''),
             fee: 0,
             steering_committee: [],
             sections: [],
@@ -491,6 +494,7 @@ editConferenceModal = Vue.createApp({
                 abstract_deadline: this.abstractDeadline,
                 proposal_deadline: this.proposalDeadline,
                 bidding_deadline: this.biddingDeadline,
+                reviewing_deadline: this.reviewingDeadline,
                 steering_committee: [...this.steering_committee]
             })
                 .then(response => window.location.reload())
