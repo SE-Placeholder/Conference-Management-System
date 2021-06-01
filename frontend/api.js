@@ -14,6 +14,7 @@ const endpoints = {
     conferences: 'conferences',
     conferenceDetails: 'conferences/<id>',
     joinConference: 'conferences/<id>/join',
+    joinConferenceSection: 'conferences/<id>/join-section',
 
     userConferences: '/user/conferences',
     userProposals: '/user/proposals',
@@ -50,8 +51,8 @@ const api = {
             client.get(pathEncode(endpoints.conferenceDetails, id)),
         create: ({title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline}) =>
             client.post(endpoints.conferences, {title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline}),
-        update: ({id, title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline, steering_committee, sections}) =>
-            client.post(pathEncode(endpoints.conferenceDetails, id), {
+        update: ({id, title, description, date, location, fee, abstract_deadline, proposal_deadline, bidding_deadline, steering_committee, sections}) => {
+            updatedConference = {
                 title,
                 description,
                 date,
@@ -60,11 +61,15 @@ const api = {
                 abstract_deadline,
                 proposal_deadline,
                 bidding_deadline,
-                steering_committee: JSON.stringify(steering_committee),
-                sections: JSON.stringify(sections)
-            }),
+                steering_committee: JSON.stringify(steering_committee)
+            }
+            if (sections) updatedConference.sections = JSON.stringify(sections)
+            return client.post(pathEncode(endpoints.conferenceDetails, id), updatedConference)
+        },
         join: id =>
-            client.post(pathEncode(endpoints.joinConference, id))
+            client.post(pathEncode(endpoints.joinConference, id)),
+        joinSection: (id, section) =>
+            client.post(pathEncode(endpoints.joinConferenceSection, id), {section})
     },
     proposals: {
         list: () =>

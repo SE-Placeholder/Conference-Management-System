@@ -115,6 +115,37 @@
                             <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
                             <section class="conference-details-secondary w3-small">Date: <span>{{new Date(conference.date).toDateString()}}</span></section>
                         </div>
+
+                        <!-- Sections in the conference dropdown -->
+                        <div class="w3-padding">
+                            <label class="w3-bar">
+                            <span class="">
+                                Select the sections you wish to attend
+                            </span>
+                                <select id="selected-section" class="w3-select" style="max-width:50% !important; width:auto;">
+                                    <option default value="yolo" style="font-style: italic">~No section selected~</option>
+                                    <option v-for="section in conference.sections" :value="section.id">{{section.title}}</option>
+                                </select>
+                                <button v-on:click="joinSection(conference.id)" type="button" class="w3-button w3-rest">Add</button>
+                            </label>
+                        </div>
+
+                        <!-- Selected Sections List -->
+                        <table class="w3-table w3-striped">
+                            <tr>
+                                <th>Section name</th>
+                                <th>From</th>
+                                <th>To</th>
+                            </tr>
+                            <tr v-for="section in selectedSections[conference.id]">
+                                <td>{{section.title}}</td>
+                                <td class="w3-pale-grey">{{new Date(section.start).toLocaleString()}}</td>
+                                <td class="w3-pale-grey">{{new Date(section.end).toLocaleString()}}</td>
+                            </tr>
+                        </table>
+
+
+
                     </div>
                 </div>
             </div>
@@ -523,26 +554,46 @@
                         <input id="section-name" type="text" placeholder="Enter Section Name" class="w3-input w3-padding-top"/>
                     </label>
 
-                    <label class="w3-cell-row w3-padding">
-                        <span class="w3-cell w3-quarter">
-                            Date and time for this section:
-                        </span>
-                        <input id="section-start" type="datetime-local" class="w3-input w3-padding-top w3-cell w3-threequarter">
-                    </label>
+                    <!-- Date Pickers Row -->
+                    <div class="w3-cell-row">
+                        <!-- Start Time for Section -->
+                        <label class="w3-cell w3-padding w3-half">
+                            <span class="">
+                                Start Time:
+                            </span>
+                            <input id="section-start" type="datetime-local" class="w3-input w3-padding-top">
+                        </label>
 
-                    <label class="w3-cell-row w3-padding">
-                        <span class="w3-cell w3-quarter">
-                            Select papers for this conference:
-                        </span>
-                        <div v-for="proposal in selectedProposals">
-                            <p>{{proposal.title}}</p>
+                        <!-- End Time for Section -->
+                        <label class="w3-cell w3-padding w3-half">
+                            <span class="">
+                                End Time:
+                            </span>
+                            <input id="section-end" type="datetime-local" class="w3-input w3-padding-top">
+                        </label>
+                    </div>
+
+                    <!-- Papers submitted to conference dropdown -->
+                    <div class="w3-padding">
+                        <label class="w3-bar">
+                            <span class="">
+                                Add papers to this section:
+                            </span>
+                            <select id="selected-proposal" class="w3-select" style="max-width:50% !important; width:auto;">
+                                <option default value="yolo" style="font-style: italic">~No paper selected~</option>
+                                <option v-for="proposal in proposals" :value="proposal.id">{{proposal.title}}</option>
+                            </select>
+                            <button v-on:click="addProposal()" type="button" class="w3-button w3-rest">Add</button>
+                        </label>
+                    </div>
+
+                    <div class="w3-bar">
+                        <!-- Selected Papers List -->
+                        <div v-for="proposal in selectedProposals" class="w3-bar-item">
+                            <p> <span class="w3-large">&#128462;</span> {{proposal.title}}</p>
                         </div>
-                        <select id="selected-proposal" class="w3-select w3-cell w3-rest">
-                            <option selected default value="yolo" style="font-style: italic">~No paper selected~</option>
-                            <option v-for="proposal in proposals" :value="proposal.id">{{proposal.title}}</option>
-                        </select>
-                        <button v-on:click="addProposal()" type="button" class="w3-button w3-cell" style="width:10%">Add</button>
-                    </label>
+                    </div>
+
                 </div>
                 <button type="button" class="w3-button w3-bar w3-border w3-large" v-on:click="addSection()">Add New Section</button>
             </div>

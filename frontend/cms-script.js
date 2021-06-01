@@ -123,7 +123,8 @@ dashboardTabComponent = Vue.createApp({
         return {
             conferences: [],
             proposals: [],
-            sections: []
+            sections: [],
+            selectedSections: {}
         }
     },
     mounted() {
@@ -131,35 +132,47 @@ dashboardTabComponent = Vue.createApp({
         currentUser = dataStore.get('user')
 
         this.conferences = {
-            steeringCommittee: allConferences.filter(conference => 
+            steeringCommittee: allConferences.filter(conference =>
                 conference.steering_committee.map(user => user.id).includes(currentUser.id)),
             listener: allConferences.filter(conference =>
                 conference.listeners.map(listener => listener.user.id).includes(currentUser.id))
         }
         this.proposals = allConferences.map(conference => {
             conference = {...conference}
-            conference.proposals = conference.proposals.filter(proposal => 
+            conference.proposals = conference.proposals.filter(proposal =>
                 proposal.authors.map(user => user.id).includes(currentUser.id))
             return conference
         }).filter(conference => conference.proposals.length > 0)
         this.sections = []
         for (conference of allConferences) {
+            console.log(conference.listeners.find(listener => listener.user.id == currentUser.id))
             sections = conference.listeners.find(listener => listener.user.id == currentUser.id)
-            if (sections)
-                this.sections.push(...sections.sections)            
+            if (sections) {
+                for (section of sections.sections) {
+                    conferenceID = section.conference.id
+                    if (!(conferenceID in this.selectedSections))
+                        this.selectedSections[conferenceID] = []
+                    this.selectedSections[conferenceID].push(section)
+                }
+                this.sections.push(...sections.sections)
+            }
         }
-
-        // console.log(this.conferences)
-        // console.log(this.sections)
-        // allConferences[
-        //     {title: 'unu section'},
-        //     {title: 'doi section'}
-        // ]
-        this.sections.sort(function(section1,section2){
+        this.sections.sort(function(section1, section2) {
             return new Date(section1.start) - new Date(section2.start);
         });
     },
     methods: {
+        joinSection(conferenceID) {
+            sectionID = document.getElementById("selected-section").value
+            api.conferences.joinSection(conferenceID, sectionID)
+                .then(result => {
+                    if (!(conferenceID in this.selectedSections))
+                        this.selectedSections[conferenceID] = []
+                    section = dataStore.get('conferences').find(conference => conference.id == conferenceID).sections.find(section => section.id == sectionID)
+                    this.selectedSections[conferenceID].push(section)
+                })
+                .catch(error => alert(error.response.data.detail))
+        },
         showEditConferenceModal(conference) {
             editConferenceModal.$data.title = conference.title
             editConferenceModal.$data.description = conference.description
@@ -604,6 +617,10 @@ viewProposalsModal = Vue.createApp({
             return new Date() < new Date(this.bidding_deadline)
         },
         saveReviewers(proposal) {
+            if (proposal.assigned_reviewers.length < 2) {
+                alert('kurwa')
+                return
+            }
             api.proposals.assignReviewers(proposal.id, proposal.assigned_reviewers)
                 .then(response => console.log(response))
         },
