@@ -12,6 +12,7 @@ class Conference(Model):
     abstract_deadline = DateTimeField()
     proposal_deadline = DateTimeField()
     bidding_deadline = DateTimeField()
+    reviewing_deadline = DateTimeField()
 
     def __str__(self):
         return f'{self.title} - {self.description}'
