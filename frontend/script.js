@@ -700,6 +700,25 @@ showReviewsModal = Vue.createApp({
         reviewProposal() {
             api.proposals.review(this.paperId, this.qualifier, this.review)
                 .then(response => hideModal('review-proposal-modal'))
+        },
+
+        qualifierToString(qualifier) {
+            switch (qualifier) {
+                case -3:
+                    return "Strong Reject (0/6)"
+                case -2:
+                    return "Reject (1/6)"
+                case -1:
+                    return "Weak Reject (2/6)"
+                case 0:
+                    return "Neutral (3/6)"
+                case 1:
+                    return "Weak Accept (4/6)"
+                case 2:
+                    return "Accept (5/6)"
+                case 3:
+                    return "Strong Accept (6/6)"
+            }
         }
     }
 })
