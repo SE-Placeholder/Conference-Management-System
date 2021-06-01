@@ -219,8 +219,11 @@
                             <div class="w3-bar-item">
                                 <article class="conference-details-primary w3-large">{{proposal.title}}</article>
                             </div>
-                            <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showReviewProposalModal(proposal)">
+                            <button v-if="isReviewingPhase(conference)" class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showReviewProposalModal(proposal)">
                                 Review
+                            </button>
+                            <button v-else class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showReviewsModal(proposal)">
+                                Show reviews
                             </button>
                         </div>
                     </div>
