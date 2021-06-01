@@ -180,7 +180,8 @@ dashboardTabComponent = Vue.createApp({
         showViewProposalsModal(conference) {
             viewProposalsModal.$data.proposals = [...conference.proposals].map(proposal => {
                 // console.log(proposal)
-                reviewers = proposal.reviewers.map(user => user.username)
+                // reviewers = proposal.reviewers.map(user => user.username)
+                reviewers = proposal.reviews.map(review => review.user.username)
                 if (reviewers.length > 0) {
                     proposal.assigned_reviewers = reviewers
                 } else {

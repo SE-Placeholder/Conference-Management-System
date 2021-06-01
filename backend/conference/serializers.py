@@ -63,17 +63,17 @@ class ConferenceSerializer(ModelSerializer):
         steering_committee = []
         errors = []
 
-        for section in Section.objects.filter(conference=instance):
-            section.delete()
-
-        print(validated_data.get('sections', []))
+        if 'sections' in validated_data:
+            for section in Section.objects.filter(conference=instance):
+                section.delete()
 
         for section in validated_data.pop('sections', []):
-            Section.objects.create(
+            section = Section.objects.create(
                 title=section["title"],
                 start=section["start"],
                 end=section["end"],
                 conference=instance)
+            section.proposals.set([Proposal.objects.get(id=proposal_id) for proposal_id in section["proposals"]])
 
         for user_id in list(set(validated_data.pop('steering_committee', []))):
             user = get_user(user_id)
