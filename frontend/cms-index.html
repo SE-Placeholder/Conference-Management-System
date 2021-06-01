@@ -304,7 +304,6 @@
             </label>
 
             <label>
-                <!-- TODO: make user press enter -->
                 <span>Keywords</span>
                 <span class="w3-block">
                     <div v-for='(tag, index) in keywords_list' :key='tag' class="tag w3-tag w3-round-xxlarge">
@@ -313,7 +312,11 @@
                     </div>
                 </span>
 
-                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Keywords" @keydown.enter='addTag($event, keywords_list)' @keydown.delete='removeLastTag($event, keywords_list)'>
+                <input type="text" class="w3-input w3-margin-bottom" @focus='hideDiv("SubmitProposalModal_Keywords_Div")' @blur='checkIfEmpty($event,"SubmitProposalModal_Keywords_Div")' placeholder="Enter Keywords" @keydown.enter='addTag($event, keywords_list)' @keydown.delete='removeLastTag($event, keywords_list)'>
+                <!-- TODO: make this look better with css -->
+                <div id="SubmitProposalModal_Keywords_Div" class="hidden">
+                    <p>Please press enter to add</p>
+                </div>
             </label>
 
             <label>
@@ -325,7 +328,11 @@
                     </div>
                 </span>
 
-                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Topics" @keydown.enter='addTag($event, topics_list)' @keydown.delete='removeLastTag($event, topics_list)'>
+                <input type="text" class="w3-input w3-margin-bottom" @focus='hideDiv("SubmitProposalModal_Keywords_Div")' @blur='checkIfEmpty($event,"SubmitProposalModal_Keywords_Div")' placeholder="Enter Topics" @keydown.enter='addTag($event, topics_list)' @keydown.delete='removeLastTag($event, topics_list)'>
+                <!-- TODO: make this look better with css -->
+                <div id="SubmitProposalModal_Topics_Div" class="hidden">
+                    <p>Please press enter to add</p>
+                </div>
             </label>
 
             <label>
@@ -645,7 +652,7 @@
             </label>
 
             <label>
-                <!-- TODO: make user press enter -->
+
                 <span>Keywords</span>
                 <span class="w3-block">
                     <div v-for='(tag, index) in keywords_list' :key='tag' class="tag w3-tag w3-round-xxlarge">
@@ -654,7 +661,11 @@
                     </div>
                 </span>
 
-                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Keywords" @keydown.enter='addTag($event, keywords_list)' @keydown.delete='removeLastTag($event, keywords_list)'>
+                <input type="text" class="w3-input w3-margin-bottom" @focus='hideDiv("EditProposalModal_Keywords_Div")' @blur='checkIfEmpty($event,"EditProposalModal_Keywords_Div")' placeholder="Enter Keywords" @keydown.enter='addTag($event, keywords_list)' @keydown.delete='removeLastTag($event, keywords_list)'>
+                <!-- TODO: make this look better with css-->
+                <div id="EditProposalModal_Keywords_Div" class="hidden">
+                    <p>Please press enter to add</p>
+                </div>
             </label>
 
             <label>
@@ -666,7 +677,11 @@
                     </div>
                 </span>
 
-                <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Topics" @keydown.enter='addTag($event, topics_list)' @keydown.delete='removeLastTag($event, topics_list)'>
+                <input type="text" class="w3-input w3-margin-bottom"@focus='hideDiv("EditProposalModal_Topics_Div")' @blur='checkIfEmpty($event,"EditProposalModal_Topics_Div")' placeholder="Enter Topics" @keydown.enter='addTag($event, topics_list)' @keydown.delete='removeLastTag($event, topics_list)'>
+                <!-- TODO: make this look better with css -->
+                <div id="EditProposalModal_Topics_Div" class="hidden">
+                    <p>Please press enter to add</p>
+                </div>
             </label>
 
             <label>

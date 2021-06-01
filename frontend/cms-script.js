@@ -365,6 +365,15 @@ editProposalModal = Vue.createApp({
         abstractUpload() {
             this.abstract = document.querySelector('#update-abstract').files[0]
         },
+        checkIfEmpty(event,divId){
+            event.preventDefault();
+            var value = event.target.value.trim();
+            if (value.length > 0)
+                document.getElementById(divId).style.display = 'block';
+                },
+        hideDiv(divId){
+            document.getElementById(divId).style.display = 'none';
+        },
         paperUpload() {
             this.paper = document.querySelector('#update-paper').files[0]
         },

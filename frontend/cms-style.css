@@ -508,5 +508,9 @@ form textarea {
     to { left: 110%; width: 10%;}
 }
 
+.hidden{
+    display: none;
+}
+
 
 
