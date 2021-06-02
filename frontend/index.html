@@ -165,7 +165,7 @@
                             <section class="conference-details-secondary w3-small">Location: <span>{{conference.location}}</span></section>
                             <section class="conference-details-secondary w3-small">Date: <span>{{new Date(conference.date).toDateString()}}</span></section>
                         </div>
-                        <button class="cms-button-inversed w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="deleteConference()">
+                        <button class="cms-button-inversed w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="deleteConference(conference.id)">
                             Delete
                         </button>
                         <button class="cms-button w3-button w3-large w3-container w3-bar-item w3-right w3-padding w3-margin" v-on:click="showEditConferenceModal(conference)">

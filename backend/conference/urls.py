@@ -3,7 +3,7 @@ from conference.views import ConferenceViewSet, JoinConferenceView, JoinSectionV
 
 urlpatterns = [
     path('', ConferenceViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('/<int:id>', ConferenceViewSet.as_view({'get': 'retrieve', 'post': 'partial_update'})),
+    path('/<int:id>', ConferenceViewSet.as_view({'get': 'retrieve', 'post': 'partial_update', 'delete': 'destroy'})),
     path('/<int:id>/join', JoinConferenceView.as_view()),
     path('/<int:id>/join-section', JoinSectionView.as_view())
 ]
