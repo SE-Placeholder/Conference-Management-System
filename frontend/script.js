@@ -177,7 +177,7 @@ dashboardTabComponent = Vue.createApp({
             return new Date() < new Date(conference.reviewing_deadline)
         },
         joinSection(conferenceID) {
-            sectionID = document.getElementById("selected-section").value
+            sectionID = document.getElementById("selected-section"+conferenceID).value
             api.conferences.joinSection(conferenceID, sectionID)
                 .then(result => {
                     if (!(conferenceID in this.selectedSections))
@@ -250,6 +250,7 @@ dashboardTabComponent = Vue.createApp({
             // editProposalModal.$data.keywords_list = proposal.keywords
             // editProposalModal.$data.topics_list = proposal.topics
             // editProposalModal.$data.authors_list = proposal.authors.map(user => user.username)
+            showReviewsModal.$data.title = proposal.title
             showReviewsModal.$data.reviews = proposal.reviews.filter(review => review.qualifier != null)
             showModal('show-reviews-modal')
         },

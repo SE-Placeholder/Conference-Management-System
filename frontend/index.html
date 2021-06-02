@@ -122,7 +122,7 @@
                             <span class="">
                                 Select the sections you wish to attend
                             </span>
-                                <select id="selected-section" class="w3-select" style="max-width:50% !important; width:auto;">
+                                <select :id="'selected-section'+conference.id" class="w3-select" style="max-width:50% !important; width:auto;">
                                     <option default value="yolo" style="font-style: italic">~No section selected~</option>
                                     <option v-for="section in conference.sections" :value="section.id">{{section.title}}</option>
                                 </select>
@@ -877,7 +877,7 @@
 
         <div v-for="review in reviews">
             <div class="w3-panel w3-block w3-light-gray">
-                <h4 class="w3-margin-top">Review Message</h4>
+                <h4 class="w3-margin-top">Review from: {{review.user.username}}</h4>
                 <p class="w3-serif w3-large w3-margin-left"><i>{{review.review}}</i></p>
 
                 <div class="w3-right w3-margin-right w3-margin-bottom">
